@@ -271,7 +271,7 @@ export default function ProductCard({ product, lang }: ProductCardProps) {
               >
                 <div className="relative aspect-square">
                   <Image
-                  quality={80}
+                    quality={80}
                     src={variant.images[0] || "/placeholder.jpg"}
                     alt={variant.color}
                     fill
@@ -324,7 +324,7 @@ export default function ProductCard({ product, lang }: ProductCardProps) {
             <div className="flex items-start gap-4">
               <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
                 <Image
-                quality={80}
+                  quality={80}
                   src={selectedVariant.images[0] || "/placeholder.jpg"}
                   alt={selectedVariant.color}
                   fill
@@ -522,12 +522,11 @@ export default function ProductCard({ product, lang }: ProductCardProps) {
         <div className="relative overflow-hidden aspect-square bg-gray-50">
           <div className="relative w-full h-full">
             <Image
-            quality={80}
+              quality={80}
               fill
               src={currentImages[currentImageIndex]}
               alt={`${product.name} - ${selectedVariant.color}`}
               className="w-full h-full object-cover"
-              priority
             />
 
             {currentImages.length > 1 && (
