@@ -1,64 +1,56 @@
-// app/components/HomeComponents/products/ProductsSection.tsx
 "use client";
 
-import { useState, useEffect } from "react";
-import { Product } from "@/types/product";
+import { useEffect, useState, useMemo } from "react";
+import { shallow, useShallow } from "zustand/shallow";
 import ProductCard from "./ProductsCard";
 import Filters from "./filters";
+import { useProductsStore } from "@/store/products-store";
 
 interface ProductsSectionProps {
   lang?: "ar" | "en";
 }
 
 export default function ProductsSection({ lang = "ar" }: ProductsSectionProps) {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(
     null
   );
-  const [loading, setLoading] = useState(true);
 
+  // استخدام shallow لتجنب إعادة الرندر غير الضرورية
+  const { products, loading, fetchProducts } = useProductsStore(
+    useShallow((state) => ({
+      products: state.products,
+      loading: state.loading,
+      fetchProducts: state.fetchProducts,
+    }))
+  );
+
+  // جلب المنتجات عند التحميل
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [fetchProducts]);
 
-  // تطبيق الفلاتر عند التغيير
-  useEffect(() => {
+  // استخدام useMemo لحساب filteredProducts
+  const filteredProducts = useMemo(() => {
     let filtered = products;
 
     if (selectedCategory) {
-      filtered = filtered.filter(
-        (product) => product.category === selectedCategory
-      );
+      filtered = filtered.filter((p) => p.category === selectedCategory);
 
       if (selectedSubcategory) {
         filtered = filtered.filter(
-          (product) => product.subcategory === selectedSubcategory
+          (p) => p.subcategory === selectedSubcategory
         );
       }
     }
 
-    setFilteredProducts(filtered);
+    return filtered;
   }, [products, selectedCategory, selectedSubcategory]);
-
-  const fetchProducts = async () => {
-    try {
-      const response = await fetch("/api/products");
-      const data = await response.json();
-      setProducts(data);
-      setFilteredProducts(data);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div
       className="container mx-auto px-4 py-8"
-      style={{ direction: lang === "ar" ? "rtl" : "ltr" }} // تغيير اتجاه النص بناءً على اللغة
+      style={{ direction: lang === "ar" ? "rtl" : "ltr" }}
     >
       <div className="flex flex-col md:flex-row md:justify-between items-center">
         <h2
@@ -69,7 +61,6 @@ export default function ProductsSection({ lang = "ar" }: ProductsSectionProps) {
           {lang === "ar" ? "أحدث المنتجات" : "Latest Products"}
         </h2>
 
-        {/* ⚠️ تصحيح: تمرير جميع الـ props المطلوبة */}
         <Filters
           lang={lang}
           selectedCategory={selectedCategory}
@@ -79,14 +70,12 @@ export default function ProductsSection({ lang = "ar" }: ProductsSectionProps) {
         />
       </div>
 
-      {/* عرض عدد النتائج */}
       <div className="mb-4 text-gray-600 text-center">
         {lang === "ar"
           ? `عرض ${filteredProducts.length} من ${products.length} منتج`
           : `Showing ${filteredProducts.length} of ${products.length} products`}
       </div>
 
-      {/* قائمة المنتجات */}
       {loading ? (
         <div className="text-center py-8">
           <p>
@@ -101,14 +90,12 @@ export default function ProductsSection({ lang = "ar" }: ProductsSectionProps) {
         </div>
       ) : (
         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {/* عرض أول 8 منتجات فقط في الصفحة الرئيسية */}
           {filteredProducts.slice(0, 8).map((product) => (
             <ProductCard key={product.id} product={product} lang={lang} />
           ))}
         </div>
       )}
 
-      {/* زر عرض المزيد (إذا كان هناك أكثر من 8 منتجات) */}
       <div className="text-center mt-8">
         <a
           href={`/${lang}/products`}

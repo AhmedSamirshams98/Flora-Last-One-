@@ -212,7 +212,7 @@ export default function ProductCard({ product, lang }: ProductCardProps) {
             }`}
           >
             <Image
-              unoptimized
+              
               src={variant.images[0] || "/placeholder.jpg"}
               alt={variant.color}
               fill
@@ -271,7 +271,6 @@ export default function ProductCard({ product, lang }: ProductCardProps) {
               >
                 <div className="relative aspect-square">
                   <Image
-                    unoptimized
                     src={variant.images[0] || "/placeholder.jpg"}
                     alt={variant.color}
                     fill
