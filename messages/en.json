@@ -1,0 +1,222 @@
+{
+  "about": {
+    "title": "About Flora",
+    "subtitle": "We believe in timeless elegance and exceptional craftsmanship. Our curated collection of bags and shoes combines classic design with modern functionality, giving you a sophisticated look every day.",
+    "features": {
+      "quality": "Excellent Quality",
+      "shipping": "Free Shipping",
+      "love": "Made with Love"
+    },
+    "storyTitle": "Our Story",
+    "storyText1": "Flora was founded in 2024, and since then we have been committed to offering the finest selection of leather products and shoes. Every piece in our collection is carefully chosen to ensure quality, design, and durability.",
+    "storyText2": "We work directly with artisans and designers who share our passion for excellence, ensuring that every product meets our high standards. When you choose Flora, you choose a legacy of craftsmanship and elegance."
+  },
+
+  "stats": {
+    "customers": "Customers",
+    "products": "Products",
+    "brands": "Brands",
+    "satisfaction": "Customer Satisfaction"
+  },
+
+  "offers": {
+    "title": "Latest Offers",
+    "noOffers": "No offers available at the moment.",
+    "starts": "Starts",
+    "ends": "Ends",
+    "freeShipping": "Free Shipping",
+    "specialOffer": "Special Offer",
+    "featuredOffer": "Featured Offer"
+  },
+
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "products": "Products",
+    "offers": "Offers",
+        "orders":"My Orders"
+
+  },
+
+  "dashboard": {
+    "products": "Products Management",
+    "orders": "Orders Management",
+    "offers": "Offers Management",
+    "analytics": "Analytics Dashboard"
+  },
+
+  "search": {
+    "placeholder": "Search for a product by name or code..."
+  },
+
+  "auth": {
+    "title": "Sign In",
+    "description": "Sign in to continue shopping",
+    "button": "Sign in with Google"
+  },
+
+  "products": {
+    "types": {
+      "SHOE": "Shoes",
+      "BAG": "Bags"
+    },
+
+    "subtypes": {
+      "shoe": {
+        "ALL_SHOES": "All Shoes",
+        "WINTER_BOOTS": "Winter Boots",
+        "SNEAKERS": "Sneakers",
+        "PUMPS": "Pumps",
+        "BALLERINAS": "Ballerinas",
+        "LOAFERS": "Loafers",
+        "SLIPPERS": "Slippers",
+        "SANDALS": "Sandals"
+      },
+      "bag": {
+        "ALL_BAGS": "All Bags",
+        "HAND_BAGS": "Hand Bags",
+        "SHOULDER_BAGS": "Shoulder Bags",
+        "CROSSBODY_BAGS": "Crossbody Bags",
+        "CLUTCH_BAGS": "Clutch Bags",
+        "BACKPACKS": "Backpacks",
+        "WALLETS": "Wallets"
+      }
+    },
+
+    "pricing": {
+      "SINGLE_PRICE": "Single Price",
+      "SALE_PRICE": "Sale Price",
+      "WITH_OFFER": "With Offer"
+    },
+
+    "labels": {
+      "type": "Type",
+      "category": "Category",
+      "price": "Price",
+      "salePrice": "Sale Price",
+      "addToCart": "Add to Cart",
+      "viewDetails": "View Details",
+      "noProducts": "No products available",
+      "loading": "Loading products..."
+    }
+  },
+
+  "checkout": {
+    "pageTitle": "Checkout",
+    "backToCart": "Back to Cart",
+    "shippingAddress": "Shipping Address",
+    "addNewAddress": "Add New Address",
+    "noAddresses": "No addresses registered",
+    "default": "Default",
+    "fullNamePlaceholder": "Full Name",
+    "phonePlaceholder": "Phone Number",
+    "addressPlaceholder": "Address",
+    "cityPlaceholder": "City",
+    "setAsDefault": "Set as default",
+    "saveAddress": "Save Address",
+    "cancel": "Cancel",
+    "orderSummary": "Order Summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "free": "Free",
+    "total": "Total",
+    "confirmOrder": "Confirm Order",
+    "creatingOrder": "Creating Order...",
+    "selectAddressWarning": "⚠️ Please select a shipping address",
+    "emptyCartTitle": "Your cart is empty",
+    "emptyCartMessage": "You haven't added any products yet",
+    "browseProducts": "Browse Products",
+    "loading": "Loading...",
+    "loginRequired": "You must login first",
+    "allFieldsRequired": "All fields are required",
+    "invalidPhone": "Invalid phone number. Must start with 01 and contain 11 digits",
+    "addressAdded": "Address added successfully",
+    "addressAddFailed": "Failed to add address",
+    "addressLoadFailed": "Failed to load addresses",
+    "selectAddress": "Please select a shipping address",
+    "invalidAddress": "Invalid selected address",
+    "orderCreated": "Order created successfully",
+    "orderFailed": "Failed to create order",
+    "unknownError": "An unexpected error occurred",
+    "currency": "EGP",
+    "color": "Color",
+    "size": "Size"
+  },
+
+  "cart": {
+    "pageTitle": "Shopping Cart",
+    "backToShopping": "Back to Shopping",
+    "emptyTitle": "Your cart is empty",
+    "emptyMessage": "Start shopping to add amazing products to your cart",
+    "browseProducts": "Browse Products",
+    "continueShopping": "Continue Shopping",
+    "clearCart": "Clear Cart",
+    "cartCleared": "Cart cleared!",
+    "itemRemoved": "Item removed from cart",
+    "items": "items",
+    "item": "item",
+    "color": "Color",
+    "size": "Size",
+    "category": "Category",
+    "orderSummary": "Order Summary",
+    "total": "Total",
+    "proceedToCheckout": "Proceed to Checkout",
+    "cartIsEmptyToast": "Cart is empty!"
+  },
+  "orders": {
+    "pageTitle": "My Orders",
+    "subtitle": "View and track all your orders",
+    "welcome": "Welcome",
+    "back": "Back",
+    "loading": "Loading orders...",
+    "loginRequired": "Login Required",
+    "loginMessage": "Please login to view your orders",
+    "error": "Error",
+    "retry": "Retry",
+    "fetchError": "Failed to fetch orders",
+    "totalOrders": "Total Orders",
+    "pending": "Pending",
+    "delivered": "Delivered",
+    "totalSpent": "Total Spent",
+    "noOrders": "No Orders Yet",
+    "noOrdersMessage": "You haven't placed any orders yet. Start shopping to see your orders here.",
+    "startShopping": "Start Shopping",
+    "order": "Order",
+    "orderDate": "Order Date",
+    "amount": "Amount",
+    "viewDetails": "View Details",
+    "items": "Items",
+    "moreItems": "more items",
+    "quantity": "Quantity",
+    "shippingInfo": "Shipping Information",
+    "customerName": "Customer Name",
+    "phone": "Phone",
+    "address": "Address",
+    "orderDetails": "Order Details",
+    "orderStatus": "Order Status",
+    "lastUpdated": "Last updated",
+    "totalAmount": "Total Amount",
+    "shippingAddress": "Shipping Address",
+    "orderItems": "Order Items",
+    "item": "Item",
+    "piece": "piece",
+    "total": "Total",
+    "discount": "Discount",
+    "category": "Category",
+    "color": "Color",
+    "sizes": "Sizes",
+    "additionalDetails": "Additional Details",
+    "orderSummary": "Order Summary",
+    "totalItems": "Total Items",
+    "differentItems": "Different Items",
+    "totalDiscount": "Total Discount",
+    "close": "Close",
+     "price": "Price",
+    "saved": "Saved",
+    "productImages": "Product Images",
+    "clickToEnlarge": "Click to enlarge image",
+    "noImages": "No images available",
+    "variantDetails": "Variant Details",
+    "clickOutsideToClose": "Click outside to close"
+  }
+}

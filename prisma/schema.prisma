@@ -1,0 +1,305 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//marque model 
+
+model Marquee {
+  id        String   @id @default(cuid())
+  text      String
+  textEn    String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("marquees") // محول إلى جمع باللغة الإنجليزية
+}
+
+// ============================================
+// 📌 USERS & AUTHENTICATION
+// ============================================
+
+enum Role {
+  USER
+  ADMIN
+  SUPERADMIN
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  image     String?
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders         Order[]
+  assignedOrders Order[]    @relation("AssignedOrders")
+  addresses      Address[]
+  cartItems      CartItem[]
+  wishlistItems  Wishlist[]
+
+  @@map("users")
+}
+
+model Address {
+  id        String   @id @default(cuid())
+  userId    String
+  fullName  String
+  phone     String
+  address   String
+  city      String
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders Order[]
+
+  @@map("addresses")
+}
+
+// ============================================
+// 📌 PRODUCTS & VARIANTS
+// ============================================
+
+enum ProductType {
+  SHOE
+  BAG
+}
+
+enum ProductSubtype {
+  // أحذية
+  ALL_SHOES
+  WINTER_BOOTS
+  SNEAKERS
+  PUMPS
+  BALLERINAS
+  LOAFERS
+  SLIPPERS
+  SANDALS
+
+  // شنط
+  ALL_BAGS
+  HAND_BAGS
+  SHOULDER_BAGS
+  CROSSBODY_BAGS
+  CLUTCH_BAGS
+  BACKPACKS
+  WALLETS
+}
+
+enum PricingType {
+  SINGLE_PRICE // سعر واحد فقط
+  SALE_PRICE // سعر مخفض خاص
+  WITH_OFFER // مع عرض
+}
+
+model Product {
+  id   String @id @default(cuid())
+  name String
+
+  // النوع والفئة
+  category    ProductType // SHOE أو BAG
+  subcategory ProductSubtype? // نوع فرعي
+
+  // ===== التسعير =====
+  basePrice Float // السعر الأساسي (مطلوب)
+  salePrice Float? // السعر المخفض الخاص
+
+  // ===== العرض =====
+  offerId    String? // إذا كان له عرض
+  offerPrice Float? // السعر بعد العرض
+
+  // تحديد نوع التسعير
+  pricingType PricingType @default(SINGLE_PRICE)
+
+  // السعر النهائي المعروض
+  finalPrice Float // يحسب تلقائياً
+
+  // معلومات إضافية
+  isNew      Boolean @default(false)
+  isActive   Boolean @default(true)
+  isFeatured Boolean @default(false)
+  inStock    Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // العلاقات
+  variants   ProductVariant[]
+  orderItems OrderItem[]
+  cartItems  CartItem[]
+  wishlists  Wishlist[]
+  offer      Offer?           @relation(fields: [offerId], references: [id])
+
+  @@map("products")
+}
+
+model ProductVariant {
+  id          String   @id @default(cuid())
+  productId   String
+  code        String   @default("TEMP_CODE") // <-- قيمة افتراضية
+  color       String
+  sizes       String[] @default([]) // ⚡ دائمًا قائمة، قد تكون فارغة
+  price       Float
+  images      String[]
+  stock       Int      @default(0)
+  description String?
+
+  product   Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  OrderItem OrderItem[]
+  CartItem  CartItem[]
+
+  @@map("product_variants")
+}
+
+// ============================================
+// 📌 OFFERS & DISCOUNTS
+// ============================================
+
+enum OfferType {
+  SIMPLE // عرض بسيط (صورة فقط)
+  PERCENTAGE_DISCOUNT // خصم نسبة مئوية
+  FIXED_AMOUNT_DISCOUNT // خصم مبلغ ثابت
+  FIXED_PRICE // سعر ثابت
+  BUY_X_GET_Y // اشتري X احصل على Y
+  FREE_SHIPPING // شحن مجاني
+}
+
+model Offer {
+  id            String  @id @default(cuid())
+  title         String
+  titleEn       String?
+  subtitle      String?
+  subtitleEn    String?
+  description   String?
+  descriptionEn String?
+  image         String? // صورة واحدة كافية
+
+  offerType OfferType @default(PERCENTAGE_DISCOUNT)
+
+  // تفاصيل حسب نوع العرض
+  discountPercentage Float? // 20 لخصم 20%
+  discountAmount     Float? // 50 لخصم 50 ريال
+  fixedPrice         Float? // 199 سعر ثابت
+  buyQuantity        Int? // اشتر 2
+  getQuantity        Int? // احصل على 1
+
+  // الفعالية
+  startDate DateTime?
+  endDate   DateTime?
+  isActive  Boolean   @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // العلاقات
+  products Product[] // المنتجات التي تطبق عليها هذا العرض
+
+  @@map("offers")
+}
+
+// ============================================
+// 📌 ORDERS & CHECKOUT
+// ============================================
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  orderNumber String      @unique
+  userId      String
+  totalAmount Float // المجموع قبل الخصم
+  finalAmount Float // المبلغ النهائي بعد الخصم
+  status      OrderStatus @default(PENDING)
+
+  // تتبع التعديلات
+  assignedAdminId String?
+  lastUpdatedBy   String?
+  statusHistory   String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // معلومات الشحن
+  shippingAddressId String?
+  customerName      String?
+  customerPhone     String?
+  shippingAddress   String?
+  shippingCity      String?
+  notes             String?
+
+  // العلاقات
+  user               User        @relation(fields: [userId], references: [id])
+  assignedAdmin      User?       @relation("AssignedOrders", fields: [assignedAdminId], references: [id])
+  orderItems         OrderItem[]
+  shippingAddressRef Address?    @relation(fields: [shippingAddressId], references: [id])
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id             String  @id @default(cuid())
+  orderId        String
+  productId      String
+  variantId      String?
+  quantity       Int
+  price          Float // السعر الذي تم الشراء به
+  originalPrice  Float? // السعر الأصلي قبل الخصم
+  discountAmount Float? // قيمة الخصم المطبق
+
+  productName    String // اسم المنتج وقت الشراء
+  variantDetails String? // تفاصيل المتغير
+
+  order   Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product         @relation(fields: [productId], references: [id])
+  variant ProductVariant? @relation(fields: [variantId], references: [id])
+
+  @@map("order_items")
+}
+
+// ============================================
+// 📌 CART & WISHLIST
+// ============================================
+
+model CartItem {
+  id        String  @id @default(cuid())
+  userId    String
+  productId String
+  variantId String?
+  quantity  Int     @default(1)
+
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product         @relation(fields: [productId], references: [id])
+  variant ProductVariant? @relation(fields: [variantId], references: [id])
+
+  @@map("cart_items")
+}
+
+model Wishlist {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
+  @@map("wishlists")
+}

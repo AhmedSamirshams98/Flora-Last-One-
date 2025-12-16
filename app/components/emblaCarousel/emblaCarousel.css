@@ -1,0 +1,133 @@
+/* emblaCarousel/emblaCarousel.css */
+
+.emblas {
+  width: 100%;
+  position: relative;
+  --slide-size: 100%;
+  --slide-spacing: 0rem;
+  direction: ltr;
+  overflow: hidden;
+  
+}
+
+.embla__viewport {
+  overflow: hidden;
+  width: 100%;
+}
+
+.embla__container {
+  display: flex;
+  
+  width: 100%;
+  margin-left: calc(var(--slide-spacing) * -1);
+  direction: ltr;
+}
+
+.embla__slide {
+  flex: 0 0 var(--slide-size);
+  min-width: 0;
+  padding-left: var(--slide-spacing);
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* تحسينات للشاشات المختلفة */
+@media (min-width: 640px) {
+  .emblas {
+    --slide-spacing: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .emblas {
+    --slide-spacing: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .emblas {
+    --slide-spacing: 2rem;
+  }
+}
+
+/* أزرار التحكم */
+.embla__controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+.embla__buttons {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: rgba(253, 184, 0, 0.1);
+  backdrop-filter: blur(8px);
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+}
+
+.embla__button {
+  touch-action: manipulation;
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: primary;
+  font-size: 2rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.embla__button:hover {
+  transform: scale(1.4);
+}
+
+.embla__dots {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.embla__dot {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.5);
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: transparent;
+  touch-action: manipulation;
+  cursor: pointer;  
+  border: 0;
+  padding: 0;
+  margin: 0;
+  width: 1rem;
+  height: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.embla__dot:after {
+  background-color: rgb(156 163 175); /* لون gray-400 للنقاط غير النشطة */
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  content: "";
+  transition: all 0.3s ease;
+}
+
+.embla__dot--selected:after {
+  background-color: #6b4423;
+  width: 1rem;
+  height: 0.5rem;
+  border-radius: 0.25rem;
+}
