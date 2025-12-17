@@ -1,7 +1,11 @@
 // src/store/productsStore.ts
 import { create } from "zustand";
 import axios from "axios";
-import { Product, CreateProductInput, UpdateProductInput } from "../types/product";
+import {
+  Product,
+  CreateProductInput,
+  UpdateProductInput,
+} from "../types/product";
 
 interface ProductStore {
   products: Product[];
@@ -21,14 +25,23 @@ interface ProductStore {
   addProduct: (data: CreateProductInput) => Promise<Product>;
   updateProduct: (id: string, data: UpdateProductInput) => Promise<Product>;
   deleteProduct: (id: string) => Promise<void>;
-  applyOfferToProduct: (productId: string, offerId?: string) => Promise<Product>;
-  updateStock: (productId: string, variantId: string, stock: number) => Promise<Product>;
+  applyOfferToProduct: (
+    productId: string,
+    offerId?: string
+  ) => Promise<Product>;
+  updateStock: (
+    productId: string,
+    variantId: string,
+    stock: number
+  ) => Promise<Product>;
   getProductById: (id: string) => Promise<Product>;
 }
 
 function getErrorMessage(error: unknown): string {
   if (axios.isAxiosError(error)) {
-    return error.response?.data?.error || error.response?.statusText || error.message;
+    return (
+      error.response?.data?.error || error.response?.statusText || error.message
+    );
   }
   if (error instanceof Error) {
     return error.message;
@@ -44,7 +57,9 @@ export const useProductsStore = create<ProductStore>((set, get) => {
   const updateProductInStore = (updated: Product) => {
     set((state) => ({
       products: state.products.map((p) => (p.id === updated.id ? updated : p)),
-      filteredProducts: state.filteredProducts.map((p) => (p.id === updated.id ? updated : p)),
+      filteredProducts: state.filteredProducts.map((p) =>
+        p.id === updated.id ? updated : p
+      ),
     }));
   };
 
@@ -72,10 +87,19 @@ export const useProductsStore = create<ProductStore>((set, get) => {
       set({ loading: true, error: null });
       try {
         const response = await axios.get("/api/products");
-        set({ products: response.data, filteredProducts: response.data, loading: false });
+        set({
+          products: response.data,
+          filteredProducts: response.data,
+          loading: false,
+        });
       } catch (error) {
         const errorMessage = getErrorMessage(error);
-        set({ error: errorMessage, loading: false, products: [], filteredProducts: [] });
+        set({
+          error: errorMessage,
+          loading: false,
+          products: [],
+          filteredProducts: [],
+        });
         throw error;
       }
     },
@@ -129,7 +153,9 @@ export const useProductsStore = create<ProductStore>((set, get) => {
     applyOfferToProduct: async (productId, offerId) => {
       set({ loading: true, error: null });
       try {
-        const response = await axios.patch(`/api/products/${productId}/offer`, { offerId });
+        const response = await axios.patch(`/api/products/${productId}/offer`, {
+          offerId,
+        });
         const updated = response.data;
         updateProductInStore(updated);
         set({ loading: false });
@@ -144,7 +170,10 @@ export const useProductsStore = create<ProductStore>((set, get) => {
     updateStock: async (productId, variantId, stock) => {
       set({ loading: true, error: null });
       try {
-        const response = await axios.put(`/api/products/${productId}/stock`, { variantId, stock });
+        const response = await axios.put(`/api/products/${productId}/stock`, {
+          variantId,
+          stock,
+        });
         const updated = response.data;
         updateProductInStore(updated);
         set({ loading: false });
