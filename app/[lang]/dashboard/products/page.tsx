@@ -105,7 +105,9 @@ export default function ProductsDashboard() {
 
   // حالة لرفع الملفات
   const [uploading, setUploading] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState<Record<number, File[]>>({});
+  const [uploadedFiles, setUploadedFiles] = useState<Record<number, File[]>>(
+    {}
+  );
 
   // جلب البيانات
   const fetchData = useCallback(async () => {
@@ -317,36 +319,41 @@ export default function ProductsDashboard() {
     if (!files) return;
 
     const filesArray = Array.from(files);
-    
+
     // حفظ الملفات مؤقتاً
-    setUploadedFiles(prev => ({
+    setUploadedFiles((prev) => ({
       ...prev,
-      [variantIndex]: [...(prev[variantIndex] || []), ...filesArray]
+      [variantIndex]: [...(prev[variantIndex] || []), ...filesArray],
     }));
 
     // عرض معاينة للصور المرفوعة
-    const newImagePreviews = filesArray.map(file => URL.createObjectURL(file));
+    const newImagePreviews = filesArray.map((file) =>
+      URL.createObjectURL(file)
+    );
     const currentImages = formData.variants[variantIndex].images;
-    handleVariantChange(variantIndex, "images", [...currentImages, ...newImagePreviews]);
+    handleVariantChange(variantIndex, "images", [
+      ...currentImages,
+      ...newImagePreviews,
+    ]);
   };
 
   const removeImage = (variantIndex: number, imageIndex: number) => {
     const newImages = formData.variants[variantIndex].images.filter(
       (_, i) => i !== imageIndex
     );
-    
+
     // إزالة المعاينة من الذاكرة
     URL.revokeObjectURL(formData.variants[variantIndex].images[imageIndex]);
-    
+
     handleVariantChange(variantIndex, "images", newImages);
-    
+
     // إزالة الملف من uploadedFiles إذا كان ملف جديد
     const currentFiles = uploadedFiles[variantIndex] || [];
     if (imageIndex < currentFiles.length) {
       const newFiles = currentFiles.filter((_, i) => i !== imageIndex);
-      setUploadedFiles(prev => ({
+      setUploadedFiles((prev) => ({
         ...prev,
-        [variantIndex]: newFiles
+        [variantIndex]: newFiles,
       }));
     }
   };
@@ -384,7 +391,7 @@ export default function ProductsDashboard() {
         })),
       };
 
-      formDataToSend.append('data', JSON.stringify(productData));
+      formDataToSend.append("data", JSON.stringify(productData));
 
       // إضافة الملفات المرفوعة مع الفهارس المناسبة
       let globalFileIndex = 0;
@@ -393,7 +400,7 @@ export default function ProductsDashboard() {
       Object.entries(uploadedFiles).forEach(([variantIndexStr, files]) => {
         const variantIndex = parseInt(variantIndexStr);
         variantImageIndices[variantIndex] = [];
-        
+
         files.forEach((file, fileIndex) => {
           formDataToSend.append(`image_${globalFileIndex}`, file);
           variantImageIndices[variantIndex].push(globalFileIndex);
@@ -409,24 +416,27 @@ export default function ProductsDashboard() {
           // إضافة الفهارس للملفات المرفوعة حديثاً
           uploadedImageIndexes: variantImageIndices[index] || [],
           // إضافة الصور القديمة التي كانت في قاعدة البيانات
-          images: formData.variants[index].images.filter(img => 
-            img.startsWith('http') || img.startsWith('/') || img.includes('base64')
-          )
-        }))
+          images: formData.variants[index].images.filter(
+            (img) =>
+              img.startsWith("http") ||
+              img.startsWith("/") ||
+              img.includes("base64")
+          ),
+        })),
       };
 
       // إضافة البيانات المحدثة
-      formDataToSend.set('data', JSON.stringify(updatedProductData));
+      formDataToSend.set("data", JSON.stringify(updatedProductData));
 
       // إرسال الطلب إلى API
-      const response = await fetch('/api/products', {
-        method: 'POST',
+      const response = await fetch("/api/products", {
+        method: "POST",
         body: formDataToSend,
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'فشل في إنشاء المنتج');
+        throw new Error(errorData.error || "فشل في إنشاء المنتج");
       }
 
       const result = await response.json();
@@ -434,17 +444,18 @@ export default function ProductsDashboard() {
       if (result.success) {
         // إعادة تحميل المنتجات
         await fetchData();
-        
+
         // إغلاق النموذج
         setShowForm(false);
         setEditingProduct(null);
         resetForm();
-        
-        alert(editingProduct ? "تم تحديث المنتج بنجاح!" : "تم إنشاء المنتج بنجاح!");
-      } else {
-        throw new Error(result.error || 'فشل في العملية');
-      }
 
+        alert(
+          editingProduct ? "تم تحديث المنتج بنجاح!" : "تم إنشاء المنتج بنجاح!"
+        );
+      } else {
+        throw new Error(result.error || "فشل في العملية");
+      }
     } catch (error) {
       console.error("Failed to save product:", error);
       alert(error instanceof Error ? error.message : "حدث خطأ في حفظ المنتج");
@@ -576,7 +587,7 @@ export default function ProductsDashboard() {
               {product.variants[0]?.images[0] && (
                 <div className="relative w-full h-48 mb-4">
                   <Image
-                    unoptimized
+                    
                     src={product.variants[0].images[0]}
                     alt={product.name}
                     fill
@@ -866,7 +877,11 @@ export default function ProductsDashboard() {
                           type="color"
                           value={variant.colorHex || "#000000"}
                           onChange={(e) =>
-                            handleVariantChange(index, "colorHex", e.target.value)
+                            handleVariantChange(
+                              index,
+                              "colorHex",
+                              e.target.value
+                            )
                           }
                           className="w-full h-10 cursor-pointer"
                         />
@@ -1011,7 +1026,9 @@ export default function ProductsDashboard() {
                                   <Image
                                     unoptimized
                                     src={image}
-                                    alt={`Variant ${index + 1} image ${imgIndex + 1}`}
+                                    alt={`Variant ${index + 1} image ${
+                                      imgIndex + 1
+                                    }`}
                                     fill
                                     className="object-cover rounded"
                                   />
@@ -1088,7 +1105,11 @@ export default function ProductsDashboard() {
                   disabled={uploading}
                   className="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {uploading ? "جاري الحفظ..." : editingProduct ? "تحديث المنتج" : "إضافة المنتج"}
+                  {uploading
+                    ? "جاري الحفظ..."
+                    : editingProduct
+                    ? "تحديث المنتج"
+                    : "إضافة المنتج"}
                 </button>
                 <button
                   type="button"
