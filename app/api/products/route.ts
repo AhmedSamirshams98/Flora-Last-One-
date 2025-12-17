@@ -1,60 +1,57 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { CreateProductInput } from "@/types/product";
-import {
-  Prisma,
-  ProductType,
-  ProductSubtype,
-  PricingType,
-  OfferType,
-} from "@prisma/client";
-import path from "path";
-import fs from "fs/promises";
-import { randomBytes } from "crypto";
+// import { NextResponse } from "next/server";
+// import { prisma } from "@/lib/prisma";
+// import { CreateProductInput } from "@/types/product";
+// import {
+//   Prisma,
+//   ProductType,
+//   ProductSubtype,
+//   PricingType,
+//   OfferType,
+// } from "@prisma/client";
 
-// ==============================
-// 📌 GET ALL PRODUCTS
-// ==============================
-export async function GET(request: Request) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const category = searchParams.get("category");
-    const subcategory = searchParams.get("subcategory");
-    const offerId = searchParams.get("offerId");
-    const pricingType = searchParams.get("pricingType");
-    const isNew = searchParams.get("isNew");
-    const isFeatured = searchParams.get("isFeatured");
+// // ==============================
+// // 📌 GET ALL PRODUCTS
+// // ==============================
+// export async function GET(request: Request) {
+//   try {
+//     const { searchParams } = new URL(request.url);
+//     const category = searchParams.get("category");
+//     const subcategory = searchParams.get("subcategory");
+//     const offerId = searchParams.get("offerId");
+//     const pricingType = searchParams.get("pricingType");
+//     const isNew = searchParams.get("isNew");
+//     const isFeatured = searchParams.get("isFeatured");
 
-    // بناء where بأمان باستخدام Prisma types
-    const where: Prisma.ProductWhereInput = {};
+//     // بناء where بأمان باستخدام Prisma types
+//     const where: Prisma.ProductWhereInput = {};
 
-    if (category) where.category = { equals: category as ProductType };
-    if (subcategory)
-      where.subcategory = { equals: subcategory as ProductSubtype };
-    if (offerId) where.offerId = offerId;
-    if (pricingType) where.pricingType = { equals: pricingType as PricingType };
-    if (isNew !== null) where.isNew = isNew === "true";
-    if (isFeatured !== null) where.isFeatured = isFeatured === "true";
+//     if (category) where.category = { equals: category as ProductType };
+//     if (subcategory)
+//       where.subcategory = { equals: subcategory as ProductSubtype };
+//     if (offerId) where.offerId = offerId;
+//     if (pricingType) where.pricingType = { equals: pricingType as PricingType };
+//     if (isNew !== null) where.isNew = isNew === "true";
+//     if (isFeatured !== null) where.isFeatured = isFeatured === "true";
 
-    const products = await prisma.product.findMany({
-      where,
-      include: {
-        variants: true,
-        offer: true,
-      },
-      orderBy: { createdAt: "desc" },
-    });
+//     const products = await prisma.product.findMany({
+//       where,
+//       include: {
+//         variants: true,
+//         offer: true,
+//       },
+//       orderBy: { createdAt: "desc" },
+//     });
 
-    return NextResponse.json(products);
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    return NextResponse.json({ error: "فشل في جلب المنتجات" }, { status: 500 });
-  }
-}
+//     return NextResponse.json(products);
+//   } catch (error) {
+//     console.error("Error fetching products:", error);
+//     return NextResponse.json({ error: "فشل في جلب المنتجات" }, { status: 500 });
+//   }
+// }
 
-// ==============================
-// 📌 CREATE PRODUCT - النظام الجديد
-// ==============================
+// // ==============================
+// // 📌 CREATE PRODUCT - النظام الجديد
+// // ==============================
 // export async function POST(req: Request) {
 //   try {
 //     const data: CreateProductInput = await req.json();
@@ -158,7 +155,151 @@ export async function GET(request: Request) {
 //     );
 //   }
 // }
-// const UPLOAD_DIR = process.env.UPLOAD_DIR || "/var/www/flora/uploads";
+
+// // ==============================
+// // 📌 دالة حساب سعر العرض
+// // ==============================
+// function calculateOfferPrice(
+//   basePrice: number,
+//   offer: {
+//     offerType: OfferType;
+//     discountPercentage?: number | null;
+//     discountAmount?: number | null;
+//     fixedPrice?: number | null;
+//   }
+// ): number {
+//   let finalPrice = basePrice;
+
+//   switch (offer.offerType) {
+//     case OfferType.PERCENTAGE_DISCOUNT:
+//       if (offer.discountPercentage) {
+//         finalPrice = basePrice * (1 - offer.discountPercentage / 100);
+//       }
+//       break;
+
+//     case OfferType.FIXED_AMOUNT_DISCOUNT:
+//       if (offer.discountAmount) {
+//         finalPrice = Math.max(0, basePrice - offer.discountAmount);
+//       }
+//       break;
+
+//     case OfferType.FIXED_PRICE:
+//       if (offer.fixedPrice) {
+//         finalPrice = offer.fixedPrice;
+//       }
+//       break;
+
+//     case OfferType.BUY_X_GET_Y:
+//     case OfferType.FREE_SHIPPING:
+//     case OfferType.SIMPLE:
+//       // هذه العروض لا تؤثر على سعر المنتج مباشرة
+//       finalPrice = basePrice;
+//       break;
+//   }
+
+//   // تقريب إلى منزلتين عشريتين
+//   return Math.round(finalPrice * 100) / 100;
+// }
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { CreateProductInput } from "@/types/product";
+import {
+  Prisma,
+  ProductType,
+  ProductSubtype,
+  PricingType,
+  OfferType,
+} from "@prisma/client";
+import path from "path";
+import fs from "fs/promises";
+import { randomBytes } from "crypto";
+
+// ==============================
+// 📌 دالة حساب سعر العرض
+// ==============================
+function calculateOfferPrice(
+  basePrice: number,
+  offer: {
+    offerType: OfferType;
+    discountPercentage?: number | null;
+    discountAmount?: number | null;
+    fixedPrice?: number | null;
+  }
+): number {
+  let finalPrice = basePrice;
+
+  switch (offer.offerType) {
+    case OfferType.PERCENTAGE_DISCOUNT:
+      if (offer.discountPercentage) {
+        finalPrice = basePrice * (1 - offer.discountPercentage / 100);
+      }
+      break;
+
+    case OfferType.FIXED_AMOUNT_DISCOUNT:
+      if (offer.discountAmount) {
+        finalPrice = Math.max(0, basePrice - offer.discountAmount);
+      }
+      break;
+
+    case OfferType.FIXED_PRICE:
+      if (offer.fixedPrice) {
+        finalPrice = offer.fixedPrice;
+      }
+      break;
+
+    case OfferType.BUY_X_GET_Y:
+    case OfferType.FREE_SHIPPING:
+    case OfferType.SIMPLE:
+      // هذه العروض لا تؤثر على سعر المنتج مباشرة
+      finalPrice = basePrice;
+      break;
+  }
+
+  // تقريب إلى منزلتين عشريتين
+  return Math.round(finalPrice * 100) / 100;
+}
+
+// ==============================
+// 📌 GET ALL PRODUCTS
+// ==============================
+export async function GET(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const category = searchParams.get("category");
+    const subcategory = searchParams.get("subcategory");
+    const offerId = searchParams.get("offerId");
+    const pricingType = searchParams.get("pricingType");
+    const isNew = searchParams.get("isNew");
+    const isFeatured = searchParams.get("isFeatured");
+
+    // بناء where بأمان باستخدام Prisma types
+    const where: Prisma.ProductWhereInput = {};
+
+    if (category) where.category = { equals: category as ProductType };
+    if (subcategory)
+      where.subcategory = { equals: subcategory as ProductSubtype };
+    if (offerId) where.offerId = offerId;
+    if (pricingType) where.pricingType = { equals: pricingType as PricingType };
+    if (isNew !== null) where.isNew = isNew === "true";
+    if (isFeatured !== null) where.isFeatured = isFeatured === "true";
+
+    const products = await prisma.product.findMany({
+      where,
+      include: {
+        variants: true,
+        offer: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return NextResponse.json(products);
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return NextResponse.json({ error: "فشل في جلب المنتجات" }, { status: 500 });
+  }
+}
+
+// تكوين مجلد الرفع
 const getUploadDir = () => {
   // في التطوير: استخدم المسار النسبي
   if (process.env.NODE_ENV === "development") {
@@ -169,7 +310,6 @@ const getUploadDir = () => {
 };
 
 const UPLOAD_DIR = getUploadDir();
-
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_MIME_TYPES = [
   "image/jpeg",
@@ -218,11 +358,9 @@ async function saveUploadedFile(file: File): Promise<string> {
   }
 }
 
-// دالة مساعدة للحصول على URL عام للصورة
-function getPublicUrl(filename: string): string {
-  return `/uploads/${filename}`;
-}
-
+// ==============================
+// 📌 CREATE PRODUCT
+// ==============================
 export async function POST(request: NextRequest) {
   try {
     // استقبال FormData
@@ -239,45 +377,6 @@ export async function POST(request: NextRequest) {
 
     // تحليل JSON
     const productData = JSON.parse(dataString);
-
-    // استخراج الصور من FormData
-    const imageFiles: File[] = [];
-    const imageLinks: string[] = [];
-
-    // جمع الملفات المرفوعة
-    for (const [key, value] of formData.entries()) {
-      if (key.startsWith("image_") && value instanceof File) {
-        imageFiles.push(value);
-      }
-    }
-
-    // جمع روابط الصور من بيانات المنتج
-    if (productData.variants) {
-      for (const variant of productData.variants) {
-        if (variant.images && Array.isArray(variant.images)) {
-          imageLinks.push(
-            ...variant.images.filter(
-              (img: string) =>
-                typeof img === "string" &&
-                (img.startsWith("http") || img.startsWith("/"))
-            )
-          );
-        }
-      }
-    }
-
-    // رفع الملفات إلى السيرفر
-    const uploadedImageUrls: string[] = [];
-    for (const imageFile of imageFiles) {
-      try {
-        const imageUrl = await saveUploadedFile(imageFile);
-        uploadedImageUrls.push(imageUrl);
-        console.log("✓ Image uploaded:", imageUrl);
-      } catch (uploadError) {
-        console.error("✗ Failed to upload image:", uploadError);
-        // يمكنك المتابعة أو إرجاع خطأ حسب احتياجك
-      }
-    }
 
     // التحقق من البيانات الأساسية
     if (!productData.name || !productData.category || !productData.basePrice) {
@@ -319,58 +418,74 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // معالجة الصور المرفوعة
+    const imageFiles: File[] = [];
+    const uploadedImageUrls: string[] = [];
+
+    // جمع الملفات المرفوعة من FormData
+    for (const [key, value] of formData.entries()) {
+      if (key.startsWith("image_") && value instanceof File) {
+        imageFiles.push(value);
+      }
+    }
+
+    // رفع الملفات إلى السيرفر
+    for (const imageFile of imageFiles) {
+      try {
+        const imageUrl = await saveUploadedFile(imageFile);
+        uploadedImageUrls.push(imageUrl);
+        console.log("✓ Image uploaded:", imageUrl);
+      } catch (uploadError) {
+        console.error("✗ Failed to upload image:", uploadError);
+        // يمكنك اختيار إما المتابعة أو إرجاع خطأ
+      }
+    }
+
     // معالجة المتغيرات وإضافة الصور
-    const variantsWithImages =
-      productData.variants?.map((variant: any, index: number) => {
-        const variantImages: string[] = [];
+    const variantsWithImages = productData.variants?.map((variant: any, index: number) => {
+      const variantImages: string[] = [];
 
-        // إضافة الصور المرفوعة حديثاً لهذا المتغير (إذا تم تحديد)
-        if (
-          variant.uploadedImageIndexes &&
-          Array.isArray(variant.uploadedImageIndexes)
-        ) {
-          variant.uploadedImageIndexes.forEach((imgIndex: number) => {
-            if (uploadedImageUrls[imgIndex]) {
-              variantImages.push(uploadedImageUrls[imgIndex]);
-            }
-          });
-        }
+      // إضافة الصور المرفوعة حديثاً لهذا المتغير
+      if (variant.uploadedImageIndexes && Array.isArray(variant.uploadedImageIndexes)) {
+        variant.uploadedImageIndexes.forEach((imgIndex: number) => {
+          if (uploadedImageUrls[imgIndex]) {
+            variantImages.push(uploadedImageUrls[imgIndex]);
+          }
+        });
+      }
 
-        // إضافة روابط الصور الحالية
-        if (variant.images && Array.isArray(variant.images)) {
-          variant.images.forEach((img: string) => {
-            if (
-              typeof img === "string" &&
-              (img.startsWith("http") || img.startsWith("/"))
-            ) {
-              variantImages.push(img);
-            }
-          });
-        }
+      // إضافة روابط الصور الحالية
+      if (variant.images && Array.isArray(variant.images)) {
+        variant.images.forEach((img: string) => {
+          if (typeof img === "string" && (img.startsWith("http") || img.startsWith("/"))) {
+            variantImages.push(img);
+          }
+        });
+      }
 
-        // إذا لم تكن هناك صور، نضيف صورة افتراضية
-        if (variantImages.length === 0 && uploadedImageUrls.length > 0) {
-          // نأخذ أول صورة مرفوعة لهذا المنتج
-          variantImages.push(uploadedImageUrls[0]);
-        } else if (variantImages.length === 0) {
-          // صورة افتراضية
-          variantImages.push("/placeholder.jpg");
-        }
+      // إذا لم تكن هناك صور، نضيف صورة افتراضية
+      if (variantImages.length === 0 && uploadedImageUrls.length > 0) {
+        // نأخذ أول صورة مرفوعة
+        variantImages.push(uploadedImageUrls[0]);
+      } else if (variantImages.length === 0) {
+        // صورة افتراضية
+        variantImages.push("/placeholder.jpg");
+      }
 
-        return {
-          code: variant.code || `VAR-${Date.now()}-${index}`,
-          color: variant.color || "Default",
-          sizes: Array.isArray(variant.sizes)
-            ? variant.sizes
-            : variant.size
-            ? [variant.size]
-            : [],
-          price: variant.price || finalPrice,
-          images: variantImages, // 👈 الصور بعد المعالجة
-          stock: variant.stock || 0,
-          description: variant.description || "",
-        };
-      }) || [];
+      return {
+        code: variant.code || `VAR-${Date.now()}-${index}`,
+        color: variant.color || "Default",
+        sizes: Array.isArray(variant.sizes)
+          ? variant.sizes
+          : variant.size
+          ? [variant.size]
+          : [],
+        price: variant.price || finalPrice,
+        images: variantImages,
+        stock: variant.stock || 0,
+        description: variant.description || "",
+      };
+    }) || [];
 
     // إنشاء المنتج
     const product = await prisma.product.create({
@@ -409,6 +524,7 @@ export async function POST(request: NextRequest) {
       product: product,
       uploadedImages: uploadedImageUrls.length,
     });
+
   } catch (error) {
     console.error("Error creating product:", error);
 
@@ -425,6 +541,15 @@ export async function POST(request: NextRequest) {
 
     if (error instanceof Error && error.message.includes("حجم الملف")) {
       return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        return NextResponse.json(
+          { error: "كود المنتج موجود مسبقاً" },
+          { status: 400 }
+        );
+      }
     }
 
     return NextResponse.json(
@@ -452,49 +577,4 @@ export async function OPTIONS() {
       "Access-Control-Allow-Headers": "Content-Type, Authorization",
     },
   });
-}
-
-// ==============================
-// 📌 دالة حساب سعر العرض
-// ==============================
-function calculateOfferPrice(
-  basePrice: number,
-  offer: {
-    offerType: OfferType;
-    discountPercentage?: number | null;
-    discountAmount?: number | null;
-    fixedPrice?: number | null;
-  }
-): number {
-  let finalPrice = basePrice;
-
-  switch (offer.offerType) {
-    case OfferType.PERCENTAGE_DISCOUNT:
-      if (offer.discountPercentage) {
-        finalPrice = basePrice * (1 - offer.discountPercentage / 100);
-      }
-      break;
-
-    case OfferType.FIXED_AMOUNT_DISCOUNT:
-      if (offer.discountAmount) {
-        finalPrice = Math.max(0, basePrice - offer.discountAmount);
-      }
-      break;
-
-    case OfferType.FIXED_PRICE:
-      if (offer.fixedPrice) {
-        finalPrice = offer.fixedPrice;
-      }
-      break;
-
-    case OfferType.BUY_X_GET_Y:
-    case OfferType.FREE_SHIPPING:
-    case OfferType.SIMPLE:
-      // هذه العروض لا تؤثر على سعر المنتج مباشرة
-      finalPrice = basePrice;
-      break;
-  }
-
-  // تقريب إلى منزلتين عشريتين
-  return Math.round(finalPrice * 100) / 100;
 }
