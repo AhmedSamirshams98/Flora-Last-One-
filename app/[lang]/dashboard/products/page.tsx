@@ -586,7 +586,7 @@ export default function ProductsDashboard() {
             >
               {product.variants[0]?.images[0] && (
                 <div className="relative w-full h-48 mb-4">
-                  <Image
+                  <Image  
                     
                     src={product.variants[0].images[0]}
                     alt={product.name}

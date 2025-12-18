@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// GET: الحصول على النص الحالي
 export async function GET() {
   try {
     const marquee = await prisma.marquee.findFirst({
@@ -9,7 +8,6 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     });
 
-    // إذا لم يكن هناك نص، أرجع مصفوفة فارغة
     return NextResponse.json(marquee ? [marquee] : []);
   } catch (error) {
     console.error("Error fetching marquee:", error);
@@ -17,7 +15,6 @@ export async function GET() {
   }
 }
 
-// POST: حفظ نص جديد
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
@@ -46,12 +43,10 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE() {
   try {
-    // 1. البحث عن النص النشط الحالي
     const activeMarquee = await prisma.marquee.findFirst({
       where: { isActive: true },
     });
 
-    // 2. إذا لم يكن هناك نص نشط، أرجع رسالة
     if (!activeMarquee) {
       return NextResponse.json(
         { message: "لا يوجد نص نشط للحذف" },
@@ -59,12 +54,10 @@ export async function DELETE() {
       );
     }
 
-    // 3. حذف النص النشط
     await prisma.marquee.delete({
       where: { id: activeMarquee.id },
     });
 
-    // 4. إرجاع رسالة النجاح
     return NextResponse.json({
       success: true,
       message: "تم حذف النص بنجاح",

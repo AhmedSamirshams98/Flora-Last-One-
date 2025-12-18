@@ -64,6 +64,7 @@ const MarqueeBanner = () => {
           }
           className="w-12"
           priority
+          quality={80}
         />
       </div>
     </>

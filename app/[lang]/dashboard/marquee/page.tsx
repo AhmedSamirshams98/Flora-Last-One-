@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Edit2, Save, X, Trash2, AlertCircle } from "lucide-react";
 import { useMarqueeStore } from "@/store/marquee-store";
 import { toast } from "sonner";
