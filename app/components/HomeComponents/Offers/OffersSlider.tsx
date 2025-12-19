@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import Image from "next/image";
 import { useOffersStore } from "@/store/offers-store";
 import en from "@/messages/en.json";

@@ -1,21 +1,16 @@
 "use client";
 
-import { Offer } from "@/types/offers";
+import {  offerListProps } from "@/types/offers";
 import { OfferCard } from "./OfferCard";
 
-interface Props {
-  offers: Offer[];
-  onEdit: (offer: Offer) => void;
-  onDelete: (id: string) => void;
-  onToggleStatus: (id: string) => void;
-}
+
 
 export function OffersList({
   offers,
   onEdit,
   onDelete,
   onToggleStatus,
-}: Props) {
+}: offerListProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {offers.map((offer) => (

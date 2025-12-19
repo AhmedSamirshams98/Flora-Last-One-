@@ -2,17 +2,9 @@
 import { memo } from "react";
 import { Edit, Trash2, Eye, EyeOff, Tag } from "lucide-react";
 import Image from "next/image";
-import { Offer } from "@/types/offers";
+import { Offer, OfferCardProps } from "@/types/offers";
 import { OFFER_TYPES } from "@/constants/offers";
 import { OfferType } from "@prisma/client";
-
-/* ---------------- OfferCard ---------------- */
-interface OfferCardProps {
-  offer: Offer;
-  onEdit: (offer: Offer) => void;
-  onDelete: (id: string) => void;
-  onToggleStatus: (id: string) => void;
-}
 
 export const OfferCard = memo(
   ({ offer, onEdit, onDelete, onToggleStatus }: OfferCardProps) => {
@@ -26,12 +18,16 @@ export const OfferCard = memo(
           return `خصم ${offer.discountAmount} جنية مصري `;
         case OfferType.FIXED_PRICE:
           return `سعر ${offer.fixedPrice} جنية مصري`;
-        case OfferType.BUY_X_GET_Y:
-          return `اشتر ${offer.buyQuantity} احصل على ${offer.getQuantity}`;
-        case OfferType.FREE_SHIPPING:
-          return "شحن مجاني";
         default:
           return "عرض خاص";
+      }
+    };
+
+    const handleDeleteClick = () => {
+      let message = `هل أنت متأكد أنك تريد حذف العرض "${offer.title}"؟`;
+
+      if (window.confirm(message)) {
+        onDelete(offer.id);
       }
     };
 
@@ -44,7 +40,6 @@ export const OfferCard = memo(
 
     return (
       <div className="bg-white shadow rounded-lg border overflow-hidden flex flex-col h-full">
-        {/* Header */}
         <div className="p-4 border-b flex justify-between">
           <div className="flex items-center gap-2">
             <span className="text-xl">{getOfferIcon(offer.offerType)}</span>
@@ -62,7 +57,6 @@ export const OfferCard = memo(
           </button>
         </div>
 
-        {/* Image */}
         {offer.image && (
           <div className="relative aspect-video">
             <Image
@@ -107,7 +101,7 @@ export const OfferCard = memo(
               تعديل
             </button>
             <button
-              onClick={() => onDelete(offer.id)}
+              onClick={handleDeleteClick}
               className="flex-1 bg-red-600 text-white py-2 rounded-lg flex items-center justify-center gap-1 hover:bg-red-700 transition-colors"
             >
               <Trash2 size={16} />

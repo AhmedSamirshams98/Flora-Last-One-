@@ -3,6 +3,22 @@
 // ============================
 import { OfferType as PrismaOfferType, Product } from "@prisma/client";
 
+
+export interface OfferCardProps {
+  offer: Offer;
+  onEdit: (offer: Offer) => void;
+  onDelete: (id: string) => void;
+  onToggleStatus: (id: string) => void;
+}
+export interface offerListProps {
+  offers: Offer[];
+  onEdit: (offer: Offer) => void;
+  onDelete: (id: string) => void;
+  onToggleStatus: (id: string) => void;
+}
+
+
+
 export interface Offer {
   id: string;
   title: string;

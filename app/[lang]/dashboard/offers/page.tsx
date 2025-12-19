@@ -26,18 +26,37 @@ export default function OffersDashboard() {
   useEffect(() => {
     fetchOffers();
   }, [fetchOffers]);
-  const handleOfferSubmit = async (data: CreateOfferInput) => {
-    if (editingOffer) {
-      // تحديث العرض
-      await axios.put(`/api/offers/${editingOffer.id}`, data);
-    } else {
-      // إضافة عرض جديد
-      await axios.post("/api/offers", data);
-    }
-    fetchOffers(); // إعادة تحميل العروض بعد العملية
-    handleCloseForm(); // إغلاق الفورم بعد الإضافة أو التعديل
-  };
+  const handleOfferSubmit = async (formData: FormData) => {
+    try {
+      const url = editingOffer
+        ? `/api/offers/${editingOffer.id}`
+        : "/api/offers";
 
+      const method = editingOffer ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        body: formData,
+        // لا تضيف Content-Type هنا، سيتم تعيينه تلقائياً
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "فشل في حفظ العرض");
+      }
+
+      const result = await response.json();
+
+      fetchOffers(); // إعادة تحميل العروض بعد العملية
+      handleCloseForm(); // إغلاق الفورم بعد الإضافة أو التعديل
+
+      // عرض رسالة نجاح
+      alert(result.message || "تم حفظ العرض بنجاح");
+    } catch (error) {
+      console.error("Error saving offer:", error);
+      alert(error instanceof Error ? error.message : "حدث خطأ أثناء حفظ العرض");
+    }
+  };
   const handleEdit = useCallback((offer: Offer) => {
     setEditingOffer(offer);
     setShowForm(true);

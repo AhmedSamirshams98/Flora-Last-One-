@@ -21,7 +21,6 @@ export const useOffersStore = create<OfferStore>((set, get) => ({
   loading: false,
   error: null,
   selectedOffer: null,
-
   setSelectedOffer: (offer) => set({ selectedOffer: offer }),
 
   fetchOffers: async () => {
