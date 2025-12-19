@@ -553,13 +553,6 @@ export default function ProductsDashboard() {
     >
       <div className="flex flex-row justify-between items-center">
         <h1 className="text-3xl font-bold mb-2 text-center">إدارة المنتجات</h1>
-        <Filters
-          lang={lang}
-          selectedCategory={filters.category}
-          selectedSubcategory={filters.subcategory}
-          onCategoryChange={(value) => updateFilter("category", value)}
-          onSubcategoryChange={(value) => updateFilter("subcategory", value)}
-        />
 
         <button
           onClick={() => {
@@ -586,8 +579,7 @@ export default function ProductsDashboard() {
             >
               {product.variants[0]?.images[0] && (
                 <div className="relative w-full h-48 mb-4">
-                  <Image  
-                    
+                  <Image
                     src={product.variants[0].images[0]}
                     alt={product.name}
                     fill
