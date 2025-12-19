@@ -7,6 +7,7 @@ import {
   User,
   Settings,
   Menu,
+  Heart,
 } from "lucide-react";
 import logo from "@/public/images/logo.png";
 import Link from "next/link";
@@ -168,6 +169,9 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
 
             {/* Cart + User + Menu */}
             <div className="flex items-center justify-end gap-4">
+              <Link href="/wishlist">
+                <Heart />
+              </Link>
               {status === "authenticated" && (
                 <h1 className="font-bold text-white text-center text-xs hidden lg:block font-rubik">
                   {lang === "ar" ? "مرحباً" : "Welcome"} <br />{" "}

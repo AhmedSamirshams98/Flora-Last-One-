@@ -5,7 +5,6 @@ import { useOffersStore } from "@/store/offers-store";
 import { CreateOfferInput, Offer } from "@/types/offers";
 import OfferForm from "./components/OfferForm";
 import { OffersList } from "./components/OffersList";
-import axios from "axios";
 import { useShallow } from "zustand/shallow";
 
 export default function OffersDashboard() {
@@ -37,7 +36,6 @@ export default function OffersDashboard() {
       const response = await fetch(url, {
         method,
         body: formData,
-        // لا تضيف Content-Type هنا، سيتم تعيينه تلقائياً
       });
 
       if (!response.ok) {

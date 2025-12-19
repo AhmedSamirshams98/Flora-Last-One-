@@ -87,11 +87,11 @@ export const EMBLA_OPTIONS = {
 export const GRADIENT_STYLES = {
   withImage: "linear-gradient(135deg, #faf9f6 0%, #3d2817 100%)",
   withoutImage: "linear-gradient(135deg, #faf9f6 10%, #3d2817 100%)",
-} as const; 
+} as const;
 
 // ============== 7. إعدادات الصور ==============
 export const IMAGE_SETTINGS = {
   sizes: "(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px",
-  quality: 85,
+  quality: 80,
   logoSize: { width: 176, height: 176 },
 } as const;
