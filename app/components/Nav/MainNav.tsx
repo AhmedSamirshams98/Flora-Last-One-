@@ -43,6 +43,8 @@ const MainNav = () => {
         toggleLang={toggleLang}
       />
       <MobileNav
+      
+      
         lang={lang}
         toggleLang={toggleLang}
         totalItems={totalItems}

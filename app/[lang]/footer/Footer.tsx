@@ -46,6 +46,7 @@ export default function Footer() {
 
   return (
     <footer
+      id="contact"
       className="bg-primary text-primary-foreground"
       dir={lang === "ar" ? "rtl" : "ltr"} // 👈 هذا يجعل الاتجاه حسب اللغة فقط داخل الفوتر
     >
@@ -60,6 +61,7 @@ export default function Footer() {
           {/* BRAND */}
           <div className="flex flex-col items-center lg:items-start">
             <Image
+              sizes="(max-width: 768px) 100vw, 1200px"
               src={logo}
               alt="Flora Logo"
               className="w-[30vw] md:w-[14vw]"

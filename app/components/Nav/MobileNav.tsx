@@ -10,9 +10,10 @@ import { MobileNavProps } from "@/types/nav";
 import en from "@/messages/en.json";
 import ar from "@/messages/ar.json";
 import { useFiltersStore } from "@/store/filters-store";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import type { Category, Subcategory } from "@/store/filters-store";
 import Filters from "../HomeComponents/products/filters";
+import { handleNavLinkClick } from "@/lib/navigation";
 
 const MobileNav: React.FC<MobileNavProps> = ({
   isOpen,
@@ -26,6 +27,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
   const [shouldRender, setShouldRender] = useState(false);
   const { setCategory, setSubcategory } = useFiltersStore();
   const router = useRouter();
+  const pathname = usePathname();
 
   // اختيار القاموس المناسب
   const t = lang === "ar" ? ar : en;
@@ -70,10 +72,6 @@ const MobileNav: React.FC<MobileNavProps> = ({
     onClose();
   };
 
-  const handleNavLinkClick = () => {
-    onClose();
-  };
-
   const handleFilterChange = (category: Category, subcategory: Subcategory) => {
     // تحديث store
     setCategory(category);
@@ -84,6 +82,24 @@ const MobileNav: React.FC<MobileNavProps> = ({
 
     // الانتقال لصفحة المنتجات
     router.push("/products");
+  };
+
+  // دالة للتعامل مع النقر على روابط التنقل
+  const handleMobileLinkClick = (link: any) => {
+    if (link.type === "anchor") {
+      // للروابط الأنكور (about, contact)
+      handleNavLinkClick(link, pathname, lang, router);
+    } else if (link.type === "page") {
+      // للصفحات العادية
+      if (link.href === "/" && (pathname === "/" || pathname === "/ar")) {
+        // إذا كنا في الصفحة الرئيسية بالفعل، scroll إلى الأعلى
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        // الانتقال إلى الصفحة
+        router.push(link.href);
+      }
+    }
+    onClose(); // إغلاق القائمة الجانبية
   };
 
   if (!shouldRender) return null;
@@ -128,7 +144,13 @@ const MobileNav: React.FC<MobileNavProps> = ({
             <Link
               href="/"
               className="flex items-center gap-3"
-              onClick={handleNavLinkClick}
+              onClick={() => {
+                // إذا كنا في الصفحة الرئيسية بالفعل، scroll إلى الأعلى
+                if (pathname === "/" || pathname === "/ar") {
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }
+                onClose();
+              }}
             >
               <Image
                 className="w-18"
@@ -169,22 +191,39 @@ const MobileNav: React.FC<MobileNavProps> = ({
           <div className="p-2">
             {/* Navigation Links */}
             <nav className="flex flex-col space-y-3 mt-6">
-              {NAV_LINKS.map((link) => (
-                <Link
-                  style={
-                    lang === "ar"
-                      ? { textAlign: "right" }
-                      : { textAlign: "left" }
-                  }
-                  key={link.href}
-                  href={link.href}
-                  className="py-2 px-2 text-right text-white hover:bg-white/10 rounded-xl transition-all duration-200 font-gess text-lg border border-transparent hover:border-white/10"
-                  onClick={handleNavLinkClick}
-                >
-                  {getText(link.labelKey)}
-                </Link>
-              ))}
+              {NAV_LINKS.map((link) => {
+                // استخدام button للروابط الأنكور، و Link للصفحات
+                return link.type === "anchor" ? (
+                  <button
+                    key={link.href}
+                    onClick={() => handleMobileLinkClick(link)}
+                    style={
+                      lang === "ar"
+                        ? { textAlign: "right" }
+                        : { textAlign: "left" }
+                    }
+                    className="py-2 px-2 text-white hover:bg-white/10 rounded-xl transition-all duration-200 font-gess text-lg border border-transparent hover:border-white/10 w-full text-right"
+                  >
+                    {getText(link.labelKey)}
+                  </button>
+                ) : (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => handleMobileLinkClick(link)}
+                    style={
+                      lang === "ar"
+                        ? { textAlign: "right" }
+                        : { textAlign: "left" }
+                    }
+                    className="py-2 px-2 text-right text-white hover:bg-white/10 rounded-xl transition-all duration-200 font-gess text-lg border border-transparent hover:border-white/10"
+                  >
+                    {getText(link.labelKey)}
+                  </Link>
+                );
+              })}
             </nav>
+
             <Filters lang={lang} onFilterChange={handleFilterChange} />
 
             {/* User Section */}
@@ -235,7 +274,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
                     <Link
                       href="/profile"
                       className="w-full py-3 px-4 text-white hover:bg-white/10 rounded-lg transition-all duration-200 flex items-center gap-3"
-                      onClick={handleNavLinkClick}
+                      onClick={onClose}
                       style={
                         lang === "ar"
                           ? { flexDirection: "row" }
@@ -261,7 +300,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
                       <Link
                         href="/dashboard"
                         className="w-full py-3 px-4 text-white hover:bg-white/10 rounded-lg transition-all duration-200 flex items-center gap-3"
-                        onClick={handleNavLinkClick}
+                        onClick={onClose}
                         style={
                           lang === "ar"
                             ? { flexDirection: "row" }

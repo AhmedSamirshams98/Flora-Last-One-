@@ -6,6 +6,8 @@ export interface MobileNavProps {
   showAuthPopup: boolean;
     lang: "en" | "ar";
   toggleLang: () => void;
+  
+
 }
 export interface DesktopNavProps {
   totalItems: number;

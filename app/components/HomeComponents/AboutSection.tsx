@@ -18,7 +18,7 @@ export default function AboutSection({ lang }: AboutSectionProps) {
   ];
 
   return (
-    <section id="about" className="py-10 bg-card">
+    <section id="about" className=" bg-card">
       <div className="container mx-auto px-4">
         {/* العنوان */}
         <div className="text-center mb-16">

@@ -20,32 +20,34 @@ export const ROUTES = {
   },
 } as const;
 
-// ==========================
-// NAV LINKS (بالـ labelKey فقط)
-// ==========================
 export const NAV_LINKS = [
   {
     href: ROUTES.HOME,
     labelKey: "nav.home",
+    type: "page", // نوع: صفحة عادية
   },
   {
-    href: `${ROUTES.HOME}#about`,
+    href: "#about",
     labelKey: "nav.about",
-    isAnchor: true,
+    type: "anchor", // نوع: رابط أنكور
+    anchorId: "about",
   },
   {
     href: ROUTES.PRODUCTS,
     labelKey: "nav.products",
+    type: "page",
   },
   {
     href: ROUTES.ORDERS,
     labelKey: "nav.orders",
+    type: "page",
   },
-  // {
-  //   href: ROUTES.OFFERS,
-  //   labelKey: "nav.offers",
-  //   isAnchor: true,
-  // },
+  {
+    href: "#contact",
+    labelKey: "nav.contact",
+    type: "anchor", // نوع: رابط أنكور
+    anchorId: "contact",
+  },
 ] as const;
 
 // ==========================
