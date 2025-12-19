@@ -115,6 +115,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 }
               >
                 <Image
+                  sizes="(max-width: 768px) 100vw, 1200px"
                   className="w-18"
                   src={logo}
                   alt={
@@ -204,6 +205,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 >
                   {status === "authenticated" && session?.user?.image ? (
                     <Image
+                      sizes="(max-width: 768px) 100vw, 1200px"
                       src={session?.user.image}
                       alt={
                         lang === "ar"

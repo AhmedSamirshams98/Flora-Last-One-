@@ -5,18 +5,20 @@ import { shallow, useShallow } from "zustand/shallow";
 import ProductCard from "./ProductsCard";
 import Filters from "./filters";
 import { useProductsStore } from "@/store/products-store";
+import { useFiltersStore } from "@/store/filters-store";
 
 interface ProductsSectionProps {
   lang?: "ar" | "en";
 }
 
 export default function ProductsSection({ lang = "ar" }: ProductsSectionProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(
-    null
+  const { category, subcategory } = useFiltersStore(
+    useShallow((s) => ({
+      category: s.category,
+      subcategory: s.subcategory,
+    }))
   );
 
-  // استخدام shallow لتجنب إعادة الرندر غير الضرورية
   const { products, loading, fetchProducts } = useProductsStore(
     useShallow((state) => ({
       products: state.products,
@@ -34,18 +36,16 @@ export default function ProductsSection({ lang = "ar" }: ProductsSectionProps) {
   const filteredProducts = useMemo(() => {
     let filtered = products;
 
-    if (selectedCategory) {
-      filtered = filtered.filter((p) => p.category === selectedCategory);
+    if (category) {
+      filtered = filtered.filter((p) => p.category === category);
 
-      if (selectedSubcategory) {
-        filtered = filtered.filter(
-          (p) => p.subcategory === selectedSubcategory
-        );
+      if (subcategory) {
+        filtered = filtered.filter((p) => p.subcategory === subcategory);
       }
     }
 
     return filtered;
-  }, [products, selectedCategory, selectedSubcategory]);
+  }, [products, category, subcategory]);
 
   return (
     <div
@@ -61,13 +61,7 @@ export default function ProductsSection({ lang = "ar" }: ProductsSectionProps) {
           {lang === "ar" ? "أحدث المنتجات" : "Latest Products"}
         </h2>
 
-        <Filters
-          lang={lang}
-          selectedCategory={selectedCategory}
-          selectedSubcategory={selectedSubcategory}
-          onCategoryChange={setSelectedCategory}
-          onSubcategoryChange={setSelectedSubcategory}
-        />
+        <Filters lang={lang} />
       </div>
 
       <div className="mb-4 text-gray-600 text-center">

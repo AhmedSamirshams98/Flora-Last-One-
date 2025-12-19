@@ -9,6 +9,10 @@ import { NAV_LINKS } from "@/constants/links";
 import { MobileNavProps } from "@/types/nav";
 import en from "@/messages/en.json";
 import ar from "@/messages/ar.json";
+import { useFiltersStore } from "@/store/filters-store";
+import { useRouter } from "next/navigation";
+import type { Category, Subcategory } from "@/store/filters-store";
+import Filters from "../HomeComponents/products/filters";
 
 const MobileNav: React.FC<MobileNavProps> = ({
   isOpen,
@@ -20,6 +24,8 @@ const MobileNav: React.FC<MobileNavProps> = ({
   const { data: session, status } = useSession();
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
+  const { setCategory, setSubcategory } = useFiltersStore();
+  const router = useRouter();
 
   // اختيار القاموس المناسب
   const t = lang === "ar" ? ar : en;
@@ -68,6 +74,18 @@ const MobileNav: React.FC<MobileNavProps> = ({
     onClose();
   };
 
+  const handleFilterChange = (category: Category, subcategory: Subcategory) => {
+    // تحديث store
+    setCategory(category);
+    setSubcategory(subcategory);
+
+    // إغلاق القائمة الجانبية
+    onClose();
+
+    // الانتقال لصفحة المنتجات
+    router.push("/products");
+  };
+
   if (!shouldRender) return null;
 
   const getRoleText = (role: string) => {
@@ -114,6 +132,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
             >
               <Image
                 className="w-18"
+                sizes="(max-width: 768px) 100vw, 1200px"
                 src={logo}
                 alt={lang === "ar" ? "فلورا ستور" : "Flora Store"}
               />
@@ -166,6 +185,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
                 </Link>
               ))}
             </nav>
+            <Filters lang={lang} onFilterChange={handleFilterChange} />
 
             {/* User Section */}
             <div className="mt-8 pt-6 border-t border-white/20">
@@ -175,6 +195,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
                   <div className="flex items-center gap-3 p-4 bg-white/10 rounded-xl backdrop-blur-sm">
                     {session?.user?.image ? (
                       <Image
+                        sizes="(max-width: 768px) 100vw, 1200px"
                         src={session.user.image}
                         alt={session.user.name || "User"}
                         width={44}

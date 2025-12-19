@@ -4,6 +4,8 @@ import ProductCard from "../../components/HomeComponents/products/ProductsCard";
 import { usePathname } from "next/navigation";
 import Filters from "../../components/HomeComponents/products/filters"; // استيراد الفلاتر
 import { useProductsStore } from "@/store/products-store";
+import { useFiltersStore } from "@/store/filters-store";
+import { useShallow } from "zustand/shallow";
 
 export default function ProductsPage() {
   const pathname = usePathname();
@@ -20,9 +22,11 @@ export default function ProductsPage() {
     setFilteredProducts,
   } = useProductsStore();
 
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(
-    null
+  const { category, subcategory } = useFiltersStore(
+    useShallow((s) => ({
+      category: s.category,
+      subcategory: s.subcategory,
+    }))
   );
 
   // جلب المنتجات عند تحميل الصفحة
@@ -35,21 +39,16 @@ export default function ProductsPage() {
     let filtered = products;
 
     // فلاتر الفئة
-    if (selectedCategory) {
-      filtered = filtered.filter(
-        (product) => product.category === selectedCategory
-      );
-    }
+    if (category) {
+      filtered = filtered.filter((p) => p.category === category);
 
-    // فلاتر الفئة الفرعية
-    if (selectedSubcategory) {
-      filtered = filtered.filter(
-        (product) => product.subcategory === selectedSubcategory
-      );
+      if (subcategory) {
+        filtered = filtered.filter((p) => p.subcategory === subcategory);
+      }
     }
 
     setFilteredProducts(filtered);
-  }, [products, selectedCategory, selectedSubcategory, setFilteredProducts]);
+  }, [products, category, subcategory]);
 
   // المنتجات التي سيتم عرضها
   const displayProducts = filteredProducts;
@@ -76,13 +75,7 @@ export default function ProductsPage() {
 
           {/* الفلاتر في الشاشات الكبيرة على اليمين */}
           <div className="w-full md:w-auto   flex items-center justify-center">
-            <Filters
-              lang={lang}
-              selectedCategory={selectedCategory}
-              selectedSubcategory={selectedSubcategory}
-              onCategoryChange={setSelectedCategory}
-              onSubcategoryChange={setSelectedSubcategory}
-            />
+            <Filters lang={lang} />
           </div>
         </div>
 
