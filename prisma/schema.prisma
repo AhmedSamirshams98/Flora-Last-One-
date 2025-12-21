@@ -303,3 +303,10 @@ model Wishlist {
   @@unique([userId, productId])
   @@map("wishlists")
 }
+
+
+//reels 
+model ReelVideo {
+  id  String @id @default(cuid())
+  url String
+}

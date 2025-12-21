@@ -12,6 +12,13 @@ export default function DashboardPage() {
       href: "/dashboard/orders",
       color: "bg-blue-500",
     },
+       {
+      title: "الريلز",
+      description: "إدارة طلبات الريلز",
+      icon: ShoppingBag,
+      href: "/dashboard/reels",
+      color: "bg-blue-200",
+    },
     {
       title: "المنتجات",
       description: "إدارة المنتجات والمخزون",
