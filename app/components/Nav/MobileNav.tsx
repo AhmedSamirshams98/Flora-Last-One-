@@ -32,6 +32,10 @@ const MobileNav: React.FC<MobileNavProps> = ({
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<
+    "SHOE" | "BAG" | null
+  >(null); // 🔥 متغير جديد
+
   const router = useRouter();
   const pathname = usePathname();
 
@@ -66,6 +70,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
       const timer = setTimeout(() => {
         setShouldRender(false);
         setShowCategories(false);
+        setSelectedCategory(null); // 🔥 إعادة تعيين عند الإغلاق
       }, 300);
       return () => clearTimeout(timer);
     }
@@ -89,13 +94,24 @@ const MobileNav: React.FC<MobileNavProps> = ({
     onClose();
   };
 
-  // مباشرة عند فتح القائمة الجانبية، تظهر شنط وأحذية بدون زر "التصنيفات"
-  useEffect(() => {
-    if (isOpen && !showCategories) {
-      // يمكنك اختيار إظهارها مباشرة أو بعد الروابط
-      // هنا سأجعلها تظهر مباشرة بعد الروابط
-    }
-  }, [isOpen, showCategories]);
+  // 🔥 عند النقر على "أحذية" أو "شنط"
+  const handleCategoryClick = (category: "SHOE" | "BAG") => {
+    setSelectedCategory(category);
+    setShowCategories(true); // 🔥 عرض الأنواع الفرعية مباشرة
+  };
+
+  // 🔥 عند الرجوع من الأنواع الفرعية
+  const handleBackFromCategories = () => {
+    setShowCategories(false);
+    setSelectedCategory(null);
+  };
+
+  // 🔥 عند اختيار نوع فرعي والذهاب للصفحة
+  const handleSubcategorySelected = () => {
+    setShowCategories(false);
+    setSelectedCategory(null);
+    onClose();
+  };
 
   if (!shouldRender) return null;
 
@@ -162,7 +178,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
 
               {showCategories ? (
                 <button
-                  onClick={() => setShowCategories(false)}
+                  onClick={handleBackFromCategories} // 🔥 تغيير الدالة
                   className="p-2 hover:bg-white/10 rounded-full transition-colors"
                   aria-label={lang === "ar" ? "رجوع" : "Back"}
                 >
@@ -194,8 +210,13 @@ const MobileNav: React.FC<MobileNavProps> = ({
         {/* المحتوى القابل للتمرير */}
         <div className="flex-1 overflow-y-auto">
           {showCategories ? (
-            // عرض فئات المنتجات (شنط وأحذية)
-            <MobileNavFilters lang={lang} onClose={onClose} />
+            // 🔥 تمرير الفئة المحددة إلى MobileNavFilters
+            <MobileNavFilters
+              lang={lang}
+              onClose={onClose}
+              selectedCategory={selectedCategory} // 🔥 إضافة هذا الـ prop
+              onSubcategorySelected={handleSubcategorySelected} // 🔥 دالة استدعاء
+            />
           ) : (
             // القائمة الرئيسية
             <div className="p-2">
@@ -233,16 +254,15 @@ const MobileNav: React.FC<MobileNavProps> = ({
                 })}
               </nav>
 
-              {/* قسم شنط وأحذية - مباشرة بدون زر */}
+              {/* قسم شنط وأحذية */}
               <div className="mt-8 pt-6 border-t border-white/20">
                 <div className="space-y-4">
-                  {/* حذاء */}
+                  {/* أحذية */}
                   <button
-                    onClick={() => setShowCategories(true)}
+                    onClick={() => handleCategoryClick("SHOE")} // 🔥 تعديل الدالة
                     className="w-full px-4 py-4 flex items-center justify-between text-white hover:bg-white/10 rounded-xl transition-all duration-200 group border border-white/10"
                   >
                     <div className="flex items-center gap-4">
-                      <span className="text-2xl">👟</span>
                       <span className="font-bold font-gess text-xl">
                         {lang === "ar" ? "أحذية" : "Shoes"}
                       </span>
@@ -256,11 +276,10 @@ const MobileNav: React.FC<MobileNavProps> = ({
 
                   {/* شنط */}
                   <button
-                    onClick={() => setShowCategories(true)}
+                    onClick={() => handleCategoryClick("BAG")} // 🔥 تعديل الدالة
                     className="w-full px-4 py-4 flex items-center justify-between text-white hover:bg-white/10 rounded-xl transition-all duration-200 group border border-white/10"
                   >
                     <div className="flex items-center gap-4">
-                      <span className="text-2xl">👜</span>
                       <span className="font-bold font-gess text-xl">
                         {lang === "ar" ? "شنط" : "Bags"}
                       </span>
@@ -274,17 +293,6 @@ const MobileNav: React.FC<MobileNavProps> = ({
                 </div>
 
                 {/* زر عرض جميع المنتجات */}
-                <div className="mt-6">
-                  <button
-                    onClick={() => {
-                      router.push("/products");
-                      onClose();
-                    }}
-                    className="w-full py-4 px-4 text-white bg-white/10 hover:bg-white/20 rounded-xl transition-all duration-200 font-medium border border-white/20"
-                  >
-                    {lang === "ar" ? "عرض جميع المنتجات" : "View All Products"}
-                  </button>
-                </div>
               </div>
 
               {/* قسم المستخدم */}
@@ -329,29 +337,6 @@ const MobileNav: React.FC<MobileNavProps> = ({
                     </div>
 
                     <div className="space-y-2 font-gess">
-                      <Link
-                        href="/profile"
-                        className="w-full py-3 px-4 text-white hover:bg-white/10 rounded-lg transition-all duration-200 flex items-center gap-3"
-                        onClick={onClose}
-                        style={
-                          lang === "ar"
-                            ? { flexDirection: "row" }
-                            : { flexDirection: "row-reverse" }
-                        }
-                      >
-                        <User className="w-5 h-5" />
-                        <span
-                          className="flex-1"
-                          style={
-                            lang === "ar"
-                              ? { textAlign: "right" }
-                              : { textAlign: "left" }
-                          }
-                        >
-                          {lang === "ar" ? "الملف الشخصي" : "Profile"}
-                        </span>
-                      </Link>
-
                       {(session?.user?.role === "ADMIN" ||
                         session?.user?.role === "SUPERADMIN") && (
                         <Link

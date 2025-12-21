@@ -13,7 +13,7 @@ const Page = async ({ params }: PageProps) => {
   return (
     <div className="relative top-0 overflow-hidden">
       <OffersSlider lang={lang} />
-      <FacebookReelEmbed />
+      <FacebookReelEmbed lang={lang} />
       <ProductsSection lang={lang} />
       <AboutSection lang={lang} />
 
