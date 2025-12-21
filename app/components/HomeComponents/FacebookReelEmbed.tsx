@@ -11,7 +11,7 @@ export default function ReelsSection() {
   }, []);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 font-gess container mx-auto">
+    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 font-gess container mx-auto">
       {reels.map((reel) => (
         <div key={reel.id} className="flex justify-center">
           <iframe
