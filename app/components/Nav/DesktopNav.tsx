@@ -33,6 +33,8 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showAuthPopup, setShowAuthPopup] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const [hash, setHash] = useState("");
+
   const router = useRouter();
 
   // اختيار القاموس بناءً على اللغة
@@ -86,6 +88,18 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
       setShowAuthPopup(true);
     }
   };
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setHash(window.location.hash);
+
+      const onHashChange = () => {
+        setHash(window.location.hash);
+      };
+
+      window.addEventListener("hashchange", onHashChange);
+      return () => window.removeEventListener("hashchange", onHashChange);
+    }
+  }, []);
 
   // ترجمة الأدوار
   const getRoleText = (role: string) => {
@@ -105,7 +119,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
     if (link.type === "anchor") {
       e.preventDefault();
     }
-    
+
     // استدعاء الدالة المساعدة
     handleNavLinkClick(link, pathname, lang, router);
   };
@@ -139,68 +153,20 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 />
               </Link>
             </div>
-            
+
             <div
               className="hidden lg:flex items-center justify-center gap-10 h-14 mt-2"
               dir={lang === "ar" ? "rtl" : "ltr"}
             >
-              {isDashboard ? (
-                // Dashboard links
-                DASHBOARD_LINKS.map((link) => {
-                  const isActive = pathname === link.href;
-                  return (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className={`hover:text-accent font-gess text-lg transition-all duration-300 ${
-                        isActive
-                          ? "text-accent border-b-2 border-accent"
-                          : "text-primary-foreground"
-                      }`}
-                    >
-                      {getText(link.labelKey)}
-                    </Link>
-                  );
-                })
-              ) : (
-                // Regular navigation links - ✅ تم التصحيح هنا
-                NAV_LINKS.map((link) => {
-                  // التحقق إذا كان الرابط نشطاً
-                  let isActive = false;
-                  if (link.type === "page") {
-                    isActive = pathname === link.href;
-                  } else if (link.type === "anchor") {
-                    // للروابط الأنكور، تحقق إذا كنا في الصفحة الرئيسية
-                    isActive = (pathname === "/" || pathname === "/ar") && 
-                               window.location.hash === `#${link.anchorId}`;
-                  }
-                  
-                  return (
-                    // استخدام button للروابط الأنكور، و Link للصفحات
-                    link.type === "anchor" ? (
-                      <button
-                        key={link.href}
-                        onClick={(e) => handleLinkClick(e, link)}
-                        className={`hover:text-accent font-gess text-md transition-all duration-300 ${
-                          isActive
-                            ? "text-accent border-b-2 border-accent"
-                            : "text-primary-foreground"
-                        } cursor-pointer`}
-                      >
-                        {getText(link.labelKey)}
-                      </button>
-                    ) : (
+              {isDashboard
+                ? // Dashboard links
+                  DASHBOARD_LINKS.map((link) => {
+                    const isActive = pathname === link.href;
+                    return (
                       <Link
                         key={link.href}
                         href={link.href}
-                        onClick={(e) => {
-                          // إذا كان رابط الصفحة الرئيسية ونحن فيها بالفعل
-                          if (link.href === "/" && (pathname === "/" || pathname === "/ar")) {
-                            e.preventDefault();
-                            window.scrollTo({ top: 0, behavior: "smooth" });
-                          }
-                        }}
-                        className={`hover:text-accent font-gess text-md transition-all duration-300 ${
+                        className={`hover:text-accent font-gess text-lg transition-all duration-300 ${
                           isActive
                             ? "text-accent border-b-2 border-accent"
                             : "text-primary-foreground"
@@ -208,10 +174,60 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                       >
                         {getText(link.labelKey)}
                       </Link>
-                    )
-                  );
-                })
-              )}
+                    );
+                  })
+                : // Regular navigation links - ✅ تم التصحيح هنا
+                  NAV_LINKS.map((link) => {
+                    // التحقق إذا كان الرابط نشطاً
+                    let isActive = false;
+                    if (link.type === "page") {
+                      isActive = pathname === link.href;
+                    } else if (link.type === "anchor") {
+                      // للروابط الأنكور، تحقق إذا كنا في الصفحة الرئيسية
+                      isActive =
+                        (pathname === "/" || pathname === "/ar") &&
+                        hash === `#${link.anchorId}`;
+                    }
+
+                    return (
+                      // استخدام button للروابط الأنكور، و Link للصفحات
+                      link.type === "anchor" ? (
+                        <button
+                          key={link.href}
+                          onClick={(e) => handleLinkClick(e, link)}
+                          className={`hover:text-accent font-gess text-md transition-all duration-300 ${
+                            isActive
+                              ? "text-accent border-b-2 border-accent"
+                              : "text-primary-foreground"
+                          } cursor-pointer`}
+                        >
+                          {getText(link.labelKey)}
+                        </button>
+                      ) : (
+                        <Link
+                          key={link.href}
+                          href={link.href}
+                          onClick={(e) => {
+                            // إذا كان رابط الصفحة الرئيسية ونحن فيها بالفعل
+                            if (
+                              link.href === "/" &&
+                              (pathname === "/" || pathname === "/ar")
+                            ) {
+                              e.preventDefault();
+                              window.scrollTo({ top: 0, behavior: "smooth" });
+                            }
+                          }}
+                          className={`hover:text-accent font-gess text-md transition-all duration-300 ${
+                            isActive
+                              ? "text-accent border-b-2 border-accent"
+                              : "text-primary-foreground"
+                          }`}
+                        >
+                          {getText(link.labelKey)}
+                        </Link>
+                      )
+                    );
+                  })}
             </div>
 
             {/* Cart + User + Menu */}
@@ -219,7 +235,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
               <Link href="/wishlist">
                 <Heart />
               </Link>
-              
+
               {status === "authenticated" && (
                 <h1 className="font-bold text-white text-center text-xs hidden lg:block font-rubik">
                   {lang === "ar" ? "مرحباً" : "Welcome"} <br />{" "}

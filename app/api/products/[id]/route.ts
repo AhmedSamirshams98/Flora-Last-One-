@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { UpdateProductInput } from "@/types/product";
-import { Offer, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 // =====================================
-// 📌 UPDATE PRODUCT
+// 📌 UPDATE PRODUCT - FormData Version
 // =====================================
 export async function PUT(
   request: Request,
@@ -12,8 +11,39 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
-    const data: UpdateProductInput = await request.json();
 
+    // التحقق من وجود المنتج أولاً
+    const existingProduct = await prisma.product.findUnique({
+      where: { id },
+      include: {
+        variants: {
+          include: {
+            // نضمن أننا نحصل على الصور القديمة
+          },
+        },
+      },
+    });
+
+    if (!existingProduct) {
+      return NextResponse.json({ error: "المنتج غير موجود" }, { status: 404 });
+    }
+
+    // استقبال FormData بدلاً من JSON مباشرة
+    const formData = await request.formData();
+
+    // استخراج البيانات النصية من حقل 'data'
+    const dataString = formData.get("data");
+    if (!dataString || typeof dataString !== "string") {
+      return NextResponse.json(
+        { error: "بيانات المنتج مطلوبة في حقل 'data'" },
+        { status: 400 }
+      );
+    }
+
+    // تحويل JSON string إلى object
+    const data = JSON.parse(dataString);
+
+    // التحقق من البيانات الأساسية
     if (!data.basePrice && data.basePrice !== 0) {
       return NextResponse.json(
         { error: "السعر الأساسي (basePrice) مطلوب" },
@@ -43,7 +73,7 @@ export async function PUT(
     }
 
     // ==========================
-    // تجهيز بيانات التحديث
+    // تجهيز بيانات التحديث الأساسية
     // ==========================
     const updateData: Prisma.ProductUpdateInput = {
       name: data.name,
@@ -66,24 +96,61 @@ export async function PUT(
     };
 
     // ==========================
-    // تحديث Variants (مع الكود، الوصف، المقاسات، الصور)
+    // معالجة Variants - مع الحفاظ على الصور القديمة
     // ==========================
     if (data.variants && data.variants.length > 0) {
-      // حذف القديم أولاً
+      // حذف المتغيرات القديمة أولاً
       await prisma.productVariant.deleteMany({ where: { productId: id } });
 
-      // إنشاء الجديد
+      // إنشاء المتغيرات الجديدة مع الحفاظ على الصور
       updateData.variants = {
-        create: data.variants.map((variant) => ({
-          code:
-            variant.code || `VAR-${Math.random().toString(36).substring(2, 8)}`,
+        create: data.variants.map((variant: any, index: number) => {
+          // البحث عن المتغير القديم المقابل (إذا كان هناك تطابق)
+          const oldVariant =
+            existingProduct.variants.find((v) => v.color === variant.color) ||
+            existingProduct.variants[index];
+
+          // إذا كانت الصور فارغة في البيانات الجديدة، نستخدم الصور القديمة
+          let finalImages: string[] = [];
+
+          if (variant.images && variant.images.length > 0) {
+            // إذا كان هناك صور جديدة، نستخدمها
+            finalImages = variant.images;
+          } else if (oldVariant && oldVariant.images.length > 0) {
+            // إذا لم يكن هناك صور جديدة، نستخدم الصور القديمة
+            finalImages = oldVariant.images;
+          } else {
+            // إذا لم يكن هناك صور نهائياً، نستخدم صورة افتراضية
+            finalImages = ["/placeholder.jpg"];
+          }
+
+          return {
+            code:
+              variant.code ||
+              oldVariant?.code ||
+              `VAR-${Math.random().toString(36).substring(2, 8)}`,
+            color: variant.color,
+            sizes: Array.isArray(variant.sizes)
+              ? variant.sizes
+              : oldVariant?.sizes || [],
+            price: variant.price || calculatedFinalPrice,
+            images: finalImages,
+            stock: variant.stock ?? oldVariant?.stock ?? 0,
+            description: variant.description ?? oldVariant?.description ?? null,
+          };
+        }),
+      };
+    } else {
+      // إذا لم يتم إرسال variants، نحتفظ بالمعلومات القديمة
+      updateData.variants = {
+        create: existingProduct.variants.map((variant) => ({
+          code: variant.code,
           color: variant.color,
-          colorHex: variant.colorHex ?? null,
-          sizes: variant.sizes ?? [], // ⚠️ تغيير من variant.size ? [variant.size] : [] إلى variant.sizes ?? []
+          sizes: variant.sizes,
           price: variant.price,
-          images: variant.images ?? [],
-          stock: variant.stock ?? 0,
-          description: variant.description ?? null,
+          images: variant.images, // نحافظ على الصور القديمة
+          stock: variant.stock,
+          description: variant.description,
         })),
       };
     }
@@ -97,10 +164,23 @@ export async function PUT(
       include: { variants: true, offer: true },
     });
 
-    return NextResponse.json(updated);
+    return NextResponse.json({
+      success: true,
+      message: "تم تحديث المنتج بنجاح",
+      product: updated,
+    });
   } catch (error) {
     console.error("Error updating product:", error);
 
+    // معالجة أخطاء الـ JSON
+    if (error instanceof SyntaxError) {
+      return NextResponse.json(
+        { error: "تنسيق JSON غير صحيح في حقل 'data'" },
+        { status: 400 }
+      );
+    }
+
+    // معالجة أخطاء Prisma
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
         return NextResponse.json(
@@ -108,10 +188,18 @@ export async function PUT(
           { status: 400 }
         );
       }
+      if (error.code === "P2025") {
+        return NextResponse.json(
+          { error: "المنتج غير موجود" },
+          { status: 404 }
+        );
+      }
     }
 
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "فشل في تحديث المنتج" },
+      {
+        error: error instanceof Error ? error.message : "فشل في تحديث المنتج",
+      },
       { status: 500 }
     );
   }
@@ -120,7 +208,7 @@ export async function PUT(
 // ==========================
 // دالة حساب سعر العرض
 // ==========================
-function calculateOfferPrice(basePrice: number, offer: Offer): number {
+function calculateOfferPrice(basePrice: number, offer: any): number {
   let finalPrice = basePrice;
 
   switch (offer.offerType) {
@@ -151,6 +239,10 @@ function calculateOfferPrice(basePrice: number, offer: Offer): number {
 
   return Math.round(finalPrice * 100) / 100;
 }
+
+// ==========================
+// GET - جلب منتج واحد
+// ==========================
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -158,18 +250,16 @@ export async function GET(
   try {
     const { id } = await params;
 
-    // التحقق من وجود المنتج
     const product = await prisma.product.findUnique({
       where: { id },
       include: {
         variants: true,
         offer: true,
-        // يمكنك إضافة المزيد من العلاقات حسب الحاجة
       },
     });
 
     if (!product) {
-      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+      return NextResponse.json({ error: "المنتج غير موجود" }, { status: 404 });
     }
 
     return NextResponse.json(product);
@@ -179,24 +269,56 @@ export async function GET(
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2023") {
         return NextResponse.json(
-          { error: "Invalid product ID format" },
+          { error: "معرف المنتج غير صحيح" },
           { status: 400 }
         );
       }
+    }
+
+    return NextResponse.json({ error: "فشل في جلب المنتج" }, { status: 500 });
+  }
+}
+
+// ==========================
+// DELETE - حذف منتج
+// ==========================
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+
+    // التحقق من وجود المنتج
+    const existingProduct = await prisma.product.findUnique({
+      where: { id },
+    });
+
+    if (!existingProduct) {
+      return NextResponse.json({ error: "المنتج غير موجود" }, { status: 404 });
+    }
+
+    // حذف المنتج (سيحذف المتغيرات تلقائياً إذا العلاقة cascade)
+    await prisma.product.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: "تم حذف المنتج بنجاح",
+    });
+  } catch (error) {
+    console.error("Error deleting product:", error);
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2025") {
         return NextResponse.json(
-          { error: "Product not found" },
+          { error: "المنتج غير موجود" },
           { status: 404 }
         );
       }
     }
 
-    return NextResponse.json(
-      {
-        error:
-          error instanceof Error ? error.message : "Failed to fetch product",
-      },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "فشل في حذف المنتج" }, { status: 500 });
   }
 }

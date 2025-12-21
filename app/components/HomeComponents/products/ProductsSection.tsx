@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { shallow, useShallow } from "zustand/shallow";
-import ProductCard from "./ProductsCard";
+import ProductCard from "./ProductCard/ProductsCard";
 import Filters from "./filters";
 import { useProductsStore } from "@/store/products-store";
 import { useFiltersStore } from "@/store/filters-store";
