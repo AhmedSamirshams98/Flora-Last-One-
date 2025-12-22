@@ -51,7 +51,7 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50" style={{ direction: "rtl" }}>
+    <div className="min-h-screen bg-gray-50 " style={{ direction: "rtl" }}>
       <div className="container mx-auto px-4 py-8">
         {/* Menu Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 font-gess">
