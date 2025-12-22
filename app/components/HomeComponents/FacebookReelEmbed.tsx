@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useInView } from "react-intersection-observer"; // لا تنسى تثبيت: npm i react-intersection-observer
 import AOS from "aos";
 import "aos/dist/aos.css";
 
@@ -10,13 +9,20 @@ interface AboutSectionProps {
   lang: "ar" | "en";
 }
 
+interface ReelType {
+  id: string;
+  url: string;
+}
+
 export default function ReelsCarousel({ lang }: AboutSectionProps) {
-  const [reels, setReels] = useState<{ id: string; url: string }[]>([]);
+  const [reels, setReels] = useState<ReelType[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // تحميل البيانات عند بدء تحميل المكون
+  /* =========================
+     Fetch Reels
+  ========================= */
   useEffect(() => {
     const fetchReels = async () => {
       try {
@@ -33,7 +39,9 @@ export default function ReelsCarousel({ lang }: AboutSectionProps) {
     fetchReels();
   }, []);
 
-  // AOS على الحاوية الرئيسية فقط
+  /* =========================
+     AOS
+  ========================= */
   useEffect(() => {
     AOS.init({ duration: 800, once: true });
   }, []);
@@ -42,42 +50,63 @@ export default function ReelsCarousel({ lang }: AboutSectionProps) {
     AOS.refresh();
   }, [reels]);
 
-  // التنقل للريل التالي
+  /* =========================
+     Navigation
+  ========================= */
   const nextReel = useCallback(() => {
-    setCurrentIndex((prev) => (prev === reels.length - 1 ? 0 : prev + 1));
+    setCurrentIndex((prev) =>
+      prev === reels.length - 1 ? 0 : prev + 1
+    );
   }, [reels.length]);
 
-  // التنقل للريل السابق
-  const prevReel = () => {
-    setCurrentIndex((prev) => (prev === 0 ? reels.length - 1 : prev - 1));
-  };
+  const prevReel = useCallback(() => {
+    setCurrentIndex((prev) =>
+      prev === 0 ? reels.length - 1 : prev - 1
+    );
+  }, [reels.length]);
 
-  // التعامل مع السحب (touch)
+  const goToReel = (index: number) => setCurrentIndex(index);
+
+  /* =========================
+     Touch Handling
+  ========================= */
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
 
   const handleTouchStart = (e: React.TouchEvent) =>
     setTouchStart(e.targetTouches[0].clientX);
+
   const handleTouchMove = (e: React.TouchEvent) =>
     setTouchEnd(e.targetTouches[0].clientX);
+
   const handleTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
     const distance = touchStart - touchEnd;
-    if (Math.abs(distance) > 50) distance > 0 ? nextReel() : prevReel();
+    if (Math.abs(distance) > 50) {
+      distance > 0 ? nextReel() : prevReel();
+    }
   };
 
-  const goToReel = (index: number) => setCurrentIndex(index);
-
+  /* =========================
+     States
+  ========================= */
   if (loading) return <LoadingSkeleton />;
-  if (reels.length === 0)
+
+  if (!reels.length) {
     return (
       <div className="text-center py-12">
         <p className="text-gray-500">
-          {lang === "ar" ? "لا توجد Reels متاحة حالياً" : "No Reels available"}
+          {lang === "ar"
+            ? "لا توجد Reels متاحة حالياً"
+            : "No Reels available"}
         </p>
       </div>
     );
+  }
 
+  /* =========================
+     Render
+  ========================= */
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="mb-8 text-center">
@@ -91,7 +120,7 @@ export default function ReelsCarousel({ lang }: AboutSectionProps) {
       </div>
 
       <div className="relative" data-aos="fade-right">
-        {/* زر السابق */}
+        {/* Previous */}
         <button
           onClick={prevReel}
           className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white/80 hover:bg-white p-3 rounded-full shadow-lg backdrop-blur-sm transition-all hover:scale-110"
@@ -100,7 +129,7 @@ export default function ReelsCarousel({ lang }: AboutSectionProps) {
           <ChevronLeft className="w-6 h-6" />
         </button>
 
-        {/* Carousel Container */}
+        {/* Carousel */}
         <div
           ref={containerRef}
           className="overflow-hidden rounded-2xl"
@@ -110,20 +139,23 @@ export default function ReelsCarousel({ lang }: AboutSectionProps) {
         >
           <div
             className="flex transition-transform duration-500 ease-out will-change-transform"
-            style={{ transform: `translate3d(-${currentIndex * 100}%, 0, 0)` }}
+            style={{
+              transform: `translate3d(-${currentIndex * 100}%, 0, 0)`,
+            }}
           >
             {reels.map((reel, index) => (
               <Reel
                 key={reel.id}
                 reel={reel}
                 index={index}
+                currentIndex={currentIndex}
                 totalReels={reels.length}
               />
             ))}
           </div>
         </div>
 
-        {/* زر التالي */}
+        {/* Next */}
         <button
           onClick={nextReel}
           className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white/80 hover:bg-white p-3 rounded-full shadow-lg backdrop-blur-sm transition-all hover:scale-110"
@@ -154,25 +186,29 @@ export default function ReelsCarousel({ lang }: AboutSectionProps) {
   );
 }
 
-// Reel component مع Lazy Load
+/* =========================
+   Reel Component
+========================= */
 const Reel = React.memo(
   ({
     reel,
     index,
+    currentIndex,
     totalReels,
   }: {
-    reel: { id: string; url: string };
+    reel: ReelType;
     index: number;
+    currentIndex: number;
     totalReels: number;
   }) => {
-    const { ref, inView } = useInView({
-      triggerOnce: true,
-      rootMargin: "200px",
-    });
+    const shouldRender =
+      index === currentIndex ||
+      index === currentIndex - 1 ||
+      index === currentIndex + 1;
 
     return (
-      <div ref={ref} className="w-full flex-shrink-0 px-2">
-        {inView ? (
+      <div className="w-full flex-shrink-0 px-2 relative">
+        {shouldRender ? (
           <div className="relative aspect-[9/16] w-full">
             <iframe
               src={`https://www.instagram.com/reel/${extractInstagramId(
@@ -182,17 +218,17 @@ const Reel = React.memo(
               style={{ border: "none", overflow: "hidden" }}
               scrolling="no"
               frameBorder={0}
+              loading="lazy"
               allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
               allowFullScreen
               title={`Instagram Reel ${index + 1}`}
-              loading="lazy"
             />
           </div>
         ) : (
           <div className="w-full aspect-[9/16] bg-gray-200 animate-pulse rounded-xl" />
         )}
 
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-4 bg-black/50 backdrop-blur-sm rounded-full px-4 py-2 pointer-events-none text-white text-sm">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm rounded-full px-4 py-2 text-white text-sm pointer-events-none">
           {index + 1} / {totalReels}
         </div>
       </div>
@@ -200,6 +236,9 @@ const Reel = React.memo(
   }
 );
 
+/* =========================
+   Helpers
+========================= */
 function extractInstagramId(url: string) {
   const match = url.match(/\/reel\/([^\/?]+)/);
   return match ? match[1] : "";
