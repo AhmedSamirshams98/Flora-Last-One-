@@ -7,8 +7,7 @@ import logo from "@/public/images/logo.png";
 import Image from "next/image";
 import { useMarqueeStore } from "@/store/marquee-store";
 import { useShallow } from "zustand/shallow";
-import AOS from "aos";
-import "aos/dist/aos.css";
+
 
 const MarqueeBanner = () => {
   const pathname = usePathname();
@@ -30,9 +29,6 @@ const MarqueeBanner = () => {
     fetchMarquees();
   }, [fetchMarquees]);
 
-  useEffect(() => {
-    AOS.init({ duration: 800, once: true });
-  }, []);
   if (isLoading) {
     return (
       <div className="bg-yellow-100 border-b border-yellow-300 py-2">
