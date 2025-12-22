@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { useCartStore } from "@/store/cart-store";
-import DesktopNav from "./DesktopNav";
-import MobileNav from "./MobileNav";
+import DesktopNav from "./Desktopnav/DesktopNav";
+import MobileNav from "./MobileNav/MobileNav";
 import AuthPopup from "../AuthPopup";
 import { usePathname, useRouter } from "next/navigation";
 

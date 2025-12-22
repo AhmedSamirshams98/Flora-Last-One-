@@ -1,6 +1,3 @@
-// ==========================
-// ROUTES (لا يوجد أي نص لغوي)
-// ==========================
 export const ROUTES = {
   HOME: "/",
   PRODUCTS: "/products",
@@ -24,12 +21,12 @@ export const NAV_LINKS = [
   {
     href: ROUTES.HOME,
     labelKey: "nav.home",
-    type: "page", // نوع: صفحة عادية
+    type: "page", 
   },
   {
     href: "#about",
     labelKey: "nav.about",
-    type: "anchor", // نوع: رابط أنكور
+    type: "anchor", 
     anchorId: "about",
   },
   {
@@ -45,40 +42,11 @@ export const NAV_LINKS = [
   {
     href: "#contact",
     labelKey: "nav.contact",
-    type: "anchor", // نوع: رابط أنكور
+    type: "anchor", 
     anchorId: "contact",
   },
 ] as const;
 
-// ==========================
-// DASHBOARD LINKS
-// ==========================
-export const DASHBOARD_LINKS = [
-  {
-    href: ROUTES.DASHBOARD.PRODUCTS,
-    labelKey: "dashboard.products",
-    icon: "Package",
-  },
-  {
-    href: ROUTES.DASHBOARD.ORDERS,
-    labelKey: "dashboard.orders",
-    icon: "ShoppingCart",
-  },
-  {
-    href: ROUTES.DASHBOARD.OFFERS,
-    labelKey: "dashboard.offers",
-    icon: "OFFERS",
-  },
-  {
-    href: ROUTES.DASHBOARD.ANALYTICS,
-    labelKey: "dashboard.analytics",
-    icon: "ANALYTICS",
-  },
-] as const;
-
-// ==========================
-// SEARCH CONFIG
-// ==========================
 export const SEARCH_CONFIG = {
   placeholderKey: "search.placeholder",
   DEBOUNCE_DELAY: 300,

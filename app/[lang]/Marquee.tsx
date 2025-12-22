@@ -7,11 +7,12 @@ import logo from "@/public/images/logo.png";
 import Image from "next/image";
 import { useMarqueeStore } from "@/store/marquee-store";
 import { useShallow } from "zustand/shallow";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const MarqueeBanner = () => {
   const pathname = usePathname();
 
-  // استخدام الـ store
   const { activeMarquee, fetchMarquees, isLoading } = useMarqueeStore(
     useShallow((state) => ({
       activeMarquee: state.activeMarquee,
@@ -26,10 +27,12 @@ const MarqueeBanner = () => {
   );
 
   useEffect(() => {
-    // جلب البيانات عند تحميل المكون
     fetchMarquees();
   }, [fetchMarquees]);
 
+  useEffect(() => {
+    AOS.init({ duration: 800, once: true });
+  }, []);
   if (isLoading) {
     return (
       <div className="bg-yellow-100 border-b border-yellow-300 py-2">
@@ -71,11 +74,17 @@ const MarqueeBanner = () => {
   );
 
   return (
-    <div className="bg-yellow-100 border-b border-yellow-300 py-1 overflow-hidden">
+    <div
+      role="marquee"
+      aria-live="polite"
+      aria-label={displayText}
+      className="bg-yellow-100 border-b border-yellow-300 py-1 overflow-hidden"
+    >
       <Marquee
         speed={105}
         gradient={false}
-        pauseOnHover={true}
+        pauseOnHover
+        pauseOnClick
         direction={lang === "ar" ? "right" : "left"}
         loop={0}
         autoFill={true}
@@ -89,4 +98,4 @@ const MarqueeBanner = () => {
   );
 };
 
-export default MarqueeBanner;
+export default React.memo(MarqueeBanner);

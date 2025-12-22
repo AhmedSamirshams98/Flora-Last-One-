@@ -19,7 +19,6 @@ export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
 
-    // تعطيل جميع النصوص القديمة
     await prisma.marquee.updateMany({
       where: { isActive: true },
       data: { isActive: false },
