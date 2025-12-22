@@ -1,4 +1,3 @@
-// app/wishlist/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -219,8 +218,8 @@ export default function WishlistPage() {
         {/* Wishlist Items */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {items.map((item) => {
-            const mainVariant = item.product.variants[0];
-            const hasDiscount =
+const mainVariant = item.product.variants?.[0];
+if (!mainVariant) return null;            const hasDiscount =
               item.product.pricingType === "SALE_PRICE" ||
               item.product.pricingType === "WITH_OFFER";
 

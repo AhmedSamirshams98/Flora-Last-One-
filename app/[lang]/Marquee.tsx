@@ -8,7 +8,6 @@ import Image from "next/image";
 import { useMarqueeStore } from "@/store/marquee-store";
 import { useShallow } from "zustand/shallow";
 
-
 const MarqueeBanner = () => {
   const pathname = usePathname();
 
@@ -63,7 +62,7 @@ const MarqueeBanner = () => {
           }
           className="w-12"
           priority
-          quality={80}
+          quality={75}
         />
       </div>
     </>

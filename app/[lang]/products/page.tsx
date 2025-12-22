@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import ProductCard from "../../components/HomeComponents/products/ProductCard/ProductsCard";
 import { usePathname } from "next/navigation";
 import Filters from "../../components/HomeComponents/products/filters";
@@ -10,13 +10,11 @@ import { useShallow } from "zustand/shallow";
 export default function ProductsPage() {
   const pathname = usePathname();
 
-  // تحديد اللغة مرة واحدة فقط
   const lang = useMemo(
     () => (pathname.startsWith("/ar") ? "ar" : "en"),
     [pathname]
   );
 
-  // استخدام useShallow بشكل مثالي لـ Zustand
   const { products, loading } = useProductsStore(
     useShallow((state) => ({
       products: state.products,
@@ -32,7 +30,6 @@ export default function ProductsPage() {
     }))
   );
 
-  // استخراج الفلاتر فقط
   const { category, subcategory } = useFiltersStore(
     useShallow((state) => ({
       category: state.category,
@@ -40,14 +37,12 @@ export default function ProductsPage() {
     }))
   );
 
-  // جلب المنتجات مرة واحدة عند التحميل
   useEffect(() => {
     if (products.length === 0) {
       fetchProducts();
     }
   }, [fetchProducts, products.length]);
 
-  // حساب المنتجات المصفاة باستخدام useMemo لمنع إعادة الحساب غير الضرورية
   const displayProducts = useMemo(() => {
     if (!category && !subcategory) {
       return products;
@@ -66,7 +61,6 @@ export default function ProductsPage() {
     return filtered;
   }, [products, category, subcategory]);
 
-  // تحديث الـ store مرة واحدة عند تغيير المنتجات المصفاة
   useEffect(() => {
     setFilteredProducts(displayProducts);
   }, [displayProducts, setFilteredProducts]);
@@ -75,17 +69,11 @@ export default function ProductsPage() {
   const filteredCount = displayProducts.length;
   const totalCount = products.length;
 
-  const directionStyle = useMemo(
-    () => ({ direction: lang === "ar" ? "rtl" : "ltr" }),
-    [lang]
-  );
-
   const titleText = useMemo(
     () => (lang === "ar" ? "جميع المنتجات" : "All Products"),
     [lang]
   );
 
-  // تحسين حالة التحميل
   const LoadingSpinner = () => (
     <div className="text-center py-16">
       <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>

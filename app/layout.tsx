@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import MainNav from "./components/Nav/MainNav";
-import { Providers } from "./providers";
 import MarqueeBanner from "./[lang]/Marquee";
 import Footer from "./[lang]/footer/Footer";
 import { Toaster } from "sonner";
 import Head from "next/head";
+import { Providers } from "./providers";
 export const metadata: Metadata = {
   title: "Flora Store | شنط وأحذية نسائية في مصر – كفر الشيخ",
   applicationName: "Flora Store Egypt",

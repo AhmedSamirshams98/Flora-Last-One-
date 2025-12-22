@@ -25,7 +25,8 @@ export default function ProductImages({
     <div className="relative overflow-hidden aspect-square bg-gray-50">
       <div className="relative w-full h-full">
         <Image
-          quality={80}
+          quality={75}
+          loading="eager"
           fill
           sizes="(max-width: 768px) 100vw, 1200px"
           src={currentImages[currentImageIndex]}

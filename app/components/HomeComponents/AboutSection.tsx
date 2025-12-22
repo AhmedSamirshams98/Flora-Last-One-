@@ -21,16 +21,15 @@ export default function AboutSection({ lang }: AboutSectionProps) {
     <section id="about" className=" bg-card">
       <div className="container mx-auto px-4">
         {/* العنوان */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-6">
           <h2 className="text-4xl mb-4 text-primary font-gess font-semibold">
             {t.about.title}
           </h2>
-          <p className="max-w-2xl mx-auto text-muted-foreground font-gess text-center">
+          <p className="max-w-2xl mx-auto text-muted-foreground font-gess font-semibold text-center">
             {t.about.subtitle}
           </p>
         </div>
 
-        {/* الميزات */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => {
             const Icon = feature.icon;
@@ -51,18 +50,18 @@ export default function AboutSection({ lang }: AboutSectionProps) {
         {/* العداد */}
         <div className="mt-16 grid md:grid-cols-2 gap-12 items-center">
           <div>
-            <h3 className="text-3xl mb-4 text-primary text-center font-gess">
+            <h3 className="text-3xl mb-4 text-primary text-center  font-gess">
               {t.about.storyTitle}
             </h3>
             <p
-              className={`mb-4 text-muted-foreground  text-center  ${
+              className={`mb-4 text-muted-foreground font-semibold  text-center  ${
                 lang === "ar" ? "font-gess" : "font-sans font-semibold "
               } `}
             >
               {t.about.storyText1}
             </p>
             <p
-              className={` text-muted-foreground  text-center  ${
+              className={` text-muted-foreground font-semibold  text-center  ${
                 lang === "ar" ? "font-gess" : "font-sans font-semibold "
               } `}
             >

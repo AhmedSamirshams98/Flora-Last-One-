@@ -47,7 +47,7 @@ export default function Footer() {
   return (
     <footer
       id="contact"
-      className="bg-primary text-primary-foreground"
+      className="bg-primary text-primary-foreground mt-6"
       dir={lang === "ar" ? "rtl" : "ltr"} // 👈 هذا يجعل الاتجاه حسب اللغة فقط داخل الفوتر
     >
       <div className="container mx-auto px-4 py-8">
@@ -63,14 +63,15 @@ export default function Footer() {
             <Image
               sizes="(max-width: 768px) 100vw, 1200px"
               src={logo}
+              quality={75}
               alt="Flora Logo"
               className="w-[30vw] md:w-[14vw]"
             />
 
-            <p className="text-primary-foreground/80 mt-4 text-center lg:text-start">
+            <p className="text-primary-foreground/80 mt-4 text-center lg:text-start font-bold ">
               {lang === "ar"
-                ? "وجهتك للحقائب والأحذية الفاخرة عالية الجودة تلتقي بالتصميم الخالد."
-                : "Your destination for premium bags and shoes with special design."}
+                ? "وجهتك المتميزة للحصول على الأحذية والحقائب الفاخرة"
+                : "Your premium destination for luxurious shoes and bags."}
             </p>
 
             <div className="mt-4 lg:block">
@@ -84,15 +85,19 @@ export default function Footer() {
               <li className="flex items-start gap-3 text-primary-foreground/80">
                 <MapPin className="w-5 h-5 mt-1" />
                 <span
-                  className={`${lang === "ar" ? "text-right" : "text-left"}`}
+                  className={`${
+                    lang === "ar"
+                      ? "text-right font-bold "
+                      : "text-left font-bold "
+                  }`}
                 >
                   {lang === "ar"
                     ? "كفر الشيخ شارع الخليفة المأمون بجوار فرع ڤودافون وبنك وفا التجاري"
-                    : "Kafr El Sheikh, Khalifa Al-Maamoun St. next to Vodafone & Wafa Bank"}
+                    : "Kafr El Sheikh, Al-Khalifa Al-Maamoun Street next to Vodafone Branch & Wafa Bank"}
                 </span>
               </li>
 
-              <li className="flex items-center gap-3 text-primary-foreground/80">
+              <li className="flex items-center gap-3 font-bold  text-primary-foreground/80">
                 <Phone className="w-4 h-4" />
                 <a
                   href="tel:+201090770881"
@@ -102,6 +107,7 @@ export default function Footer() {
                 >
                   01090770881
                 </a>
+                <Phone className="w-4 h-4" />
                 <a
                   href="tel:+201090770883"
                   className={`${
@@ -115,7 +121,7 @@ export default function Footer() {
               <li>
                 <a
                   href="mailto:flora.leather.product@gmail.com"
-                  className="flex items-center gap-2 hover:text-accent font-sans"
+                  className="flex items-center gap-2 hover:text-accent font-sans  text-primary-foreground/80 font-bold "
                 >
                   <Mail className="w-4 h-4" />
                   flora.leather.product@gmail.com

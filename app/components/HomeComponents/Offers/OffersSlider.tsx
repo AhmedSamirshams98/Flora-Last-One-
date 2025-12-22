@@ -73,7 +73,7 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
             className="w-full h-full object-cover"
             priority={isFirst}
             sizes={IMAGE_SETTINGS.sizes}
-            quality={IMAGE_SETTINGS.quality}
+            quality={75}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent md:from-black/70 md:via-black/50 flex items-center">
             <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 font-gess">

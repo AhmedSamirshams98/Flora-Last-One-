@@ -1236,7 +1236,7 @@ export default function ProductsDashboard() {
 
   return (
     <div
-      className="p-6 max-w-7xl mx-auto container"
+      className="p-6 max-w-7xl mx-auto container font-gess"
       style={{ direction: "rtl" }}
     >
       {/* الهيدر */}

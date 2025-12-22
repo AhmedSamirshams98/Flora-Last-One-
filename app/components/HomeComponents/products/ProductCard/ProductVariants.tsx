@@ -34,7 +34,8 @@ export default function ProductVariants({
           }`}
         >
           <Image
-            quality={80}
+            quality={75}
+            loading="eager"
             src={variant.images[0] || "/placeholder.jpg"}
             alt={variant.color}
             fill
