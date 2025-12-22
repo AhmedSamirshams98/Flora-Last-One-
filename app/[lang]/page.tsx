@@ -16,7 +16,6 @@ const Page = async ({ params }: PageProps) => {
       <FacebookReelEmbed lang={lang} />
       <ProductsSection lang={lang} />
       <AboutSection lang={lang} />
-
     </div>
   );
 };

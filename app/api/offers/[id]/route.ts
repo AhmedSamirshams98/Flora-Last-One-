@@ -165,27 +165,6 @@ export async function PUT(
             );
           }
           break;
-
-        case OfferType.BUY_X_GET_Y:
-          if (
-            updateData.buyQuantity !== undefined &&
-            (updateData.buyQuantity <= 0 || isNaN(updateData.buyQuantity))
-          ) {
-            return NextResponse.json(
-              { error: "كمية الشراء غير صالحة" },
-              { status: 400 }
-            );
-          }
-          if (
-            updateData.getQuantity !== undefined &&
-            (updateData.getQuantity <= 0 || isNaN(updateData.getQuantity))
-          ) {
-            return NextResponse.json(
-              { error: "كمية الحصول غير صالحة" },
-              { status: 400 }
-            );
-          }
-          break;
       }
     }
 
@@ -301,7 +280,6 @@ export async function DELETE(
     }
 
     await prisma.$transaction(async (tx) => {
-      // 1. جلب المنتجات المرتبطة بالعرض
       const products = await tx.product.findMany({
         where: { offerId: id },
         select: { id: true, basePrice: true },

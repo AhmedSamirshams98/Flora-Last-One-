@@ -247,22 +247,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
-export async function HEAD() {
-  return new NextResponse(null, { status: 200 });
-}
-
-// ==================================
-// 📌 دعم OPTIONS لـ CORS
-// ==================================
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      Allow: "GET, POST, PUT, DELETE, HEAD, OPTIONS",
-      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, HEAD, OPTIONS",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    },
-  });
-}

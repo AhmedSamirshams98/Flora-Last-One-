@@ -37,8 +37,12 @@ const UserMenu = ({ lang }: { lang: "ar" | "en" }) => {
         <div className="absolute mt-2 w-48 bg-white rounded shadow">
           {(session?.user?.role === "ADMIN" ||
             session?.user?.role === "SUPERADMIN") && (
-            <a href="/dashboard" className="flex gap-2 p-2">
-              <Settings /> Dashboard
+            <a
+              href="/dashboard"
+              className="flex gap-2 p-2 text-black font-gess"
+            >
+              <Settings />
+              {lang === "ar" ? "لوحة التحكم" : "Dashboard"}
             </a>
           )}
 

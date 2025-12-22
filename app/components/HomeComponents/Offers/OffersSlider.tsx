@@ -7,6 +7,8 @@ import en from "@/messages/en.json";
 import ar from "@/messages/ar.json";
 import logo from "@/public/images/logo.png";
 import EmblaCarousel from "../../emblaCarousel/EmblaCarousel";
+import AOS from "aos";
+import "aos/dist/aos.css";
 import {
   formatDate,
   getOfferDetails,
@@ -18,6 +20,7 @@ import {
 import { Skeleton } from "./Skeleton";
 import { useShallow } from "zustand/shallow";
 import { OfferWithoutImage } from "./OfferWithoutImage";
+import Head from "next/head";
 
 interface OffersSliderProps {
   lang: "ar" | "en";
@@ -33,16 +36,10 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
     }))
   );
   const now = useMemo(() => new Date(), []);
-  const nowDate = useMemo(() => {
-    const date = new Date(now);
-    date.setHours(0, 0, 0, 0);
-    return date;
-  }, [now]);
-
-  // تصفية العروض باستخدام useMemo
+  // لا تحتاج الآن إلى nowDate
   const activeOffers = useMemo(
-    () => getActiveOffers(offers, now, nowDate),
-    [offers, now, nowDate]
+    () => getActiveOffers(offers, now), // استخدم نفس now مرتين
+    [offers, now]
   );
 
   // إنشاء slides باستخدام useMemo
@@ -177,12 +174,18 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
     fetchOffers();
   }, [fetchOffers]);
 
-  // التصيير الشرطي بعد كل الـ Hooks
+  useEffect(() => {
+    AOS.init({ duration: 800, once: true });
+  }, []);
+
+  useEffect(() => {
+    AOS.refresh(); // تحديث بعد تحميل الـ slides
+  }, [activeOffers]);
   if (loading) return <Skeleton />;
 
   if (activeOffers.length === 0) {
     return (
-      <section id="offers" className="bg-secondary py-6">
+      <section id="offers" className="bg-secondary py-6" data-aos="fade-left">
         <div className="container mx-auto px-4">
           <h1 className="font-gess font-semibold text-center text-primary text-3xl mb-6 mt-2">
             {t.offers.title}
@@ -194,13 +197,30 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
   }
 
   return (
-    <section id="offers" className="bg-secondary py-6">
-      <div className="container mx-auto px-4">
-        <h1 className="font-gess text-center text-primary font-semibold text-3xl mb-2 mt-2">
-          {t.offers.title}
-        </h1>
-        <EmblaCarousel slides={slides} options={EMBLA_OPTIONS} />
-      </div>
-    </section>
+    <>
+      <Head>
+        <title>{t.offers.title} | Flora Store</title>
+        <meta
+          name="description"
+          content={
+            lang === "ar"
+              ? "اكتشف أحدث العروض من فلورا ستور للشنط والأحذية النسائية في مصر – كفر الشيخ"
+              : "Discover the latest offers from Flora Store for women's shoes and bags in Egypt – Kafr El Sheikh"
+          }
+        />
+        <meta
+          name="keywords"
+          content="شنط نسائية, أحذية نسائية, عروض فلورا ستور, flora store egypt, woman shoes, woman bags"
+        />
+      </Head>
+      <section id="offers" className="bg-secondary py-6" data-aos="fade-left">
+        <div className="container mx-auto px-4">
+          <h1 className="font-gess text-center text-primary font-semibold text-3xl mb-2 mt-2">
+            {t.offers.title}
+          </h1>
+          <EmblaCarousel slides={slides} options={EMBLA_OPTIONS} />
+        </div>
+      </section>
+    </>
   );
 }

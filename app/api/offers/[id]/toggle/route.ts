@@ -13,10 +13,7 @@ export async function PATCH(
     });
 
     if (!offer) {
-      return NextResponse.json(
-        { error: "العرض غير موجود" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "العرض غير موجود" }, { status: 404 });
     }
 
     const updatedOffer = await prisma.offer.update({
@@ -25,11 +22,13 @@ export async function PATCH(
     });
 
     return NextResponse.json(updatedOffer);
-
   } catch (error) {
     console.error("Error toggling offer:", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "فشل في تغيير حالة العرض" },
+      {
+        error:
+          error instanceof Error ? error.message : "فشل في تغيير حالة العرض",
+      },
       { status: 500 }
     );
   }

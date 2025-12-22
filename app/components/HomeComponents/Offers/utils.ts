@@ -51,26 +51,23 @@ export const getOfferDetails = (
       return t.offers.featuredOffer;
   }
 };
+export const getActiveOffers = (offers: Offer[], now: Date): Offer[] => {
+  const today = new Date(now);
+  today.setHours(0, 0, 0, 0);
 
-// ============== 4. تصفية العروض النشطة ==============
-export const getActiveOffers = (
-  offers: Offer[],
-  now: Date,
-  nowDate: Date
-): Offer[] => {
   return offers.filter((offer) => {
     if (!offer.isActive) return false;
 
     if (offer.startDate) {
       const startDate = new Date(offer.startDate);
       startDate.setHours(0, 0, 0, 0);
-      if (startDate > nowDate) return false;
+      if (startDate > today) return false;
     }
 
     if (offer.endDate) {
       const endDate = new Date(offer.endDate);
-      endDate.setHours(23, 59, 59, 999);
-      if (endDate < now) return false;
+      endDate.setHours(0, 0, 0, 0);
+      if (endDate < today) return false;
     }
 
     return true;
