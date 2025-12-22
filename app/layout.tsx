@@ -5,8 +5,10 @@ import { Providers } from "./providers";
 import MarqueeBanner from "./[lang]/Marquee";
 import Footer from "./[lang]/footer/Footer";
 import { Toaster } from "sonner";
+import Head from "next/head";
 export const metadata: Metadata = {
   title: "Flora Store | شنط وأحذية نسائية في مصر – كفر الشيخ",
+  applicationName: "Flora Store Egypt",
   description:
     "Flora Egypt Your Premier destination for Luxurious Shoes and Bags . فلورا كفر الشيخ لأفضل صيحات الموضة في الشنط والأحذية ",
   keywords: [
@@ -69,6 +71,10 @@ export default function RootLayout({
   return (
     <html lang="ar">
       <body className="">
+          <Head>
+      <meta name="description" content="Flora Egypt Your Premier destination for Luxurious Shoes and Bags . فلورا كفر الشيخ لأفضل صيحات الموضة في الشنط والأحذية" />
+      <meta name="keywords" content="شنط نسائية, أحذية نسائية, فلورا كفر الشيخ, موضة, تسوق أونلاين مصر, فلورا ستور, flora store egypt, flora kafrelshiekh, flora leather product, woman shoes, woman bags" />
+    </Head>
         <Providers>
           <div className="sticky top-0 left-0 right-0 z-50 w-full">
             <MarqueeBanner />
