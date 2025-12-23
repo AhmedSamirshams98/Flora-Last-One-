@@ -3,14 +3,10 @@ import { prisma } from "@/lib/prisma";
 import path from "path";
 import fs from "fs/promises";
 
-/* =========================
-   PUT – تعديل قسم
-========================= */
-export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+// PUT – تعديل قسم
+export async function PUT(req: Request, context: { params: { id: string } }) {
   try {
+    const { id } = context.params; // الآن id متوفر مباشرة
     const formData = await req.formData();
     const file = formData.get("image") as File | null;
     const category = formData.get("category") as string;
@@ -30,7 +26,7 @@ export async function PUT(
     }
 
     const updated = await prisma.homeCategory.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         category,
         ...(imagePath && { image: imagePath }),
@@ -38,27 +34,23 @@ export async function PUT(
     });
 
     return NextResponse.json(updated);
-  } catch {
+  } catch (error) {
+    console.error(error);
     return NextResponse.json(
       { error: "Failed to update category" },
       { status: 500 }
     );
   }
 }
-/* =========================
-   DELETE – حذف قسم
-========================= */
-export async function DELETE(
-  _: Request,
-  { params }: { params: { id: string } }
-) {
-  try {
-    await prisma.homeCategory.delete({
-      where: { id: params.id },
-    });
 
+// DELETE – حذف قسم
+export async function DELETE(req: Request, context: { params: { id: string } }) {
+  try {
+    const { id } = context.params;
+    await prisma.homeCategory.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
+    console.error(error);
     return NextResponse.json(
       { error: "Failed to delete category" },
       { status: 500 }
