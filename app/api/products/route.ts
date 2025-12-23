@@ -1,7 +1,5 @@
-
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { CreateProductInput } from "@/types/product";
 import {
   Prisma,
   ProductType,
@@ -14,7 +12,19 @@ import fs from "fs/promises";
 import { randomBytes } from "crypto";
 
 // ==============================
-// 📌 دالة حساب سعر العرض
+// 📌 إعدادات الرفع
+// ==============================
+const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ALLOWED_MIME_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+];
+
+// ==============================
+// 📌 دوال مساعدة
 // ==============================
 function calculateOfferPrice(
   basePrice: number,
@@ -46,136 +56,79 @@ function calculateOfferPrice(
       }
       break;
 
-    case OfferType.BUY_X_GET_Y:
-    case OfferType.FREE_SHIPPING:
-    case OfferType.SIMPLE:
-      // هذه العروض لا تؤثر على سعر المنتج مباشرة
+    default:
       finalPrice = basePrice;
       break;
   }
 
-  // تقريب إلى منزلتين عشريتين
   return Math.round(finalPrice * 100) / 100;
 }
 
-// ==============================
-// 📌 GET ALL PRODUCTS
-// ==============================
-export async function GET(request: Request) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const category = searchParams.get("category");
-    const subcategory = searchParams.get("subcategory");
-    const offerId = searchParams.get("offerId");
-    const pricingType = searchParams.get("pricingType");
-    const isNew = searchParams.get("isNew");
-    const isFeatured = searchParams.get("isFeatured");
-
-    // بناء where بأمان باستخدام Prisma types
-    const where: Prisma.ProductWhereInput = {};
-
-    if (category) where.category = { equals: category as ProductType };
-    if (subcategory)
-      where.subcategory = { equals: subcategory as ProductSubtype };
-    if (offerId) where.offerId = offerId;
-    if (pricingType) where.pricingType = { equals: pricingType as PricingType };
-    if (isNew !== null) where.isNew = isNew === "true";
-    if (isFeatured !== null) where.isFeatured = isFeatured === "true";
-
-    const products = await prisma.product.findMany({
-      where,
-      include: {
-        variants: true,
-        offer: true,
-      },
-      orderBy: { createdAt: "desc" },
-    });
-
-    return NextResponse.json(products);
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    return NextResponse.json({ error: "فشل في جلب المنتجات" }, { status: 500 });
-  }
-}
-
-// تكوين مجلد الرفع
-const getUploadDir = () => {
-  // في التطوير: استخدم المسار النسبي
-  if (process.env.NODE_ENV === "development") {
-    return path.join(process.cwd(), "public", "uploads");
-  }
-  // في الإنتاج: استخدم المسار المطلق
-  return process.env.UPLOAD_DIR || "/var/www/flora/uploads";
-};
-
-const UPLOAD_DIR = getUploadDir();
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ALLOWED_MIME_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/gif",
-];
-
-// دالة مساعدة لرفع الملفات
 async function saveUploadedFile(file: File): Promise<string> {
-  try {
-    // التحقق من نوع الملف
-    if (!ALLOWED_MIME_TYPES.includes(file.type)) {
-      throw new Error("نوع الملف غير مدعوم");
-    }
-
-    // التحقق من حجم الملف
-    if (file.size > MAX_FILE_SIZE) {
-      throw new Error("حجم الملف أكبر من 5MB");
-    }
-
-    // قراءة الملف
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // إنشاء اسم فريد للملف
-    const timestamp = Date.now();
-    const randomStr = randomBytes(4).toString("hex");
-    const originalName = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
-    const filename = `${timestamp}-${randomStr}-${originalName}`;
-
-    // التأكد من وجود مجلد الرفع
-    await fs.mkdir(UPLOAD_DIR, { recursive: true });
-
-    // حفظ الملف
-    const filePath = path.join(UPLOAD_DIR, filename);
-    await fs.writeFile(filePath, buffer);
-
-    console.log("File saved to:", filePath);
-
-    // إرجاع المسار العام للصورة
-    return `/api/images/${filename}`;
-  } catch (error) {
-    console.error("Error saving file:", error);
-    throw new Error("فشل في رفع الملف");
+  // التحقق من نوع الملف
+  if (!ALLOWED_MIME_TYPES.includes(file.type)) {
+    throw new Error("نوع الملف غير مدعوم. المسموح: JPEG, PNG, WebP, GIF");
   }
+
+  // التحقق من حجم الملف
+  if (file.size > MAX_FILE_SIZE) {
+    throw new Error("حجم الملف أكبر من 5MB");
+  }
+
+  // قراءة الملف
+  const bytes = await file.arrayBuffer();
+  const buffer = Buffer.from(bytes);
+
+  // إنشاء اسم فريد للملف
+  const timestamp = Date.now();
+  const randomStr = randomBytes(4).toString("hex");
+  const originalName = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
+  const filename = `${timestamp}-${randomStr}-${originalName}`;
+
+  // التأكد من وجود مجلد الرفع
+  await fs.mkdir(UPLOAD_DIR, { recursive: true });
+
+  // حفظ الملف
+  const filePath = path.join(UPLOAD_DIR, filename);
+  await fs.writeFile(filePath, buffer);
+
+  console.log("✅ تم حفظ الملف:", filePath);
+
+  // إرجاع المسار العام للصورة
+  return `/uploads/${filename}`;
 }
 
 // ==============================
-// 📌 CREATE PRODUCT
+// 📌 POST إنشاء منتج جديد
 // ==============================
 export async function POST(request: NextRequest) {
   try {
+    console.log("📥 بدء استقبال طلب إنشاء منتج...");
+
     // استقبال FormData
     const formData = await request.formData();
 
-    // استخراج البيانات النصية
+    // لرؤية كل الحقول الواردة
+    console.log("📋 الحقول المستلمة:");
+    for (const [key, value] of formData.entries()) {
+      console.log(
+        `  ${key}: ${value instanceof File ? `[ملف: ${value.name}]` : value}`
+      );
+    }
+
     const dataString = formData.get("data") as string;
+
     if (!dataString) {
+      console.error("❌ بيانات المنتج مفقودة");
       return NextResponse.json(
         { error: "بيانات المنتج مطلوبة" },
         { status: 400 }
       );
     }
 
-    // تحليل JSON
+    // تحليل بيانات المنتج
     const productData = JSON.parse(dataString);
+    console.log("📊 بيانات المنتج:", productData);
 
     // التحقق من البيانات الأساسية
     if (!productData.name || !productData.category || !productData.basePrice) {
@@ -185,23 +138,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ===== تحديد نوع التسعير =====
+    // ===== معالجة التسعير =====
     let pricingType: PricingType = PricingType.SINGLE_PRICE;
     let finalPrice = productData.basePrice;
     let offerPrice: number | null = null;
     let offerId: string | null = null;
 
-    // الحالة 1: سعر مخفض خاص
     if (productData.salePrice) {
       pricingType = PricingType.SALE_PRICE;
       finalPrice = productData.salePrice;
-    }
-    // الحالة 2: مع عرض
-    else if (productData.offerId) {
+    } else if (productData.offerId) {
       pricingType = PricingType.WITH_OFFER;
       offerId = productData.offerId;
 
-      // جلب العرض وحساب السعر
       const offer = await prisma.offer.findUnique({
         where: { id: productData.offerId, isActive: true },
       });
@@ -217,98 +166,102 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // معالجة الصور المرفوعة
-    const imageFiles: File[] = [];
+    // ===== رفع الصور =====
     const uploadedImageUrls: string[] = [];
 
-    // جمع الملفات المرفوعة من FormData
+    // جمع جميع الملفات من FormData
+    console.log("📸 البحث عن الملفات المرفوعة...");
     for (const [key, value] of formData.entries()) {
-      if (key.startsWith("image_") && value instanceof File) {
-        imageFiles.push(value);
+      if (value instanceof File && value.size > 0) {
+        console.log(
+          `  📎 معالجة الملف: ${key} (${value.name}, ${value.size} bytes)`
+        );
+        try {
+          const imageUrl = await saveUploadedFile(value);
+          uploadedImageUrls.push(imageUrl);
+          console.log(`  ✅ تم رفع: ${imageUrl}`);
+        } catch (uploadError) {
+          console.error(`  ❌ فشل في رفع الملف ${key}:`, uploadError);
+        }
       }
     }
 
-    // رفع الملفات إلى السيرفر
-    for (const imageFile of imageFiles) {
-      try {
-        const imageUrl = await saveUploadedFile(imageFile);
-        uploadedImageUrls.push(imageUrl);
-        console.log("✓ Image uploaded:", imageUrl);
-      } catch (uploadError) {
-        console.error("✗ Failed to upload image:", uploadError);
-        // يمكنك اختيار إما المتابعة أو إرجاع خطأ
-      }
-    }
+    console.log(`📊 عدد الصور المرفوعة: ${uploadedImageUrls.length}`);
+    console.log("🔗 روابط الصور:", uploadedImageUrls);
 
-    // معالجة المتغيرات وإضافة الصور
-    const variantsWithImages = productData.variants?.map((variant: any, index: number) => {
-      const variantImages: string[] = [];
+    // ===== معالجة المتغيرات =====
+    const variantsToCreate =
+      productData.variants?.map((variant: any, index: number) => {
+        let variantImages: string[] = [];
 
-      // إضافة الصور المرفوعة حديثاً لهذا المتغير
-      if (variant.uploadedImageIndexes && Array.isArray(variant.uploadedImageIndexes)) {
-        variant.uploadedImageIndexes.forEach((imgIndex: number) => {
-          if (uploadedImageUrls[imgIndex]) {
-            variantImages.push(uploadedImageUrls[imgIndex]);
-          }
-        });
-      }
+        console.log(`🔄 معالجة المتغير ${index}:`, variant);
 
-      // إضافة روابط الصور الحالية
-      if (variant.images && Array.isArray(variant.images)) {
-        variant.images.forEach((img: string) => {
-          if (typeof img === "string" && (img.startsWith("http") || img.startsWith("/"))) {
-            variantImages.push(img);
-          }
-        });
-      }
+        // 1. إضافة الصور المرفوعة حديثاً
+        if (variant.imageFiles && Array.isArray(variant.imageFiles)) {
+          console.log(`  📎 مؤشرات الصور: ${variant.imageFiles}`);
+          variant.imageFiles.forEach((fileIndex: number) => {
+            if (uploadedImageUrls[fileIndex]) {
+              variantImages.push(uploadedImageUrls[fileIndex]);
+              console.log(
+                `  ✅ أضيفت صورة من الملف ${fileIndex}: ${uploadedImageUrls[fileIndex]}`
+              );
+            }
+          });
+        }
 
-      // إذا لم تكن هناك صور، نضيف صورة افتراضية
-      if (variantImages.length === 0 && uploadedImageUrls.length > 0) {
-        // نأخذ أول صورة مرفوعة
-        variantImages.push(uploadedImageUrls[0]);
-      } else if (variantImages.length === 0) {
-        // صورة افتراضية
-        variantImages.push("/placeholder.jpg");
-      }
+        // 2. إضافة روابط الصور الحالية (غير blob)
+        if (variant.images && Array.isArray(variant.images)) {
+          variant.images.forEach((img: string, imgIndex: number) => {
+            // التحقق من أن الرابط ليس blob URL
+            if (img && (img.startsWith("http") || img.startsWith("/"))) {
+              if (!img.startsWith("blob:")) {
+                variantImages.push(img);
+                console.log(`  ✅ أضيفت صورة حالية ${imgIndex}: ${img}`);
+              } else {
+                console.log(`  ⚠️ تجاهل blob URL: ${img}`);
+              }
+            }
+          });
+        }
 
-      return {
-        code: variant.code || `VAR-${Date.now()}-${index}`,
-        color: variant.color || "Default",
-        sizes: Array.isArray(variant.sizes)
-          ? variant.sizes
-          : variant.size
-          ? [variant.size]
-          : [],
-        price: variant.price || finalPrice,
-        images: variantImages,
-        stock: variant.stock || 0,
-        description: variant.description || "",
-      };
-    }) || [];
+        console.log(`  📊 إجمالي صور المتغير: ${variantImages.length}`);
 
-    // إنشاء المنتج
+        // 3. إذا لم توجد صور، نضيف صورة افتراضية
+        if (variantImages.length === 0) {
+          variantImages.push("/placeholder.jpg");
+          console.log(`  ℹ️ أضيفت صورة افتراضية`);
+        }
+
+        return {
+          code: variant.code || `VAR-${Date.now()}-${index}`,
+          color: variant.color || "Default",
+          sizes: Array.isArray(variant.sizes) ? variant.sizes : [],
+          price: variant.price || finalPrice,
+          images: variantImages,
+          stock: variant.stock || 0,
+          description: variant.description || "",
+        };
+      }) || [];
+
+    console.log("🎯 بيانات إنشاء المتغيرات:", variantsToCreate);
+
+    // ===== إنشاء المنتج =====
     const product = await prisma.product.create({
       data: {
         name: productData.name,
         category: productData.category,
         subcategory: productData.subcategory,
-
-        // التسعير
         basePrice: productData.basePrice,
         salePrice: productData.salePrice,
-        offerId: offerId,
-        offerPrice: offerPrice,
-        pricingType: pricingType,
-        finalPrice: finalPrice,
-
-        // الخيارات
+        offerId,
+        offerPrice,
+        pricingType,
+        finalPrice,
         isNew: productData.isNew || false,
         isFeatured: productData.isFeatured || false,
         inStock: productData.inStock !== false,
-
-        // المتغيرات مع الصور
         variants: {
-          create: variantsWithImages,
+          create: variantsToCreate,
         },
       },
       include: {
@@ -317,29 +270,22 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    console.log("✅ تم إنشاء المنتج بنجاح:", product.id);
+
     return NextResponse.json({
       success: true,
-      message: "تم إنشاء المنتج بنجاح",
-      product: product,
-      uploadedImages: uploadedImageUrls.length,
+      message: "✅ تم إنشاء المنتج بنجاح",
+      product,
+      uploadedImages: uploadedImageUrls,
     });
-
   } catch (error) {
-    console.error("Error creating product:", error);
+    console.error("❌ خطأ في إنشاء المنتج:", error);
 
     if (error instanceof SyntaxError) {
       return NextResponse.json(
         { error: "تنسيق JSON غير صحيح" },
         { status: 400 }
       );
-    }
-
-    if (error instanceof Error && error.message.includes("نوع الملف")) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
-
-    if (error instanceof Error && error.message.includes("حجم الملف")) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -352,26 +298,51 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(
-      {
-        error: error instanceof Error ? error.message : "فشل في إنشاء المنتج",
-      },
+      { error: error instanceof Error ? error.message : "فشل في إنشاء المنتج" },
       { status: 500 }
     );
   }
 }
 
-// دعم HEAD للتحقق من وجود API
-export async function HEAD() {
-  return new NextResponse(null, { status: 200 });
+// ==============================
+// 📌 GET جميع المنتجات
+// ==============================
+export async function GET(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const category = searchParams.get("category");
+    const subcategory = searchParams.get("subcategory");
+
+    const where: Prisma.ProductWhereInput = {};
+
+    if (category) where.category = { equals: category as ProductType };
+    if (subcategory)
+      where.subcategory = { equals: subcategory as ProductSubtype };
+
+    const products = await prisma.product.findMany({
+      where,
+      include: {
+        variants: true,
+        offer: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return NextResponse.json(products);
+  } catch (error) {
+    console.error("❌ خطأ في جلب المنتجات:", error);
+    return NextResponse.json({ error: "فشل في جلب المنتجات" }, { status: 500 });
+  }
 }
 
-// دعم OPTIONS لـ CORS
+// ==============================
+// 📌 OPTIONS للـ CORS
+// ==============================
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {
-      Allow: "POST, HEAD, OPTIONS",
-      "Access-Control-Allow-Methods": "POST, HEAD, OPTIONS",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Headers": "Content-Type, Authorization",
     },

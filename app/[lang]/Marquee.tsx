@@ -73,10 +73,10 @@ const MarqueeBanner = () => {
       role="marquee"
       aria-live="polite"
       aria-label={displayText}
-      className="bg-yellow-100 border-b border-yellow-300 py-1 overflow-hidden"
+      className="bg-yellow-50 border-b border-yellow-300 py-1 overflow-hidden"
     >
       <Marquee
-        speed={105}
+        speed={90}
         gradient={false}
         pauseOnHover
         pauseOnClick

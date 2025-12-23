@@ -1,49 +1,136 @@
-import { X, Upload } from "lucide-react";
+import { useState } from "react";
+import { X, Upload, Trash2 } from "lucide-react";
 import Image from "next/image";
 
+interface Variant {
+  color: string;
+  sizes: string[];
+  price: number;
+  images: string[]; // روابط الصور الحقيقية فقط
+  stock: number;
+  description?: string;
+  imageFiles?: number[]; // مؤشرات للصور المرفوعة حديثاً
+}
+
 interface VariantsSectionProps {
-  formData: any;
-  sizeInputs: Record<number, string>;
-  setSizeInputs: React.Dispatch<React.SetStateAction<Record<number, string>>>;
-  uploadedFiles: Record<number, File[]>;
-  onAddVariant: () => void;
-  onRemoveVariant: (index: number) => void;
-  onVariantChange: (index: number, field: string, value: any) => void;
-  onImageUpload: (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => void;
-  onRemoveImage: (variantIndex: number, imageIndex: number) => void;
+  variants: Variant[];
+  onVariantsChange: (variants: Variant[]) => void;
+  onFilesChange: (files: File[]) => void;
+  uploadedFiles: File[];
 }
 
 export default function VariantsSection({
-  formData,
-  sizeInputs,
-  setSizeInputs,
+  variants,
+  onVariantsChange,
+  onFilesChange,
   uploadedFiles,
-  onAddVariant,
-  onRemoveVariant,
-  onVariantChange,
-  onImageUpload,
-  onRemoveImage,
 }: VariantsSectionProps) {
+  const [sizeInputs, setSizeInputs] = useState<Record<number, string>>({});
+
+  // إضافة متغير جديد
+  const handleAddVariant = () => {
+    const newVariant: Variant = {
+      color: "",
+      sizes: [],
+      price: 0,
+      images: [],
+      stock: 0,
+      description: "",
+      imageFiles: [],
+    };
+    onVariantsChange([...variants, newVariant]);
+    setSizeInputs({ ...sizeInputs, [variants.length]: "" });
+  };
+
+  // حذف متغير
+  const handleRemoveVariant = (index: number) => {
+    const newVariants = variants.filter((_, i) => i !== index);
+    onVariantsChange(newVariants);
+    
+    // تحديث sizeInputs
+    const newSizeInputs = { ...sizeInputs };
+    delete newSizeInputs[index];
+    
+    // إعادة ترتيب المؤشرات
+    const reorderedSizeInputs: Record<number, string> = {};
+    Object.keys(newSizeInputs).forEach((key, idx) => {
+      reorderedSizeInputs[idx] = newSizeInputs[Number(key)];
+    });
+    setSizeInputs(reorderedSizeInputs);
+  };
+
+  // تحديث حقل في متغير
+  const handleVariantChange = (index: number, field: keyof Variant, value: any) => {
+    const newVariants = [...variants];
+    newVariants[index] = { ...newVariants[index], [field]: value };
+    onVariantsChange(newVariants);
+  };
+
+  // رفع صور جديدة
+  const handleImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    variantIndex: number
+  ) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    const filesArray = Array.from(files);
+    
+    // إضافة الملفات إلى القائمة العامة
+    const currentFileIndex = uploadedFiles.length;
+    onFilesChange([...uploadedFiles, ...filesArray]);
+    
+    // إضافة مؤشرات الملفات إلى المتغير
+    const newImageFiles = [
+      ...(variants[variantIndex].imageFiles || []),
+      ...Array.from({ length: filesArray.length }, (_, i) => currentFileIndex + i)
+    ];
+    
+    handleVariantChange(variantIndex, "imageFiles", newImageFiles);
+    
+    // إضافة روابط مؤقتة للعرض فقط (Blob URLs)
+    const blobUrls = filesArray.map(file => URL.createObjectURL(file));
+    const currentImages = variants[variantIndex].images;
+    handleVariantChange(variantIndex, "images", [...currentImages, ...blobUrls]);
+    
+    // تنظيف بعد 5 دقائق (اختياري)
+    setTimeout(() => {
+      blobUrls.forEach(url => URL.revokeObjectURL(url));
+    }, 5 * 60 * 1000);
+  };
+
+  // حذف صورة
+  const handleRemoveImage = (variantIndex: number, imageIndex: number) => {
+    const variant = variants[variantIndex];
+    const newImages = [...variant.images];
+    
+    // إذا كانت صورة blob مؤقتة
+    if (imageIndex >= (variant.images.length - (variant.imageFiles?.length || 0))) {
+      URL.revokeObjectURL(newImages[imageIndex]);
+    }
+    
+    newImages.splice(imageIndex, 1);
+    handleVariantChange(variantIndex, "images", newImages);
+  };
+
+  // إضافة مقاس
   const handleAddSize = (variantIndex: number) => {
     const sizeInput = sizeInputs[variantIndex]?.trim();
     if (!sizeInput) return;
 
-    const currentSizes = formData.variants[variantIndex].sizes || [];
+    const currentSizes = variants[variantIndex].sizes || [];
     if (!currentSizes.includes(sizeInput)) {
       const newSizes = [...currentSizes, sizeInput];
-      onVariantChange(variantIndex, "sizes", newSizes);
+      handleVariantChange(variantIndex, "sizes", newSizes);
     }
-    setSizeInputs((prev) => ({ ...prev, [variantIndex]: "" }));
+    setSizeInputs({ ...sizeInputs, [variantIndex]: "" });
   };
 
+  // حذف مقاس
   const handleRemoveSize = (variantIndex: number, size: string) => {
-    const currentSizes =
-      (formData.variants[variantIndex].sizes as string[]) || [];
-    const newSizes = currentSizes.filter((s) => s !== size);
-    onVariantChange(variantIndex, "sizes", newSizes);
+    const currentSizes = variants[variantIndex].sizes;
+    const newSizes = currentSizes.filter(s => s !== size);
+    handleVariantChange(variantIndex, "sizes", newSizes);
   };
 
   return (
@@ -52,196 +139,228 @@ export default function VariantsSection({
         <h3 className="text-lg font-semibold">المتغيرات (الألوان)</h3>
         <button
           type="button"
-          onClick={onAddVariant}
-          className="bg-blue-600 text-white px-3 py-1 rounded text-sm"
+          onClick={handleAddVariant}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg flex items-center gap-2"
         >
-          + إضافة لون
+          <span>+</span>
+          إضافة لون
         </button>
       </div>
 
-      {formData.variants.map((variant: any, index: number) => (
-        <div key={index} className="border p-4 rounded-lg mb-4">
-          <div className="flex justify-between items-center mb-3">
-            <h4 className="font-medium">المتغير {index + 1}</h4>
-            {formData.variants.length > 1 && (
-              <button
-                type="button"
-                onClick={() => onRemoveVariant(index)}
-                className="text-red-500 hover:text-red-700"
-              >
-                <X size={20} />
-              </button>
-            )}
-          </div>
-
-          {/* حقول المتغير */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm mb-1">اللون *</label>
-              <input
-                type="text"
-                value={variant.color}
-                onChange={(e) =>
-                  onVariantChange(index, "color", e.target.value)
-                }
-                required
-                className="w-full p-2 border rounded"
-              />
+      {variants.length === 0 ? (
+        <p className="text-gray-500 text-center py-4">
+          لم يتم إضافة أي متغيرات بعد. أضف متغيراً واحداً على الأقل.
+        </p>
+      ) : (
+        variants.map((variant, index) => (
+          <div key={index} className="border rounded-lg p-4 mb-4 bg-gray-50">
+            <div className="flex justify-between items-center mb-4">
+              <h4 className="font-medium text-lg">المتغير {index + 1}</h4>
+              {variants.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => handleRemoveVariant(index)}
+                  className="text-red-600 hover:text-red-800"
+                  title="حذف هذا المتغير"
+                >
+                  <Trash2 size={20} />
+                </button>
+              )}
             </div>
 
-            <div>
-              <label className="block text-sm mb-1">سعر هذا اللون</label>
-              <input
-                type="number"
-                value={variant.price || ""}
-                onChange={(e) =>
-                  onVariantChange(
-                    index,
-                    "price",
-                    parseFloat(e.target.value) || 0
-                  )
-                }
-                min="0"
-                step="0.01"
-                className="w-full p-2 border rounded"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm mb-1">الكمية *</label>
-              <input
-                type="number"
-                value={variant.stock || ""}
-                onChange={(e) =>
-                  onVariantChange(index, "stock", parseInt(e.target.value) || 0)
-                }
-                required
-                min="0"
-                className="w-full p-2 border rounded"
-              />
-            </div>
-          </div>
-
-          {/* المقاسات */}
-          <div className="mt-4">
-            <label className="block text-sm mb-2">المقاسات المتاحة *</label>
-            <div className="flex gap-2 mb-2">
-              <input
-                type="text"
-                value={sizeInputs[index] || ""}
-                onChange={(e) =>
-                  setSizeInputs((prev) => ({
-                    ...prev,
-                    [index]: e.target.value,
-                  }))
-                }
-                placeholder="أدخل مقاساً جديداً"
-                className="flex-1 p-2 border rounded"
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleAddSize(index);
-                  }
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => handleAddSize(index)}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-              >
-                إضافة
-              </button>
-            </div>
-
-            {variant.sizes?.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {variant.sizes.map((size: string, sizeIndex: number) => (
-                  <div
-                    key={sizeIndex}
-                    className="bg-blue-100 text-blue-800 px-3 py-1 rounded flex items-center gap-2"
-                  >
-                    {size}
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveSize(index, size)}
-                      className="text-blue-600 hover:text-blue-800"
-                    >
-                      <X size={14} />
-                    </button>
-                  </div>
-                ))}
+            {/* حقول المتغير الأساسية */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  اللون * <span className="text-gray-500">(مثال: أحمر، أزرق)</span>
+                </label>
+                <input
+                  type="text"
+                  value={variant.color}
+                  onChange={(e) => handleVariantChange(index, "color", e.target.value)}
+                  required
+                  className="w-full p-2 border rounded-lg"
+                  placeholder="أدخل اسم اللون"
+                />
               </div>
-            ) : (
-              <p className="text-sm text-gray-500">
-                لم يتم إضافة أي مقاسات بعد
-              </p>
-            )}
-          </div>
 
-          {/* الوصف */}
-          <div className="mt-4">
-            <label className="block text-sm mb-2">وصف المتغير</label>
-            <textarea
-              value={variant.description || ""}
-              onChange={(e) =>
-                onVariantChange(index, "description", e.target.value)
-              }
-              className="w-full p-2 border rounded"
-              rows={2}
-              placeholder="وصف خاص بهذا المتغير..."
-            />
-          </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  السعر <span className="text-gray-500">(دينار)</span>
+                </label>
+                <input
+                  type="number"
+                  value={variant.price || ""}
+                  onChange={(e) => handleVariantChange(index, "price", parseFloat(e.target.value) || 0)}
+                  min="0"
+                  step="0.01"
+                  className="w-full p-2 border rounded-lg"
+                />
+              </div>
 
-          {/* رفع الصور */}
-          <div className="mt-4">
-            <label className="block text-sm font-medium mb-2">
-              صور هذا اللون *
-            </label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
-              <input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={(e) => onImageUpload(e, index)}
-                className="hidden"
-                id={`image-upload-${index}`}
-              />
-              <label
-                htmlFor={`image-upload-${index}`}
-                className="cursor-pointer inline-flex items-center gap-2 bg-primary text-white px-3 py-2 rounded-lg text-sm"
-              >
-                <Upload size={16} />
-                رفع الصور
-              </label>
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  الكمية المتاحة *
+                </label>
+                <input
+                  type="number"
+                  value={variant.stock || ""}
+                  onChange={(e) => handleVariantChange(index, "stock", parseInt(e.target.value) || 0)}
+                  required
+                  min="0"
+                  className="w-full p-2 border rounded-lg"
+                />
+              </div>
+            </div>
 
-              {variant.images.length > 0 && (
-                <div className="mt-3 grid grid-cols-3 gap-2">
-                  {variant.images.map((image: string, imgIndex: number) => (
-                    <div key={imgIndex} className="relative">
-                      <div className="w-full h-20 relative">
-                        <Image
-                          unoptimized
-                          src={image}
-                          alt={`Variant ${index + 1} image ${imgIndex + 1}`}
-                          fill
-                          className="object-cover rounded"
-                        />
-                      </div>
+            {/* المقاسات */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2">المقاسات المتاحة</label>
+              <div className="flex gap-2 mb-2">
+                <input
+                  type="text"
+                  value={sizeInputs[index] || ""}
+                  onChange={(e) => setSizeInputs({ ...sizeInputs, [index]: e.target.value })}
+                  placeholder="أدخل مقاساً جديداً (مثال: M, L, XL)"
+                  className="flex-1 p-2 border rounded-lg"
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddSize(index);
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => handleAddSize(index)}
+                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg"
+                >
+                  إضافة
+                </button>
+              </div>
+
+              {variant.sizes.length > 0 ? (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {variant.sizes.map((size, sizeIndex) => (
+                    <div
+                      key={sizeIndex}
+                      className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center gap-2"
+                    >
+                      {size}
                       <button
                         type="button"
-                        onClick={() => onRemoveImage(index, imgIndex)}
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
+                        onClick={() => handleRemoveSize(index, size)}
+                        className="text-blue-600 hover:text-blue-800"
+                        title="حذف هذا المقاس"
                       >
-                        <X size={12} />
+                        <X size={14} />
                       </button>
                     </div>
                   ))}
                 </div>
+              ) : (
+                <p className="text-sm text-gray-500 mt-2">
+                  لم يتم إضافة أي مقاسات بعد
+                </p>
               )}
             </div>
+
+            {/* الوصف */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2">وصف المتغير</label>
+              <textarea
+                value={variant.description || ""}
+                onChange={(e) => handleVariantChange(index, "description", e.target.value)}
+                className="w-full p-2 border rounded-lg"
+                rows={2}
+                placeholder="وصف خاص بهذا اللون (اختياري)"
+              />
+            </div>
+
+            {/* رفع الصور */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2">
+                صور هذا اللون *
+                <span className="text-gray-500 text-xs mr-2"> (الصور المرفوعة حديثاً ستظهر بحدود زرقاء)</span>
+              </label>
+              
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                {/* زر رفع الصور */}
+                <div className="mb-4">
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={(e) => handleImageUpload(e, index)}
+                    className="hidden"
+                    id={`image-upload-${index}`}
+                  />
+                  <label
+                    htmlFor={`image-upload-${index}`}
+                    className="cursor-pointer inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90"
+                  >
+                    <Upload size={18} />
+                    رفع صور جديدة
+                  </label>
+                  <p className="text-xs text-gray-500 mt-1">
+                    يمكنك رفع أكثر من صورة في المرة الواحدة
+                  </p>
+                </div>
+
+                {/* عرض الصور */}
+                {variant.images.length > 0 ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    {variant.images.map((image, imgIndex) => {
+                      // تحديد إذا كانت الصورة مرفوعة حديثاً
+                      const isNewImage = imgIndex >= (variant.images.length - (variant.imageFiles?.length || 0));
+                      
+                      return (
+                        <div
+                          key={imgIndex}
+                          className={`relative rounded-lg overflow-hidden border-2 ${
+                            isNewImage ? 'border-blue-500' : 'border-gray-200'
+                          }`}
+                        >
+                          <div className="aspect-square relative bg-gray-100">
+                            <Image
+                              src={image}
+                              alt={`صورة ${imgIndex + 1}`}
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 200px) 100vw, 200px"
+                            />
+                            {isNewImage && (
+                              <div className="absolute top-1 left-1 bg-blue-500 text-white text-xs px-2 py-1 rounded">
+                                جديد
+                              </div>
+                            )}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(index, imgIndex)}
+                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                            title="حذف هذه الصورة"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-center text-gray-500 py-4">
+                    لم يتم رفع أي صور لهذا المتغير بعد
+                  </p>
+                )}
+              </div>
+              
+              <p className="text-xs text-gray-500 mt-2">
+                * الصور المطلوبة: رفع صورة واحدة على الأقل لكل لون
+              </p>
+            </div>
           </div>
-        </div>
-      ))}
+        ))
+      )}
     </div>
   );
 }

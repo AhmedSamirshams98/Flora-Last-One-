@@ -60,7 +60,7 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
       return (
         <div
           key={offer.id}
-          className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] rounded-lg overflow-hidden"
+          className="relative w-full min-h-[65vh] md:min-h-[600px] rounded-lg overflow-hidden"
           style={{ direction }}
         >
           <Image
@@ -77,7 +77,7 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent md:from-black/70 md:via-black/50 flex items-center">
             <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 font-gess">
-              <div className="max-w-full sm:max-w-md md:max-w-lg bg-black/20 md:bg-black/30 backdrop-blur-sm md:backdrop-blur-md rounded-xl md:rounded-2xl p-4 sm:p-6 md:p-8 border border-white/10 md:border-white/20 shadow-lg md:shadow-2xl">
+              <div className="max-w-full sm:max-w-md md:max-w-lg bg-black/10 backdrop-blur-sm  rounded-xl md:rounded-2xl p-4 sm:p-6 md:p-8 border border-white/10 md:border-white/20 shadow-md">
                 {offer.title && (
                   <h1 className="text-2xl md:text-4xl mb-2 sm:mb-3 md:mb-4 text-white font-bold drop-shadow-2xl leading-tight">
                     {isArabic ? offer.title : offer.titleEn}
@@ -213,7 +213,7 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
           content="شنط نسائية, أحذية نسائية, عروض فلورا ستور, flora store egypt, woman shoes, woman bags"
         />
       </Head>
-      <section id="offers" className="bg-secondary py-6" data-aos="fade-left">
+      <section id="offers" className=" py-6" data-aos="fade-left">
         <div className="container mx-auto px-4">
           <h1 className="font-gess text-center text-primary font-semibold text-3xl mb-2 mt-2">
             {t.offers.title}

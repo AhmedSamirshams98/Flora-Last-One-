@@ -8,20 +8,16 @@ import { usePathname } from "next/navigation";
 import { NAV_LINKS } from "@/constants/links";
 import SocialFooter from "./SocialFooter";
 
-// Import translations
 import en from "@/messages/en.json";
 import ar from "@/messages/ar.json";
 
 export default function Footer() {
   const pathname = usePathname();
 
-  // نفس طريقة MainNav
   const lang: "ar" | "en" = pathname.startsWith("/ar") ? "ar" : "en";
 
-  // Choose dictionary
   const t = lang === "ar" ? ar : en;
 
-  // Translation function
   const getText = (key: string): string => {
     const keys = key.split(".");
     let result: unknown = t;
@@ -48,7 +44,7 @@ export default function Footer() {
     <footer
       id="contact"
       className="bg-primary text-primary-foreground mt-6"
-      dir={lang === "ar" ? "rtl" : "ltr"} // 👈 هذا يجعل الاتجاه حسب اللغة فقط داخل الفوتر
+      dir={lang === "ar" ? "rtl" : "ltr"} 
     >
       <div className="container mx-auto px-4 py-8">
         <div
@@ -64,7 +60,7 @@ export default function Footer() {
               sizes="(max-width: 768px) 100vw, 1200px"
               src={logo}
               quality={75}
-              alt="Flora Logo"
+              alt="Flora فلورا "
               className="w-[30vw] md:w-[14vw]"
             />
 

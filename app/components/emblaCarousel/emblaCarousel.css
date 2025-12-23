@@ -7,7 +7,6 @@
   --slide-spacing: 0rem;
   direction: ltr;
   overflow: hidden;
-  
 }
 
 .embla__viewport {
@@ -17,7 +16,7 @@
 
 .embla__container {
   display: flex;
-  
+
   width: 100%;
   margin-left: calc(var(--slide-spacing) * -1);
   direction: ltr;
@@ -64,7 +63,7 @@
   gap: 1.5rem;
   background: rgba(253, 184, 0, 0.1);
   backdrop-filter: blur(8px);
-  padding: 0.5rem 1.25rem;
+  padding: 0.2rem 1.25rem;
   border-radius: 9999px;
 }
 
@@ -74,8 +73,8 @@
   border: 0;
   padding: 0;
   margin: 0;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -83,12 +82,13 @@
   background: transparent;
   color: primary;
   font-size: 2rem;
+  margin-bottom:0.5rem;
   font-weight: bold;
   transition: all 0.3s ease;
 }
 
 .embla__button:hover {
-  transform: scale(1.4);
+  transform: scale(1);
 }
 
 .embla__dots {
@@ -103,7 +103,7 @@
   appearance: none;
   background-color: transparent;
   touch-action: manipulation;
-  cursor: pointer;  
+  cursor: pointer;
   border: 0;
   padding: 0;
   margin: 0;
@@ -116,8 +116,8 @@
 
 .embla__dot:after {
   background-color: rgb(156 163 175); /* لون gray-400 للنقاط غير النشطة */
-  width: 0.625rem;
-  height: 0.625rem;
+  width: 0.8rem;
+  height: 0.8rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -127,7 +127,7 @@
 
 .embla__dot--selected:after {
   background-color: #6b4423;
-  width: 1rem;
-  height: 0.5rem;
-  border-radius: 0.25rem;
+  width: 0.8rem;
+  height:0.8rem;
+  border-radius: 1rem;
 }

@@ -18,6 +18,14 @@ export const metadata: Metadata = {
     "موضة",
     "تسوق أونلاين مصر",
     "فلورا ستور",
+    "flora bags",
+    "فلورا",
+    "FLORA",
+    "flora",
+    "flora shoes",
+    "Flora Shoes",
+    "Flora kafrelshiekh",
+    "فلورا كفر الشيخ",
     "flora store egypt",
     "flora kafrelshiekh",
     "flora leather product",
@@ -71,10 +79,16 @@ export default function RootLayout({
   return (
     <html lang="ar">
       <body className="">
-          <Head>
-      <meta name="description" content="Flora Egypt Your Premier destination for Luxurious Shoes and Bags . فلورا كفر الشيخ لأفضل صيحات الموضة في الشنط والأحذية" />
-      <meta name="keywords" content="شنط نسائية, أحذية نسائية, فلورا كفر الشيخ, موضة, تسوق أونلاين مصر, فلورا ستور, flora store egypt, flora kafrelshiekh, flora leather product, woman shoes, woman bags" />
-    </Head>
+        <Head>
+          <meta
+            name="description"
+            content="Flora Egypt Your Premier destination for Luxurious Shoes and Bags . فلورا كفر الشيخ لأفضل صيحات الموضة في الشنط والأحذية"
+          />
+          <meta
+            name="keywords"
+            content="شنط نسائية, أحذية نسائية, فلورا كفر الشيخ, موضة, تسوق أونلاين مصر, فلورا ستور, flora store egypt, flora kafrelshiekh, flora leather product, woman shoes, woman bags"
+          />
+        </Head>
         <Providers>
           <div className="sticky top-0 left-0 right-0 z-50 w-full">
             <MarqueeBanner />

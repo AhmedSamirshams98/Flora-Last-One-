@@ -180,9 +180,6 @@ export default function ReelsCarousel({ lang }: AboutSectionProps) {
   );
 }
 
-/* =========================
-   Reel Component
-========================= */
 const Reel = React.memo(
   ({
     reel,
@@ -208,8 +205,6 @@ const Reel = React.memo(
               src={reel.url}
               className="rounded-xl shadow-2xl w-full h-full"
               style={{ border: "none", overflow: "hidden" }}
-              scrolling="no"
-              frameBorder={0}
               loading="lazy"
               allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
               allowFullScreen
@@ -227,14 +222,6 @@ const Reel = React.memo(
     );
   }
 );
-
-/* =========================
-   Helpers
-========================= */
-function extractInstagramId(url: string) {
-  const match = url.match(/\/reel\/([^\/?]+)/);
-  return match ? match[1] : "";
-}
 
 function LoadingSkeleton() {
   return (
