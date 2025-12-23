@@ -36,10 +36,10 @@ export default function AboutSection({ lang }: AboutSectionProps) {
             return (
               <div
                 key={index}
-                className="text-center p-6 rounded-lg bg-secondary hover:shadow-lg transition-shadow"
+                className="text-center p-4 rounded-lg bg-secondary hover:shadow-lg transition-shadow"
               >
-                <div className="font-gess inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary text-primary-foreground mb-4">
-                  <Icon className="w-8 h-8" />
+                <div className="font-gess inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground mb-4">
+                  <Icon className="w-6 h-6" />
                 </div>
                 <h3 className="mb-2 text-primary font-gess">{feature.title}</h3>
               </div>
@@ -75,7 +75,7 @@ export default function AboutSection({ lang }: AboutSectionProps) {
             } grid grid-cols-1 md:grid-cols-2 gap-4 `}
           >
             {/* العملاء */}
-            <div className="bg-secondary p-8 rounded-lg text-center">
+            <div className="bg-secondary p-4 rounded-lg text-center">
               <p className="text-4xl text-primary mb-2">
                 +{" "}
                 <CountUp
@@ -92,25 +92,7 @@ export default function AboutSection({ lang }: AboutSectionProps) {
               <p className="text-muted-foreground">{t.stats.customers}</p>
             </div>
 
-            {/* المنتجات */}
-            <div className="bg-secondary p-8 rounded-lg text-center">
-              <p className="text-4xl text-primary mb-2">
-                +{" "}
-                <CountUp
-                  start={0}
-                  end={500}
-                  duration={3}
-                  enableScrollSpy
-                  scrollSpyDelay={100}
-                >
-                  {({ countUpRef }) => <span ref={countUpRef} />}
-                </CountUp>
-              </p>
-              <p className="text-muted-foreground">{t.stats.products}</p>
-            </div>
-
-            {/* الماركات */}
-            <div className="bg-secondary p-8 rounded-lg text-center">
+            <div className="bg-secondary p-4 rounded-lg text-center">
               <p className="text-4xl text-primary mb-2">
                 +{" "}
                 <CountUp
@@ -127,7 +109,7 @@ export default function AboutSection({ lang }: AboutSectionProps) {
             </div>
 
             {/* الرضا */}
-            <div className="bg-secondary p-8 rounded-lg text-center">
+            <div className="bg-secondary p-4 rounded-lg text-center">
               <p className="text-4xl text-primary mb-2">
                 <CountUp
                   start={0}

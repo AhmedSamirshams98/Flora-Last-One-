@@ -1,5 +1,5 @@
 import React from "react";
-import { FaInstagram } from "react-icons/fa";
+import { FaInstagram, FaWhatsapp } from "react-icons/fa";
 
 import { FaFacebookF } from "react-icons/fa";
 
@@ -16,6 +16,15 @@ const SocialFooter = () => {
         aria-label="Facebook"
       >
         <FaFacebookF className="w-5 h-5" />
+      </a>
+      <a
+        href="https://wa.me/201090770881"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="ml-2 "
+        title="Chat on WhatsApp"
+      >
+        <FaWhatsapp className="w-5 h-5 " />
       </a>
       <a
         href="https://www.instagram.com/flora.leather.product?igsh=MWJrMHg1OWxtbnBmdg=="

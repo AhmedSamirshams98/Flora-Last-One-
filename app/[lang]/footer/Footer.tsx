@@ -1,6 +1,5 @@
 "use client";
 
-import { Mail, Phone, MapPin } from "lucide-react";
 import logo from "@/public/images/logo.png";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -10,6 +9,7 @@ import SocialFooter from "./SocialFooter";
 
 import en from "@/messages/en.json";
 import ar from "@/messages/ar.json";
+import { Mail, MapPin, Phone } from "lucide-react";
 
 export default function Footer() {
   const pathname = usePathname();
@@ -44,7 +44,7 @@ export default function Footer() {
     <footer
       id="contact"
       className="bg-primary text-primary-foreground mt-6"
-      dir={lang === "ar" ? "rtl" : "ltr"} 
+      dir={lang === "ar" ? "rtl" : "ltr"}
     >
       <div className="container mx-auto px-4 py-8">
         <div
@@ -63,19 +63,28 @@ export default function Footer() {
               alt="Flora فلورا "
               className="w-[30vw] md:w-[14vw]"
             />
-
-            <p className="text-primary-foreground/80 mt-4 text-center lg:text-start font-bold ">
-              {lang === "ar"
-                ? "وجهتك المتميزة للحصول على الأحذية والحقائب الفاخرة"
-                : "Your premium destination for luxurious shoes and bags."}
+            <p className="text-primary-foreground/80 mt-4 text-center lg:text-start font-bold">
+              {lang === "ar" ? (
+                <span>
+                  مرحبًا بكم في فلورا مصر، وجهتكم المتميزة للأحذية والحقائب
+                  الفاخرة
+                  <br />
+                  ارتق بأناقتك مع فلورا
+                </span>
+              ) : (
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: `Welcome To Flora Egypt, Your premium destination for luxurious shoes and bags <br/> Elevate Your Elegance With Flora`,
+                  }}
+                />
+              )}
             </p>
 
             <div className="mt-4 lg:block">
               <SocialFooter />
             </div>
           </div>
-
-          {/* CONTACT */}
+            {/* CONTACT */}
           <div className={isDashboard ? "lg:col-span-2" : ""}>
             <ul className="space-y-4 text-right">
               <li className="flex items-start gap-3 text-primary-foreground/80">
@@ -88,8 +97,8 @@ export default function Footer() {
                   }`}
                 >
                   {lang === "ar"
-                    ? "كفر الشيخ شارع الخليفة المأمون بجوار فرع ڤودافون وبنك وفا التجاري"
-                    : "Kafr El Sheikh, Al-Khalifa Al-Maamoun Street next to Vodafone Branch & Wafa Bank"}
+                    ? "  شارع الخليفة المأمون بجوار فرع ڤودافون وبنك وفا التجاري"
+                    : " Al-Khalifa Al-Maamoun Street next to Vodafone Branch & Wafa Bank"}
                 </span>
               </li>
 
@@ -129,7 +138,11 @@ export default function Footer() {
           {/* NAVIGATION (TRANSLATED) */}
           {!isDashboard && (
             <div>
-              <ul className="space-y-2 text-center underline flex flex-col gap-3">
+              <ul
+                className={`space-y-2 text-center underline  text-primary-foreground/80  flex flex-row gap-3 ${
+                  lang === "ar" ? "gess" : "sans"
+                }`}
+              >
                 {NAV_LINKS.map((link) => (
                   <li key={link.href}>
                     <a
