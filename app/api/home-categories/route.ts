@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import path from "path";
 import fs from "fs/promises";
+import { ProductSubtype } from "@prisma/client";
 
 /* =========================
    GET – جلب جميع الأقسام
@@ -26,6 +27,7 @@ export async function POST(req: Request) {
     const formData = await req.formData();
     const file = formData.get("image") as File;
     const category = formData.get("category") as string;
+    const categoryValue: ProductSubtype = category as ProductSubtype; // تأكد أن القيمة صحيحة
 
     if (!file || !category) {
       return NextResponse.json(
@@ -38,11 +40,7 @@ export async function POST(req: Request) {
     const buffer = Buffer.from(bytes);
 
     const fileName = `${Date.now()}-${file.name}`;
-    const uploadPath = path.join(
-      process.cwd(),
-      "public/uploads",
-      fileName
-    );
+    const uploadPath = path.join(process.cwd(), "public/uploads", fileName);
 
     await fs.mkdir(path.dirname(uploadPath), { recursive: true });
     await fs.writeFile(uploadPath, buffer);
@@ -52,7 +50,7 @@ export async function POST(req: Request) {
     const created = await prisma.homeCategory.create({
       data: {
         image: imageUrl,
-        category,
+        category: categoryValue,
       },
     });
 
