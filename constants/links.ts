@@ -1,6 +1,7 @@
 export const ROUTES = {
   HOME: "/",
   PRODUCTS: "/products",
+  CONTACT: "/contact",
   CART: "/cart",
   OFFERS: "/offers",
   ORDERS: "/orders",
@@ -40,7 +41,7 @@ export const NAV_LINKS = [
     type: "page",
   },
   {
-    href: "#contact",
+    href: ROUTES.CONTACT,
     labelKey: "nav.contact",
     type: "anchor", 
     anchorId: "contact",

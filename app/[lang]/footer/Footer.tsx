@@ -84,56 +84,7 @@ export default function Footer() {
               <SocialFooter />
             </div>
           </div>
-            {/* CONTACT */}
-          <div className={isDashboard ? "lg:col-span-2" : ""}>
-            <ul className="space-y-4 text-right">
-              <li className="flex items-start gap-3 text-primary-foreground/80">
-                <MapPin className="w-5 h-5 mt-1" />
-                <span
-                  className={`${
-                    lang === "ar"
-                      ? "text-right font-bold "
-                      : "text-left font-bold "
-                  }`}
-                >
-                  {lang === "ar"
-                    ? "  شارع الخليفة المأمون بجوار فرع ڤودافون وبنك وفا التجاري"
-                    : " Al-Khalifa Al-Maamoun Street next to Vodafone Branch & Wafa Bank"}
-                </span>
-              </li>
 
-              <li className="flex items-center gap-3 font-bold  text-primary-foreground/80">
-                <Phone className="w-4 h-4" />
-                <a
-                  href="tel:+201090770881"
-                  className={`${
-                    lang === "ar" ? "font-gess" : "font-sans"
-                  } hover:text-accent`}
-                >
-                  01090770881
-                </a>
-                <Phone className="w-4 h-4" />
-                <a
-                  href="tel:+201090770883"
-                  className={`${
-                    lang === "ar" ? "font-gess" : "font-sans"
-                  } hover:text-accent`}
-                >
-                  01090770883
-                </a>
-              </li>
-
-              <li>
-                <a
-                  href="mailto:flora.leather.product@gmail.com"
-                  className="flex items-center gap-2 hover:text-accent font-sans  text-primary-foreground/80 font-bold "
-                >
-                  <Mail className="w-4 h-4" />
-                  flora.leather.product@gmail.com
-                </a>
-              </li>
-            </ul>
-          </div>
 
           {/* NAVIGATION (TRANSLATED) */}
           {!isDashboard && (
