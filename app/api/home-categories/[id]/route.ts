@@ -3,11 +3,13 @@ import { prisma } from "@/lib/prisma";
 import path from "path";
 import fs from "fs/promises";
 
-type ContextType = { params: { id: string } };
+// Remove the explicit ContextType and use Next.js's built-in types
+// params is now a Promise, so we need to await it
 
-export async function PUT(req: NextRequest, context: ContextType) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = context.params;
+    // Await the params promise
+    const { id } = await params;
     const formData = await req.formData();
     const file = formData.get("image") as File | null;
     const category = formData.get("category") as string;
@@ -41,9 +43,10 @@ export async function PUT(req: NextRequest, context: ContextType) {
   }
 }
 
-export async function DELETE(req: NextRequest, context: ContextType) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = context.params;
+    // Await the params promise
+    const { id } = await params;
     await prisma.homeCategory.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
