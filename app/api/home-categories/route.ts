@@ -1,8 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import path from "path";
-import fs from "fs/promises";
 import { ProductSubtype } from "@prisma/client";
+import { saveCategoryImage } from "@/lib/saveCategoryImage";
 
 /* =========================
    GET – جلب جميع الأقسام
@@ -12,6 +11,7 @@ export async function GET() {
     const categories = await prisma.homeCategory.findMany();
     return NextResponse.json(categories);
   } catch (error) {
+    console.error(error);
     return NextResponse.json(
       { error: "Failed to fetch categories" },
       { status: 500 }
@@ -22,12 +22,11 @@ export async function GET() {
 /* =========================
    POST – إضافة قسم جديد
 ========================= */
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("image") as File;
     const category = formData.get("category") as string;
-    const categoryValue: ProductSubtype = category as ProductSubtype; // تأكد أن القيمة صحيحة
 
     if (!file || !category) {
       return NextResponse.json(
@@ -36,26 +35,17 @@ export async function POST(req: Request) {
       );
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    const fileName = `${Date.now()}-${file.name}`;
-    const uploadPath = path.join(process.cwd(), "public/uploads", fileName);
-
-    await fs.mkdir(path.dirname(uploadPath), { recursive: true });
-    await fs.writeFile(uploadPath, buffer);
-
-    const imageUrl = `/uploads/${fileName}`;
-
+    const imageUrl = await saveCategoryImage(file);
     const created = await prisma.homeCategory.create({
       data: {
         image: imageUrl,
-        category: categoryValue,
+        category: category as ProductSubtype,
       },
     });
 
     return NextResponse.json(created, { status: 201 });
   } catch (error) {
+    console.error(error);
     return NextResponse.json(
       { error: "Failed to upload category" },
       { status: 500 }
