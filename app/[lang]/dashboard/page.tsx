@@ -48,6 +48,13 @@ export default function DashboardPage() {
       href: "/dashboard/marquee",
       color: "bg-yellow-500",
     },
+      {
+      title: "الاقسام   ",
+      description: "ادارة الاقسام     ",
+      icon: BarChart3,
+      href: "/dashboard/categories",
+      color: "bg-yellow-500",
+    },
   ];
 
   return (

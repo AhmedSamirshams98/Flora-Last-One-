@@ -2,6 +2,7 @@ import ProductsSection from "../components/HomeComponents/products/ProductsSecti
 import AboutSection from "../components/HomeComponents/AboutSection";
 import OffersSlider from "../components/HomeComponents/Offers/OffersSlider";
 import FacebookReelEmbed from "../components/HomeComponents/FacebookReelEmbed";
+import HomeCategoriesPage from "../components/HomeComponents/HomeCategories/page";
 
 interface PageProps {
   params: Promise<{ lang: "en" | "ar" }>; // ⭐ params هو Promise
@@ -13,9 +14,9 @@ const Page = async ({ params }: PageProps) => {
   return (
     <div className="relative top-0 overflow-hidden">
       <OffersSlider lang={lang} />
-      <FacebookReelEmbed lang={lang} />
-      <ProductsSection lang={lang} />
+      <HomeCategoriesPage lang={lang} />
       <AboutSection lang={lang} />
+      <FacebookReelEmbed lang={lang} />
     </div>
   );
 };

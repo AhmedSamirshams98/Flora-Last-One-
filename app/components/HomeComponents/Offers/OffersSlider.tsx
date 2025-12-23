@@ -75,9 +75,9 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
             sizes={IMAGE_SETTINGS.sizes}
             quality={75}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent md:from-black/70 md:via-black/50 flex items-center">
+          <div className="absolute left-0 right-0  bg-gradient-to-r  to-transparent md:from-black/70 md:via-black/50 flex items-center">
             <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 font-gess">
-              <div className="max-w-full sm:max-w-md md:max-w-lg bg-black/10 backdrop-blur-sm  rounded-xl md:rounded-2xl p-4 sm:p-6 md:p-8 border border-white/10 md:border-white/20 shadow-md">
+              <div className="max-w-full sm:max-w-md md:max-w-lg bg-black/20 backdrop-blur-lg  rounded-xl md:rounded-2xl p-4 sm:p-6 md:p-8 border border-white/10 md:border-white/20">
                 {offer.title && (
                   <h1 className="text-2xl md:text-4xl mb-2 sm:mb-3 md:mb-4 text-white font-bold drop-shadow-2xl leading-tight">
                     {isArabic ? offer.title : offer.titleEn}

@@ -101,6 +101,13 @@ enum PricingType {
   WITH_OFFER // مع عرض
 }
 
+model HomeCategory {
+  id        String        @id @default(cuid())
+  image     String
+  category  ProductSubtype
+
+  @@map("home_categories")
+}
 model Product {
   id   String @id @default(cuid())
   name String
