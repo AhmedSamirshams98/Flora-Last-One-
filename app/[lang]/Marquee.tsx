@@ -44,7 +44,7 @@ const MarqueeBanner = () => {
       : activeMarquee?.textEn || activeMarquee?.text;
 
   if (!displayText || !activeMarquee) {
-    return null; // لا تعرض شيء إذا لم يكن هناك نص
+    return null;
   }
 
   const marqueeContent = (

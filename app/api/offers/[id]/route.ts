@@ -1,67 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { OfferType } from "@prisma/client";
-import path from "path";
-import fs from "fs/promises";
-import { randomBytes } from "crypto";
+import { saveOfferImage } from "@/lib/uploadOfferImage";
 
-// ==================================
-// 📌 تكوين مجلد الرفع
-// ==================================
-const getUploadDir = () => {
-  if (process.env.NODE_ENV === "development") {
-    return path.join(process.cwd(), "public", "uploads", "offers");
-  }
-  return process.env.UPLOAD_DIR || "/var/www/flora/uploads/offers";
-};
-
-const UPLOAD_DIR = getUploadDir();
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
-const ALLOWED_MIME_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/gif",
-];
-
-// ==================================
-// 📌 دالة مساعدة لرفع الملفات
-// ==================================
-async function saveUploadedFile(file: File): Promise<string> {
-  try {
-    if (!ALLOWED_MIME_TYPES.includes(file.type)) {
-      throw new Error("نوع الملف غير مدعوم");
-    }
-
-    if (file.size > MAX_FILE_SIZE) {
-      throw new Error("حجم الملف أكبر من 5MB");
-    }
-
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    const timestamp = Date.now();
-    const randomStr = randomBytes(4).toString("hex");
-    const originalName = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
-    const filename = `${timestamp}-${randomStr}-${originalName}`;
-
-    await fs.mkdir(UPLOAD_DIR, { recursive: true });
-
-    const filePath = path.join(UPLOAD_DIR, filename);
-    await fs.writeFile(filePath, buffer);
-
-    console.log("Offer image saved to:", filePath);
-
-    return `/api/images/offers/${filename}`;
-  } catch (error) {
-    console.error("Error saving offer image:", error);
-    throw new Error("فشل في رفع ملف العرض");
-  }
-}
-
-// ==================================
-// 📌 UPDATE OFFER - مع دعم FormData
-// ==================================
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -73,7 +14,6 @@ export async function PUT(
       return NextResponse.json({ error: "معرّف العرض مطلوب" }, { status: 400 });
     }
 
-    // التحقق من وجود العرض
     const existingOffer = await prisma.offer.findUnique({
       where: { id },
     });
@@ -82,7 +22,6 @@ export async function PUT(
       return NextResponse.json({ error: "العرض غير موجود" }, { status: 404 });
     }
 
-    // استقبال FormData
     const formData = await request.formData();
     const dataString = formData.get("data") as string;
 
@@ -95,14 +34,12 @@ export async function PUT(
 
     const updateData = JSON.parse(dataString);
 
-    // ===== معالجة الصورة =====
     let imageUrl: string | null | undefined = undefined;
     const imageFile = formData.get("image") as File | null;
 
-    // الحالة 1: رفع صورة جديدة
     if (imageFile && imageFile.size > 0) {
       try {
-        imageUrl = await saveUploadedFile(imageFile);
+        imageUrl = await saveOfferImage(imageFile);
         console.log("✓ New offer image uploaded:", imageUrl);
       } catch (uploadError) {
         console.error("✗ Failed to upload offer image:", uploadError);
@@ -111,13 +48,10 @@ export async function PUT(
           { status: 400 }
         );
       }
-    }
-    // الحالة 2: حذف الصورة (إذا أرسل null)
-    else if (updateData.image === null) {
+    } else if (updateData.image === null) {
       imageUrl = null;
       console.log("✓ Offer image will be removed");
     }
-    // الحالة 3: استخدام الصورة الحالية أو رابط جديد
     else if (updateData.image !== undefined) {
       if (typeof updateData.image === "string") {
         imageUrl = updateData.image;
@@ -126,7 +60,6 @@ export async function PUT(
       }
     }
 
-    // ===== التحقق من البيانات حسب نوع العرض =====
     if (updateData.offerType !== undefined) {
       switch (updateData.offerType) {
         case OfferType.PERCENTAGE_DISCOUNT:
@@ -168,10 +101,8 @@ export async function PUT(
       }
     }
 
-    // ===== تحضير بيانات التحديث =====
     const updatePayload: any = {};
 
-    // الحقول النصية
     if (updateData.title !== undefined) updatePayload.title = updateData.title;
     if (updateData.titleEn !== undefined)
       updatePayload.titleEn = updateData.titleEn;
@@ -184,15 +115,12 @@ export async function PUT(
     if (updateData.descriptionEn !== undefined)
       updatePayload.descriptionEn = updateData.descriptionEn;
 
-    // حالة التفعيل
     if (updateData.isActive !== undefined)
       updatePayload.isActive = updateData.isActive;
 
-    // نوع العرض
     if (updateData.offerType !== undefined)
       updatePayload.offerType = updateData.offerType;
 
-    // الحقول العددية
     if (updateData.discountPercentage !== undefined) {
       updatePayload.discountPercentage = updateData.discountPercentage;
     }
@@ -209,7 +137,6 @@ export async function PUT(
       updatePayload.getQuantity = updateData.getQuantity;
     }
 
-    // التواريخ
     if (updateData.startDate !== undefined) {
       updatePayload.startDate = updateData.startDate
         ? new Date(updateData.startDate)
@@ -221,12 +148,10 @@ export async function PUT(
         : null;
     }
 
-    // تحديث الصورة (إذا تم تحديد قيمة)
     if (imageUrl !== undefined) {
       updatePayload.image = imageUrl;
     }
 
-    // ===== تنفيذ التحديث =====
     const offer = await prisma.offer.update({
       where: { id },
       data: updatePayload,
@@ -265,9 +190,6 @@ export async function PUT(
   }
 }
 
-// ==================================
-// 📌 DELETE OFFER
-// ==================================
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -297,7 +219,6 @@ export async function DELETE(
         });
       }
 
-      // 3. حذف العرض
       await tx.offer.delete({
         where: { id },
       });
@@ -310,7 +231,6 @@ export async function DELETE(
   } catch (error) {
     console.error("Error deleting offer:", error);
 
-    // التحقق من error.code بأمان
     if (error instanceof Error && "code" in error && error.code === "P2025") {
       return NextResponse.json({ error: "العرض غير موجود" }, { status: 404 });
     }

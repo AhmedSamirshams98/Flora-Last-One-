@@ -36,13 +36,11 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
     }))
   );
   const now = useMemo(() => new Date(), []);
-  // لا تحتاج الآن إلى nowDate
   const activeOffers = useMemo(
-    () => getActiveOffers(offers, now), // استخدم نفس now مرتين
+    () => getActiveOffers(offers, now),
     [offers, now]
   );
 
-  // إنشاء slides باستخدام useMemo
   const slides = useMemo(() => {
     return activeOffers.map((offer, index) => {
       const isFirst = index === 0;
@@ -75,17 +73,25 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
             sizes={IMAGE_SETTINGS.sizes}
             quality={75}
           />
-          <div className="absolute left-0 right-0  bg-gradient-to-r  to-transparent md:from-black/70 md:via-black/50 flex items-center">
-            <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 font-gess">
-              <div className="max-w-full sm:max-w-md md:max-w-lg bg-black/20 backdrop-blur-lg  rounded-xl md:rounded-2xl p-4 sm:p-6 md:p-8 border border-white/10 md:border-white/20">
+          <div className="absolute left-0 right-0 w-full  bg-gradient-to-r  to-transparent md:from-black/70 md:via-black/50 flex items-center">
+            <div className="container mx-auto px-10 ml-3 font-gess">
+              <div className="max-w-full sm:max-w-md md:max-w-lg bg-black/20 backdrop-blur-lg  rounded-xl md:rounded-2xl p-3 border border-white/10 md:border-white/20">
                 {offer.title && (
-                  <h1 className="text-2xl md:text-4xl mb-2 sm:mb-3 md:mb-4 text-white font-bold drop-shadow-2xl leading-tight">
+                  <h1
+                    className={` ${
+                      lang === "ar" ? "font-gess" : "font-sans"
+                    }  text-2xl md:text-4xl mb-2 sm:mb-3 md:mb-4 text-white font-bold drop-shadow-2xl leading-tight`}
+                  >
                     {isArabic ? offer.title : offer.titleEn}
                   </h1>
                 )}
 
                 {offer.subtitle && (
-                  <p className="text-white text-sm md:text-xl mb-1 sm:mb-2 font-light drop-shadow-lg">
+                  <p
+                    className={` ${
+                      lang === "ar" ? "font-gess" : "font-sans"
+                    } text-white text-sm md:text-xl mb-1 sm:mb-2 font-light drop-shadow-lg`}
+                  >
                     {isArabic ? offer.subtitle : offer.subtitleEn}
                   </p>
                 )}
@@ -138,7 +144,6 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
     });
   }, [activeOffers, t, lang]);
 
-  // مكون رسالة عدم وجود عروض
   const NoOffersMessage = ({ lang }: { lang: "ar" | "en" }) => (
     <div
       className="w-full h-[300px] sm:h-[400px] md:h-[500px] rounded-lg flex items-center justify-center"
@@ -179,7 +184,7 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
   }, []);
 
   useEffect(() => {
-    AOS.refresh(); // تحديث بعد تحميل الـ slides
+    AOS.refresh();
   }, [activeOffers]);
   if (loading) return <Skeleton />;
 
@@ -215,7 +220,7 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
       </Head>
       <section id="offers" className=" py-6" data-aos="fade-left">
         <div className="container mx-auto px-4">
-          <h1 className="font-gess text-center text-primary font-semibold text-3xl mb-2 mt-2">
+          <h1 className="font-gess text-center text-primary font-medium text-3xl mb-3 ">
             {t.offers.title}
           </h1>
           <EmblaCarousel slides={slides} options={EMBLA_OPTIONS} />

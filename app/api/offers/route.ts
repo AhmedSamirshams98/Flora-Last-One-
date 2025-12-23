@@ -1,68 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { OfferType } from "@prisma/client";
-import path from "path";
-import fs from "fs/promises";
-import { randomBytes } from "crypto";
+import { saveOfferImage } from "@/lib/uploadOfferImage";
 
-const getUploadDir = () => {
-  if (process.env.NODE_ENV === "development") {
-    return path.join(process.cwd(), "public", "uploads", "offers");
-  }
-  return process.env.UPLOAD_DIR || "/var/www/flora/uploads/offers";
-};
-
-const UPLOAD_DIR = getUploadDir();
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
-const ALLOWED_MIME_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/gif",
-];
-
-async function saveUploadedFile(file: File): Promise<string> {
-  try {
-    // التحقق من نوع الملف
-    if (!ALLOWED_MIME_TYPES.includes(file.type)) {
-      throw new Error("نوع الملف غير مدعوم");
-    }
-
-    // التحقق من حجم الملف
-    if (file.size > MAX_FILE_SIZE) {
-      throw new Error("حجم الملف أكبر من 5MB");
-    }
-
-    // قراءة الملف
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // إنشاء اسم فريد للملف
-    const timestamp = Date.now();
-    const randomStr = randomBytes(4).toString("hex");
-    const originalName = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
-    const filename = `${timestamp}-${randomStr}-${originalName}`;
-
-    // التأكد من وجود مجلد الرفع
-    await fs.mkdir(UPLOAD_DIR, { recursive: true });
-
-    // حفظ الملف
-    const filePath = path.join(UPLOAD_DIR, filename);
-    await fs.writeFile(filePath, buffer);
-
-    console.log("Offer image saved to:", filePath);
-
-    // إرجاع المسار العام للصورة
-    return `/api/images/offers/${filename}`;
-  } catch (error) {
-    console.error("Error saving offer image:", error);
-    throw new Error("فشل في رفع ملف العرض");
-  }
-}
-
-// ==================================
-// 📌 GET ALL OFFERS
-// ==================================
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -96,9 +36,6 @@ export async function GET(request: Request) {
   }
 }
 
-// ==================================
-// 📌 CREATE OFFER - مع دعم رفع الصور
-// ==================================
 export async function POST(request: NextRequest) {
   try {
     // استقبال FormData
@@ -131,7 +68,7 @@ export async function POST(request: NextRequest) {
     // إذا كان هناك ملف صورة مرفوع
     if (imageFile && imageFile.size > 0) {
       try {
-        imageUrl = await saveUploadedFile(imageFile);
+        imageUrl = await saveOfferImage(imageFile);
         console.log("✓ Offer image uploaded:", imageUrl);
       } catch (uploadError) {
         console.error("✗ Failed to upload offer image:", uploadError);

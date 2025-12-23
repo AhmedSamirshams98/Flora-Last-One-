@@ -20,9 +20,6 @@ export default function ReelsCarousel({ lang }: AboutSectionProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  /* =========================
-     Fetch Reels
-  ========================= */
   useEffect(() => {
     const fetchReels = async () => {
       try {
@@ -39,9 +36,6 @@ export default function ReelsCarousel({ lang }: AboutSectionProps) {
     fetchReels();
   }, []);
 
-  /* =========================
-     AOS
-  ========================= */
   useEffect(() => {
     AOS.init({ duration: 800, once: true });
   }, []);
@@ -50,9 +44,6 @@ export default function ReelsCarousel({ lang }: AboutSectionProps) {
     AOS.refresh();
   }, [reels]);
 
-  /* =========================
-     Navigation
-  ========================= */
   const nextReel = useCallback(() => {
     setCurrentIndex((prev) => (prev === reels.length - 1 ? 0 : prev + 1));
   }, [reels.length]);
