@@ -54,15 +54,11 @@ export default function ReelsCarousel({ lang }: AboutSectionProps) {
      Navigation
   ========================= */
   const nextReel = useCallback(() => {
-    setCurrentIndex((prev) =>
-      prev === reels.length - 1 ? 0 : prev + 1
-    );
+    setCurrentIndex((prev) => (prev === reels.length - 1 ? 0 : prev + 1));
   }, [reels.length]);
 
   const prevReel = useCallback(() => {
-    setCurrentIndex((prev) =>
-      prev === 0 ? reels.length - 1 : prev - 1
-    );
+    setCurrentIndex((prev) => (prev === 0 ? reels.length - 1 : prev - 1));
   }, [reels.length]);
 
   const goToReel = (index: number) => setCurrentIndex(index);
@@ -96,9 +92,7 @@ export default function ReelsCarousel({ lang }: AboutSectionProps) {
     return (
       <div className="text-center py-12">
         <p className="text-gray-500">
-          {lang === "ar"
-            ? "لا توجد Reels متاحة حالياً"
-            : "No Reels available"}
+          {lang === "ar" ? "لا توجد Reels متاحة حالياً" : "No Reels available"}
         </p>
       </div>
     );
@@ -211,9 +205,7 @@ const Reel = React.memo(
         {shouldRender ? (
           <div className="relative aspect-[9/16] w-full">
             <iframe
-              src={`https://www.instagram.com/reel/${extractInstagramId(
-                reel.url
-              )}/embed`}
+              src={reel.url}
               className="rounded-xl shadow-2xl w-full h-full"
               style={{ border: "none", overflow: "hidden" }}
               scrolling="no"
