@@ -1,28 +1,26 @@
 "use client";
 
-import { useState, useEffect } from "react"; // 🔥 إضافة useEffect
+import { useState, useEffect } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { productTranslations } from "@/lib/translations/products";
 import { Category, Subcategory, useFiltersStore } from "@/store/filters-store";
-import { useShallow } from "zustand/shallow";
 import { useRouter } from "next/navigation";
 
 interface MobileNavFiltersProps {
   lang: "ar" | "en";
   onClose?: () => void;
-  selectedCategory: "SHOE" | "BAG" | null; // 🔥 إضافة prop جديد
-  onSubcategorySelected?: () => void; // 🔥 callback عند اختيار النوع الفرعي
+  selectedCategory: "SHOE" | "BAG" | null;
+  onSubcategorySelected?: () => void;
 }
 
 export default function MobileNavFilters({
   lang,
   onClose,
-  selectedCategory, // 🔥 استقبال الفئة المحددة
-  onSubcategorySelected, // 🔥 استقبال callback
+  selectedCategory,
+  onSubcategorySelected,
 }: MobileNavFiltersProps) {
   const router = useRouter();
 
-  // 🔥 عند تلقي selectedCategory، اجعلها مباشرة النظرة النشطة
   useEffect(() => {
     if (selectedCategory) {
       setActiveView(selectedCategory === "SHOE" ? "shoes" : "bags");
@@ -33,15 +31,6 @@ export default function MobileNavFilters({
     selectedCategory ? (selectedCategory === "SHOE" ? "shoes" : "bags") : "main"
   );
 
-  const { setCategory, setSubcategory, reset } = useFiltersStore(
-    useShallow((s) => ({
-      setCategory: s.setCategory,
-      setSubcategory: s.setSubcategory,
-      reset: s.reset,
-    }))
-  );
-
-  // تعريف الفئات الرئيسية
   const mainCategories = [
     {
       id: "SHOE",
@@ -103,12 +92,20 @@ export default function MobileNavFilters({
   };
 
   const handleSubcategoryClick = (subcategoryId: Subcategory) => {
-    setCategory(activeView === "shoes" ? "SHOE" : "BAG");
-    setSubcategory(subcategoryId);
-    router.push("/products");
+    if (!subcategoryId) return;
+
+    const category = activeView === "shoes" ? "SHOE" : "BAG";
+
+    const basePath = lang === "ar" ? "/ar/products" : "/products";
+    const params = new URLSearchParams();
+
+    params.set("category", category);
+    params.set("subcategory", subcategoryId);
+
+    router.push(`${basePath}?${params.toString()}`);
 
     if (onSubcategorySelected) {
-      onSubcategorySelected(); // 🔥 استدعاء callback
+      onSubcategorySelected();
     }
 
     if (onClose) {

@@ -22,12 +22,12 @@ export const NAV_LINKS = [
   {
     href: ROUTES.HOME,
     labelKey: "nav.home",
-    type: "page", 
+    type: "page",
   },
   {
     href: "#about",
     labelKey: "nav.about",
-    type: "anchor", 
+    type: "anchor",
     anchorId: "about",
   },
   {
@@ -43,8 +43,7 @@ export const NAV_LINKS = [
   {
     href: ROUTES.CONTACT,
     labelKey: "nav.contact",
-    type: "anchor", 
-    anchorId: "contact",
+    type: "page",
   },
 ] as const;
 

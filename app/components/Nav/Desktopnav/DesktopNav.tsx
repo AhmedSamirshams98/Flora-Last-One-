@@ -6,6 +6,7 @@ import { DesktopNavProps } from "@/types/nav";
 import UserMenu from "./UserMenu";
 import NavLinks from "./NavLinks";
 import React from "react";
+import { useRouter } from "next/navigation";
 
 const DesktopNav = ({
   totalItems,
@@ -13,12 +14,23 @@ const DesktopNav = ({
   toggleLang,
   lang,
 }: DesktopNavProps) => {
+  const router = useRouter();
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    router.push("/");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
   return (
     <nav className="bg-primary/85 backdrop-blur-2xl text-primary-foreground z-40">
       <div className="container mx-auto px-3 py-3">
         <div className="flex flex-row justify-between items-center">
           <div className="flex items-center">
-            <Link href="/" aria-label="Flora Store Homepage">
+            <Link
+              onClick={handleClick}
+              href="/"
+              aria-label="Flora Store Homepage"
+            >
               <Image
                 sizes="(max-width: 768px) 100vw, 1200px"
                 src={logo}

@@ -3,6 +3,9 @@ import { Award, Truck, Heart } from "lucide-react";
 import CountUp from "react-countup";
 import en from "@/messages/en.json";
 import ar from "@/messages/ar.json";
+import { useEffect } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 interface AboutSectionProps {
   lang: "ar" | "en";
@@ -11,6 +14,13 @@ interface AboutSectionProps {
 export default function AboutSection({ lang }: AboutSectionProps) {
   const t = lang === "ar" ? ar : en;
 
+  useEffect(() => {
+    AOS.init({
+      duration: 1000, // مدة الانيميشن بالمللي ثانية
+      once: true, // الانيميشن يظهر مرة واحدة فقط
+    });
+  }, []);
+
   const features = [
     { icon: Award, title: t.about.features.quality },
     { icon: Truck, title: t.about.features.shipping },
@@ -18,25 +28,31 @@ export default function AboutSection({ lang }: AboutSectionProps) {
   ];
 
   return (
-    <section id="about" className=" bg-card">
+    <section id="about">
       <div className="container mx-auto px-4">
-        {/* العنوان */}
-        <div className="text-center mb-6">
-          <h2 className="text-4xl mb-4 text-primary font-gess font-semibold">
+        <div className="text-center mb-2" data-aos="fade-down">
+          <h2
+            className={`${
+              lang === "ar" ? "font-gess" : "font-sans"
+            } text-4xl mb-4 text-primary font-medium`}
+          >
             {t.about.title}
           </h2>
-          <p className="max-w-2xl mx-auto text-muted-foreground font-gess font-semibold text-center">
+          <p className="max-w-2xl mx-auto text-muted-foreground font-gess font-medium text-center">
             {t.about.subtitle}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* الكروت */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 mt-8 gap-4">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
               <div
                 key={index}
                 className="text-center p-4 rounded-lg bg-secondary hover:shadow-lg transition-shadow"
+                data-aos="fade-up"
+                data-aos-delay={index * 150} // تأخير متدرج لكل كرت
               >
                 <div className="font-gess inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground mb-4">
                   <Icon className="w-6 h-6" />
@@ -48,22 +64,22 @@ export default function AboutSection({ lang }: AboutSectionProps) {
         </div>
 
         {/* العداد */}
-        <div className="mt-16 grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h3 className="text-3xl mb-4 text-primary text-center  font-gess">
+        <div className="mt-8 grid md:grid-cols-2 gap-8 items-center">
+          <div data-aos="fade-right">
+            <h3 className="text-3xl mb-4 text-primary text-center font-gess">
               {t.about.storyTitle}
             </h3>
             <p
-              className={`mb-4 text-muted-foreground font-semibold  text-center  ${
-                lang === "ar" ? "font-gess" : "font-sans font-semibold "
-              } `}
+              className={`mb-4 text-muted-foreground font-semibold text-center ${
+                lang === "ar" ? "font-gess" : "font-sans font-semibold"
+              }`}
             >
               {t.about.storyText1}
             </p>
             <p
-              className={` text-muted-foreground font-semibold  text-center  ${
-                lang === "ar" ? "font-gess" : "font-sans font-semibold "
-              } `}
+              className={`text-muted-foreground font-semibold text-center ${
+                lang === "ar" ? "font-gess" : "font-sans font-semibold"
+              }`}
             >
               {t.about.storyText2}
             </p>
@@ -72,10 +88,14 @@ export default function AboutSection({ lang }: AboutSectionProps) {
           <div
             className={`${
               lang === "ar" ? "font-gess" : "font-sans"
-            } grid grid-cols-1 md:grid-cols-2 gap-4 `}
+            } grid grid-cols-1 md:grid-cols-2 gap-4`}
           >
             {/* العملاء */}
-            <div className="bg-secondary p-4 rounded-lg text-center">
+            <div
+              className="bg-secondary p-6 rounded-lg text-center"
+              data-aos="fade-up"
+              data-aos-delay={100}
+            >
               <p className="text-4xl text-primary mb-2">
                 +{" "}
                 <CountUp
@@ -92,7 +112,11 @@ export default function AboutSection({ lang }: AboutSectionProps) {
               <p className="text-muted-foreground">{t.stats.customers}</p>
             </div>
 
-            <div className="bg-secondary p-4 rounded-lg text-center">
+            <div
+              className="bg-secondary p-4 rounded-lg text-center"
+              data-aos="fade-up"
+              data-aos-delay={200}
+            >
               <p className="text-4xl text-primary mb-2">
                 +{" "}
                 <CountUp
@@ -109,7 +133,11 @@ export default function AboutSection({ lang }: AboutSectionProps) {
             </div>
 
             {/* الرضا */}
-            <div className="bg-secondary p-4 rounded-lg text-center">
+            <div
+              className="bg-secondary lg:col-span-2 p-4 rounded-lg text-center"
+              data-aos="fade-up"
+              data-aos-delay={300}
+            >
               <p className="text-4xl text-primary mb-2">
                 <CountUp
                   start={0}

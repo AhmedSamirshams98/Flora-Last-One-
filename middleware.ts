@@ -21,12 +21,13 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith(`/${lang}`)
   );
 
-if (!pathnameHasLang) {
-  const languageFromCookie = request.cookies.get("lang")?.value || defaultLang;
-  return NextResponse.redirect(
-    new URL(`/${languageFromCookie}${pathname}`, request.url)
-  );
-}
+  if (!pathnameHasLang) {
+    const languageFromCookie =
+      request.cookies.get("lang")?.value || defaultLang;
+    return NextResponse.redirect(
+      new URL(`/${languageFromCookie}${pathname}`, request.url)
+    );
+  }
 
   // استخراج اللغة الحالية من الرابط
   const currentLang = pathname.split("/")[1];

@@ -65,10 +65,6 @@ model Address {
   @@map("addresses")
 }
 
-// ============================================
-// 📌 PRODUCTS & VARIANTS
-// ============================================
-
 enum ProductType {
   SHOE
   BAG
@@ -102,12 +98,14 @@ enum PricingType {
 }
 
 model HomeCategory {
-  id        String        @id @default(cuid())
-  image     String
-  category  ProductSubtype
+  id          String          @id @default(cuid())
+  image       String
+  category    ProductType
+  subcategory ProductSubtype? // هنا
 
   @@map("home_categories")
 }
+
 model Product {
   id   String @id @default(cuid())
   name String
@@ -310,7 +308,6 @@ model Wishlist {
   @@unique([userId, productId])
   @@map("wishlists")
 }
-
 
 //reels 
 model ReelVideo {

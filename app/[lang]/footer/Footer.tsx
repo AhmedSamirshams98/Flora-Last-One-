@@ -2,17 +2,19 @@
 
 import logo from "@/public/images/logo.png";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { NAV_LINKS } from "@/constants/links";
 import SocialFooter from "./SocialFooter";
 
 import en from "@/messages/en.json";
 import ar from "@/messages/ar.json";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { handleNavLinkClick } from "@/lib/navigation";
+import Link from "next/link";
 
 export default function Footer() {
   const pathname = usePathname();
+  const router = useRouter();
 
   const lang: "ar" | "en" = pathname.startsWith("/ar") ? "ar" : "en";
 
@@ -51,7 +53,7 @@ export default function Footer() {
           className={`grid ${
             isDashboard
               ? "grid-cols-1 lg:grid-cols-2"
-              : "grid-cols-1 lg:grid-cols-3"
+              : "grid-cols-1 lg:grid-cols-2"
           } items-center place-items-center gap-8 font-gess`}
         >
           {/* BRAND */}
@@ -63,7 +65,7 @@ export default function Footer() {
               alt="Flora فلورا "
               className="w-[30vw] md:w-[14vw]"
             />
-            <p className="text-primary-foreground/80 mt-4 text-center lg:text-start font-bold">
+            <p className="text-primary-foreground/80 mt-4 text-center lg:text-start font-medium">
               {lang === "ar" ? (
                 <span>
                   مرحبًا بكم في فلورا مصر، وجهتكم المتميزة للأحذية والحقائب
@@ -85,31 +87,37 @@ export default function Footer() {
             </div>
           </div>
 
+          <div>
+            <ul className="space-y-2 text-center underline text-primary-foreground/80 flex flex-row gap-3">
+              {NAV_LINKS.map((link) => {
+                const isAnchor = link.type === "anchor";
 
-          {/* NAVIGATION (TRANSLATED) */}
-          {!isDashboard && (
-            <div>
-              <ul
-                className={`space-y-2 text-center underline  text-primary-foreground/80  flex flex-row gap-3 ${
-                  lang === "ar" ? "gess" : "sans"
-                }`}
-              >
-                {NAV_LINKS.map((link) => (
+                return (
                   <li key={link.href}>
-                    <a
-                      href={`/${lang}${link.href}`}
-                      className="hover:text-accent"
-                    >
-                      {getText(link.labelKey)}
-                    </a>
+                    {isAnchor ? (
+                      <button
+                        onClick={() =>
+                          handleNavLinkClick(link, pathname, lang, router)
+                        }
+                        className="hover:text-accent underline bg-transparent border-0 cursor-pointer"
+                      >
+                        {getText(link.labelKey)}
+                      </button>
+                    ) : (
+                      <Link
+                        href={`/${lang}${link.href}`}
+                        className="hover:text-accent underline"
+                      >
+                        {getText(link.labelKey)}
+                      </Link>
+                    )}
                   </li>
-                ))}
-              </ul>
-            </div>
-          )}
+                );
+              })}
+            </ul>
+          </div>
         </div>
 
-        {/* BOTTOM */}
         <div
           className={` ${
             lang === "ar" ? "font-gess" : "font-sans"
@@ -124,7 +132,7 @@ export default function Footer() {
           <a
             href="https://wa.me/201040151413"
             target="_blank"
-            className={`flex items-center justify-center gap-2 mt-3 hover:text-accent  underline font-bold ${
+            className={`flex items-center justify-center gap-2 mt-3 hover:text-accent  underline font-medium ${
               lang === "ar" ? "font-gess text-md" : "font-sans text-xs"
             }`}
           >

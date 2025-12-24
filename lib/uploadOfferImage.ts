@@ -12,7 +12,12 @@ const getUploadDir = () => {
 
 const UPLOAD_DIR = getUploadDir();
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
-const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+const ALLOWED_MIME_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+];
 
 /**
  * حفظ الصورة مع ضغطها وتحويلها إلى WebP
@@ -35,8 +40,8 @@ export async function saveOfferImage(file: File): Promise<string> {
 
   // ضغط وتحويل الصورة إلى WebP
   const compressedBuffer = await sharp(buffer)
-    .resize({ width: 1200 }) // أقصى عرض 1200px
-    .webp({ quality: 75 })   // ضغط بنسبة 75%
+    .resize({ width: 410, height: 535, fit: "cover" }) // يطابق أبعاد العرض
+    .webp({ quality: 75 })
     .toBuffer();
 
   const filename = `${timestamp}-${randomStr}-${originalName}.webp`;

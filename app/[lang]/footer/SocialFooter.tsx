@@ -1,48 +1,57 @@
+"use client";
+
 import React from "react";
-import { FaInstagram, FaWhatsapp } from "react-icons/fa";
-
-import { FaFacebookF } from "react-icons/fa";
-
+import { usePathname } from "next/navigation";
+import { FaInstagram, FaWhatsapp, FaFacebookF } from "react-icons/fa";
 import { FaTiktok } from "react-icons/fa6";
 
 const SocialFooter = () => {
+  const pathname = usePathname();
+
+  const isContactPage = pathname === "/contact" || pathname === "/ar/contact";
+
+  const iconClass = isContactPage ? "w-5 h-5 text-primary" : "w-5 h-5"; // بدون لون → يرث اللون
+
   return (
     <div className="flex gap-4 w-full items-center justify-center">
       <a
         href="https://www.facebook.com/share/1BT3kJVN5D/?mibextid=wwXIfr"
         target="_blank"
         rel="noopener noreferrer"
-        className="hover:text-accent transition-colors"
         aria-label="Facebook"
+        className="hover:text-accent transition-colors"
       >
-        <FaFacebookF className="w-5 h-5" />
+        <FaFacebookF className={iconClass} />
       </a>
+
       <a
         href="https://wa.me/201090770881"
         target="_blank"
         rel="noopener noreferrer"
-        className="ml-2 "
         title="Chat on WhatsApp"
+        className="hover:text-accent transition-colors"
       >
-        <FaWhatsapp className="w-5 h-5 " />
+        <FaWhatsapp className={iconClass} />
       </a>
+
       <a
-        href="https://www.instagram.com/flora.leather.product?igsh=MWJrMHg1OWxtbnBmdg=="
+        href="https://www.instagram.com/flora.leather.product"
         target="_blank"
         rel="noopener noreferrer"
-        className="hover:text-accent transition-colors"
         aria-label="Instagram"
+        className="hover:text-accent transition-colors"
       >
-        <FaInstagram className="w-5 h-5" />
+        <FaInstagram className={iconClass} />
       </a>
+
       <a
         href="https://www.tiktok.com/@flora.leather.product"
         target="_blank"
         rel="noopener noreferrer"
-        className="hover:text-accent transition-colors"
         aria-label="TikTok"
+        className="hover:text-accent transition-colors"
       >
-        <FaTiktok />
+        <FaTiktok className={iconClass} />
       </a>
     </div>
   );

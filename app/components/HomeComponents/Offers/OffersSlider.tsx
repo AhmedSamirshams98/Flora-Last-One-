@@ -58,7 +58,7 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
       return (
         <div
           key={offer.id}
-          className="relative w-full min-h-[65vh] md:min-h-[600px] rounded-lg overflow-hidden"
+          className="relative w-full min-h-[65vh] md:min-h-[500px] rounded-lg overflow-hidden"
           style={{ direction }}
         >
           <Image
@@ -70,7 +70,7 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
             }
             className="w-full h-full object-cover"
             priority={isFirst}
-            sizes={IMAGE_SETTINGS.sizes}
+            sizes="(max-width: 640px) 100vw, 410px"
             quality={75}
           />
           <div className="absolute left-0 right-0 w-full  bg-gradient-to-r  to-transparent md:from-black/70 md:via-black/50 flex items-center">
@@ -146,7 +146,7 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
 
   const NoOffersMessage = ({ lang }: { lang: "ar" | "en" }) => (
     <div
-      className="w-full h-[300px] sm:h-[400px] md:h-[500px] rounded-lg flex items-center justify-center"
+      className="w-full min-h-[65vh] md:min-h-[500px] rounded-lg flex items-center justify-center"
       style={{ background: GRADIENT_STYLES.withoutImage }}
     >
       <div className="text-center flex flex-col items-center gap-2 p-8">
@@ -163,7 +163,7 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
           height={IMAGE_SETTINGS.logoSize.height}
           sizes="176px"
         />
-        <h3 className="text-2xl md:text-3xl font-bold mt-6 text-white mb-2 font-gess drop-shadow-lg">
+        <h3 className="text-2xl md:text-3xl font-medium mt-3 text-white mb-2 font-gess drop-shadow-lg">
           {lang === "ar" ? "لا توجد عروض حالياً" : "No Offers Available"}
         </h3>
         <p className="text-white/90 font-gess drop-shadow-md">
@@ -190,9 +190,9 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
 
   if (activeOffers.length === 0) {
     return (
-      <section id="offers" className="bg-secondary py-6" data-aos="fade-left">
+      <section id="offers" className=" py-6" data-aos="fade-left">
         <div className="container mx-auto px-4">
-          <h1 className="font-gess font-semibold text-center text-primary text-3xl mb-6 mt-2">
+          <h1 className="font-gess font-medium text-center text-primary text-3xl mb-6 mt-2">
             {t.offers.title}
           </h1>
           <NoOffersMessage lang={lang} />

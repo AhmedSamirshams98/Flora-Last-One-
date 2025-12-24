@@ -54,9 +54,6 @@ export default function ReelsCarousel({ lang }: AboutSectionProps) {
 
   const goToReel = (index: number) => setCurrentIndex(index);
 
-  /* =========================
-     Touch Handling
-  ========================= */
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
 
@@ -93,10 +90,10 @@ export default function ReelsCarousel({ lang }: AboutSectionProps) {
      Render
   ========================= */
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="max-w-6xl mx-auto mt-2  px-4 py-8">
       <div className="mb-8 text-center">
         <h2
-          className={`text-3xl font-bold mb-2 ${
+          className={`text-3xl font-medium mb-2 ${
             lang === "ar" ? "font-gess" : "font-sans"
           }`}
         >
@@ -108,7 +105,7 @@ export default function ReelsCarousel({ lang }: AboutSectionProps) {
         {/* Previous */}
         <button
           onClick={prevReel}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white/80 hover:bg-white p-3 rounded-full shadow-lg backdrop-blur-sm transition-all hover:scale-110"
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white hover:bg-white p-3 rounded-full shadow-lg backdrop-blur-sm transition-all hover:scale-110"
           aria-label={lang === "ar" ? "السابق" : "Previous"}
         >
           <ChevronLeft className="w-6 h-6" />
@@ -191,7 +188,7 @@ const Reel = React.memo(
     return (
       <div className="w-full flex-shrink-0 px-2 relative">
         {shouldRender ? (
-          <div className="relative aspect-[9/16] w-full">
+          <div className="relative w-full aspect-[9/16]    sm:aspect-[16/9]  md:aspect-[4/3]  lg:aspect-[16/9]   ">
             <iframe
               src={reel.url}
               className="rounded-xl shadow-2xl w-full h-full"

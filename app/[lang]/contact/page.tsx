@@ -26,19 +26,19 @@ const Contact = () => {
       }`}
       dir={lang === "ar" ? "rtl" : "ltr"}
     >
-      <h2 className="text-2xl text-center font-bold mb-6">
+      <h2 className={`${lang==="ar" ? "font-gess":"font-sans"} text-3xl text-center text-primary font-medium   mb-6`}>
         {lang === "ar" ? "تواصل معنا" : "Contact Us"}
       </h2>
 
       <ul className="space-y-4">
         {/* العنوان */}
-        <li className="flex items-start gap-3 font-bold">
+        <li className="flex items-start gap-3 text-primary font-medium">
           <MapPin className="w-5 h-5 mt-1" />
           <span>{address[lang]}</span>
         </li>
 
         {/* أرقام الهاتف */}
-        <li className="flex items-center gap-3 font-bold">
+        <li className="flex items-center gap-3 text-primary font-medium">
           {phones.map((phone, idx) => (
             <React.Fragment key={idx}>
               <Phone className="w-4 h-4" />
@@ -55,11 +55,11 @@ const Contact = () => {
         </li>
 
         {/* البريد الإلكتروني */}
-        <li className="flex items-center gap-2 font-bold">
+        <li className="flex items-center gap-2 font-medium text-primary">
           <Mail className="w-4 h-4" />
           <a
             href={`mailto:${email}`}
-            className="hover:text-accent font-sans text-black"
+            className=" font-sans text-pruimary"
           >
             {email}
           </a>
