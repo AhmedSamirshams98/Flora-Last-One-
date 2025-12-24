@@ -5,10 +5,10 @@ import { saveCategoryImage } from "@/lib/saveCategoryImage";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } } // ✅ تم التعديل هنا
 ) {
   try {
-    const { id } = await params;
+    const { id } =  params;
     const formData = await req.formData();
     const file = formData.get("image") as File | null;
     const categoryStr = formData.get("category") as string;
