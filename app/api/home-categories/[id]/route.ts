@@ -5,10 +5,10 @@ import { saveCategoryImage } from "@/lib/saveCategoryImage";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> } // ✅ Fixed - params is now a Promise
 ) {
   try {
-    const { id } = await params;
+    const { id } = await params; // ✅ Await the params
     const formData = await req.formData();
     const file = formData.get("image") as File | null;
     const categoryStr = formData.get("category") as string;
@@ -80,10 +80,10 @@ export async function PUT(
 ========================= */
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } } // ✅ تم التعديل هنا
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } =  params;
+    const { id } = await params;
     await prisma.homeCategory.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
