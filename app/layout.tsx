@@ -6,62 +6,23 @@ import Footer from "./[lang]/footer/Footer";
 import { Toaster } from "sonner";
 import Head from "next/head";
 import { Providers } from "./providers";
+
 export const metadata: Metadata = {
-  title: "Flora Store | شنط وأحذية نسائية في مصر ",
+  title: "Flora Store | شنط وأحذية نسائية في مصر",
   applicationName: "Flora Store Egypt",
   description:
-    "Flora Egypt Your Premier destination for Luxurious Shoes and Bags . فلورا لأفضل صيحات الموضة في الشنط والأحذية ",
+    "مرحبًا بكم في فلورا مصر، وجهتكم المتميزة للأحذية والحقائب الفاخرة",
   keywords: [
     "شنط نسائية",
     "أحذية نسائية",
-    "فلورا  ",
+    "فلورا",
     "موضة",
     "تسوق أونلاين مصر",
     "فلورا ستور",
-    "flora bags",
-    "فلورا",
-    "FLORA",
-    "flora",
-    "flora shoes",
-    "Flora Shoes",
-    "Flora kafrelshiekh",
-    "فلورا",
     "flora store egypt",
-    "flora kafrelshiekh",
-    "flora leather product",
+    "flora egypt",
     "woman shoes",
     "woman bags",
-    "flora",
-    "Flora",
-    "FLORA",
-    "فلورا",
-    "SHOES",
-    "BAGS",
-    "شنط",
-    "أحذية",
-    "شنط كتف",
-    "شنط نسائية",
-    "أحذية نسائية",
-    "شنط حريمي",
-    "أحذية حريمي",
-    "شنط وأحذية",
-    "شنط يد نسائية",
-    "شنط كتف",
-    "شنط كروس",
-    "شنط سواريه",
-    "أحذية كعب عالي",
-    "أحذية رياضية نسائية",
-    "صنادل نسائية",
-    "شباشب حريمي",
-    "أحذية شتوي حريمي",
-    "شنط نسائية مصر",
-    "أحذية نسائية مصر",
-    "شنط وأحذية  ",
-    "فلورا  ",
-    "فلورا ستور",
-    "flora store egypt",
-    "women bags egypt",
-    "women shoes egypt",
   ],
   metadataBase: new URL("https://floraegypt.com"),
   icons: {
@@ -80,26 +41,34 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar">
-      <body className="">
+      <body>
         <Head>
-          <link rel="icon" href="/logo.png" type="image/png" />
+          {/* Favicon */}
+          <link rel="icon" href="/logo.png" type="image/png" sizes="32x32" />
+          <link rel="icon" href="/logo.png" type="image/png" sizes="16x16" />
+          <link rel="apple-touch-icon" href="/logo.png" />
 
+          {/* Meta description */}
           <meta
             name="description"
-            content="Flora Egypt Your Premier destination for Luxurious Shoes and Bags . فلورا   لأفضل صيحات الموضة في الشنط والأحذية"
+            content="مرحبًا بكم في فلورا مصر، وجهتكم المتميزة للأحذية والحقائب الفاخرة"
           />
-          <link rel="icon" href="/logo.png" type="image/png" />
-
           <meta
             name="keywords"
-            content="شنط نسائية, أحذية نسائية, فلورا  , موضة, تسوق أونلاين مصر, فلورا ستور, flora store egypt, flora Egypt , flora leather product, woman shoes, woman bags"
+            content="شنط نسائية, أحذية نسائية, فلورا, موضة, تسوق أونلاين مصر, فلورا ستور, flora store egypt, flora egypt, woman shoes, woman bags"
+          />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
           />
         </Head>
+
         <Providers>
           <div className="sticky top-0 left-0 right-0 z-50 w-full">
             <MarqueeBanner />
             <MainNav />
           </div>
+
           <main>{children}</main>
 
           <Toaster

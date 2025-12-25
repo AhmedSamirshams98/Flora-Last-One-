@@ -57,8 +57,8 @@ const MarqueeBanner = () => {
           src={logo}
           alt={
             lang === "ar"
-              ? "فلورا ستور فلورا كفر الشيخ للشنط والأحذية "
-              : "Flora Store flora store kafrelshiekh for woman shoes and bags"
+              ? "فلورا ستور فلورا   للشنط والأحذية "
+              : "Flora Store flora store  for woman shoes and bags"
           }
           className="w-12"
           priority
