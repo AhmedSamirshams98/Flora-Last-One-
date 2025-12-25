@@ -7,14 +7,14 @@ import { Toaster } from "sonner";
 import Head from "next/head";
 import { Providers } from "./providers";
 export const metadata: Metadata = {
-  title: "Flora Store | شنط وأحذية نسائية في مصر – كفر الشيخ",
+  title: "Flora Store | شنط وأحذية نسائية في مصر ",
   applicationName: "Flora Store Egypt",
   description:
-    "Flora Egypt Your Premier destination for Luxurious Shoes and Bags . فلورا كفر الشيخ لأفضل صيحات الموضة في الشنط والأحذية ",
+    "Flora Egypt Your Premier destination for Luxurious Shoes and Bags . فلورا لأفضل صيحات الموضة في الشنط والأحذية ",
   keywords: [
     "شنط نسائية",
     "أحذية نسائية",
-    "فلورا كفر الشيخ",
+    "فلورا  ",
     "موضة",
     "تسوق أونلاين مصر",
     "فلورا ستور",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     "flora shoes",
     "Flora Shoes",
     "Flora kafrelshiekh",
-    "فلورا كفر الشيخ",
+    "فلورا",
     "flora store egypt",
     "flora kafrelshiekh",
     "flora leather product",
@@ -54,21 +54,20 @@ export const metadata: Metadata = {
     "صنادل نسائية",
     "شباشب حريمي",
     "أحذية شتوي حريمي",
-
-    // Local SEO
     "شنط نسائية مصر",
     "أحذية نسائية مصر",
     "شنط وأحذية كفر الشيخ",
     "فلورا كفر الشيخ",
     "فلورا ستور",
-
-    // English
     "flora store egypt",
     "women bags egypt",
     "women shoes egypt",
   ],
   metadataBase: new URL("https://floraegypt.com"),
-  icons: "/logo.png",
+  icons: {
+    icon: "/logo.png", // favicon
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({
@@ -80,6 +79,8 @@ export default function RootLayout({
     <html lang="ar">
       <body className="">
         <Head>
+          <link rel="icon" href="/logo.png" type="image/png" />
+
           <meta
             name="description"
             content="Flora Egypt Your Premier destination for Luxurious Shoes and Bags . فلورا كفر الشيخ لأفضل صيحات الموضة في الشنط والأحذية"
