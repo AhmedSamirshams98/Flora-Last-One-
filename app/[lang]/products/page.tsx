@@ -7,6 +7,7 @@ import Filters from "../../components/HomeComponents/products/filters";
 import { useProductsStore } from "@/store/products-store";
 import { useFiltersStore, Category } from "@/store/filters-store";
 import { useShallow } from "zustand/shallow";
+import { Subcategory } from "@/types/product";
 
 export default function ProductsPage() {
   const pathname = usePathname();
@@ -42,22 +43,18 @@ export default function ProductsPage() {
     const catFromQuery = searchParams.get("category") as Category | null;
     const subcatFromQuery = searchParams.get("subcategory");
 
-    console.log("🔍 Reading URL params:", {
-      catFromQuery,
-      subcatFromQuery,
-      currentCategory: category,
-      currentSubcategory: subcategory,
-    });
+    // 🔹 Convert URL string to Subcategory | null
+    const normalizedSubcat: Subcategory | undefined = subcatFromQuery
+      ? (subcatFromQuery as Subcategory)
+      : undefined;
 
-    // تحديث الـ store بناءً على URL
     if (catFromQuery) {
-      console.log("✅ Setting filters from URL");
-      setFilters(catFromQuery, subcatFromQuery || null);
+      setFilters(catFromQuery, normalizedSubcat);
     } else if (!catFromQuery && !subcatFromQuery) {
-      console.log("🔄 Resetting filters");
       reset();
     }
-  }, [searchParams.toString()]); // ✅ مهم: استخدام toString() بدلاً من searchParams مباشرة
+  }, [searchParams.toString()]);
+  // ✅ مهم: استخدام toString() بدلاً من searchParams مباشرة
 
   // جلب المنتجات
   useEffect(() => {
