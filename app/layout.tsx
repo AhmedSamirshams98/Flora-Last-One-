@@ -7,7 +7,8 @@ import { Toaster } from "sonner";
 import Head from "next/head";
 import { Providers } from "./providers";
 export const metadata: Metadata = {
-  title: "Flora Store | شنط وأحذية نسائية في مصر ",
+  title:
+    "Flora Store Egypt |  فلورا لأفضل صيحات الموضة في الشنط والأحذية  النسائية في مصر ",
   applicationName: "Flora Store Egypt",
   description:
     "Flora Egypt Your Premier destination for Luxurious Shoes and Bags . فلورا لأفضل صيحات الموضة في الشنط والأحذية ",
@@ -56,8 +57,8 @@ export const metadata: Metadata = {
     "أحذية شتوي حريمي",
     "شنط نسائية مصر",
     "أحذية نسائية مصر",
-    "شنط وأحذية كفر الشيخ",
-    "فلورا كفر الشيخ",
+    "شنط وأحذية  ",
+    "فلورا  ",
     "فلورا ستور",
     "flora store egypt",
     "women bags egypt",
@@ -65,8 +66,7 @@ export const metadata: Metadata = {
   ],
   metadataBase: new URL("https://floraegypt.com"),
   icons: {
-    icon: "/logo.png", // favicon
-    apple: "/logo.png",
+    icon: "/public/logo.png",
   },
 };
 
