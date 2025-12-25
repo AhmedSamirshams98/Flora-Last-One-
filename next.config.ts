@@ -1,9 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-        domains: ['http://localhost:3000'], // أو localhost أثناء التطوير
-
-    unoptimized: true, // ✅ هذا سيحل المشكلة فوراً
+    domains: ["http://localhost:3000", "https://floraegypt.com"], // أو localhost أثناء التطوير
 
     remotePatterns: [
       {

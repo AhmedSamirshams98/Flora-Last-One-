@@ -218,7 +218,7 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
               : "Discover the latest offers from Flora Store for women's shoes and bags in Egypt –"
           }
         />
-        <link rel="icon" href="/logo.png" type="image/png" />
+        {/* <link rel="icon" href="/logo.png" type="image/png" /> */}
 
         <meta
           name="keywords"

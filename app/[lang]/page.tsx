@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import HomeCategoriesPageClient from "../components/HomeComponents/HomeCategoriesPageClient.tsx/page";
 
 interface PageProps {
-  params: Promise<{ lang: "en" | "ar" }>; // params هو Promise
+  params: Promise<{ lang: "en" | "ar" }>;
 }
 
 const Page = async ({ params }: PageProps) => {
