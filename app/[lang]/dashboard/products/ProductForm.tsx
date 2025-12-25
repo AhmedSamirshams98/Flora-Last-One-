@@ -8,8 +8,8 @@ import {
   SHOE_SUBTYPES,
   BAG_SUBTYPES,
   PricingType,
+  translateSubcategory,
 } from "@/types/product";
-import { translateSubcategory } from "@/lib/translations/products";
 import VariantsSection, { Variant } from "./VariantsSection";
 
 export interface ProductFormData {
