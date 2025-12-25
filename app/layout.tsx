@@ -65,7 +65,10 @@ export const metadata: Metadata = {
   ],
   metadataBase: new URL("https://floraegypt.com"),
   icons: {
-    icon: "/logo.png", // favicon
+    icon: [
+      { url: "/logo.png", type: "image/png", sizes: "32x32" },
+      { url: "/logo.png", type: "image/png", sizes: "16x16" },
+    ],
     apple: "/logo.png",
   },
 };
@@ -83,11 +86,13 @@ export default function RootLayout({
 
           <meta
             name="description"
-            content="Flora Egypt Your Premier destination for Luxurious Shoes and Bags . فلورا كفر الشيخ لأفضل صيحات الموضة في الشنط والأحذية"
+            content="Flora Egypt Your Premier destination for Luxurious Shoes and Bags . فلورا   لأفضل صيحات الموضة في الشنط والأحذية"
           />
+                    <link rel="icon" href="/logo.png" type="image/png" />
+
           <meta
             name="keywords"
-            content="شنط نسائية, أحذية نسائية, فلورا كفر الشيخ, موضة, تسوق أونلاين مصر, فلورا ستور, flora store egypt, flora kafrelshiekh, flora leather product, woman shoes, woman bags"
+            content="شنط نسائية, أحذية نسائية, فلورا  , موضة, تسوق أونلاين مصر, فلورا ستور, flora store egypt, flora Egypt , flora leather product, woman shoes, woman bags"
           />
         </Head>
         <Providers>
