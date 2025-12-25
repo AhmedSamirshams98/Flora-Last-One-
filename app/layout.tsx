@@ -56,8 +56,8 @@ export const metadata: Metadata = {
     "أحذية شتوي حريمي",
     "شنط نسائية مصر",
     "أحذية نسائية مصر",
-    "شنط وأحذية كفر الشيخ",
-    "فلورا كفر الشيخ",
+    "شنط وأحذية  ",
+    "فلورا  ",
     "فلورا ستور",
     "flora store egypt",
     "women bags egypt",
@@ -88,7 +88,7 @@ export default function RootLayout({
             name="description"
             content="Flora Egypt Your Premier destination for Luxurious Shoes and Bags . فلورا   لأفضل صيحات الموضة في الشنط والأحذية"
           />
-                    <link rel="icon" href="/logo.png" type="image/png" />
+          <link rel="icon" href="/logo.png" type="image/png" />
 
           <meta
             name="keywords"

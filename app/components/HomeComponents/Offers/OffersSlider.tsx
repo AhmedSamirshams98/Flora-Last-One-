@@ -66,7 +66,7 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
             fill
             alt={
               offer.title ||
-              "Flora Store Offer فلورا للشنط والاحذيه flora egypt flora store flora egypt store فلورا كفر الشيخ"
+              "Flora Store Offer فلورا للشنط والاحذيه flora egypt flora store flora egypt store فلورا  "
             }
             className="w-full h-full object-cover"
             priority={isFirst}
@@ -155,8 +155,8 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
           src={logo}
           alt={
             lang === "ar"
-              ? "الصفحة الرئيسية لفلورا ستور  فلورا ستور كفر الشيخ فلورا للشنط والاحذيه شنط واحذيه نسائيه كفر الشيخ "
-              : "Flora Store Homepage flora store kafrelshiekh flora store for woman shoes and bags "
+              ? "الصفحة الرئيسية لفلورا ستور  فلورا ستور   فلورا للشنط والاحذيه شنط واحذيه نسائيه   "
+              : "Flora Store Homepage flora store  flora store for woman shoes and bags "
           }
           priority
           fetchPriority="high" // optional, explicit
@@ -214,10 +214,12 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
           name="description"
           content={
             lang === "ar"
-              ? "اكتشف أحدث العروض من فلورا ستور للشنط والأحذية النسائية في مصر – كفر الشيخ"
-              : "Discover the latest offers from Flora Store for women's shoes and bags in Egypt – Kafr El Sheikh"
+              ? "اكتشف أحدث العروض من فلورا ستور للشنط والأحذية النسائية في مصر –  "
+              : "Discover the latest offers from Flora Store for women's shoes and bags in Egypt –"
           }
         />
+        <link rel="icon" href="/logo.png" type="image/png" />
+
         <meta
           name="keywords"
           content="شنط نسائية, أحذية نسائية, عروض فلورا ستور, flora store egypt, woman shoes, woman bags"

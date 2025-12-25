@@ -1,4 +1,3 @@
-// app/[lang]/page.tsx
 import OffersSlider from "../components/HomeComponents/Offers/OffersSlider";
 import AboutSection from "../components/HomeComponents/AboutSection";
 import FacebookReelEmbed from "../components/HomeComponents/FacebookReelEmbed";
@@ -12,7 +11,6 @@ interface PageProps {
 const Page = async ({ params }: PageProps) => {
   const { lang } = await params;
 
-  // جلب الأقسام من قاعدة البيانات هنا
   const categories = await prisma.homeCategory.findMany();
 
   return (
