@@ -3,9 +3,15 @@
 import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
-import { productTranslations } from "@/lib/translations/products";
-import { Category, Subcategory, useFiltersStore } from "@/store/filters-store";
 import { useShallow } from "zustand/shallow";
+
+import { Category, useFiltersStore } from "@/store/filters-store";
+import {
+  Subcategory,
+  translateSubcategory,
+  ProductSubtype,
+  PRODUCT_TYPES,
+} from "@/types/product";
 
 interface FiltersProps {
   lang: "ar" | "en";
@@ -17,79 +23,69 @@ export default function Filters({ lang }: FiltersProps) {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isSubcategoryOpen, setIsSubcategoryOpen] = useState(false);
 
-  const { category, subcategory, setFilters, setCategory, setSubcategory, reset } =
-    useFiltersStore(
-      useShallow((s) => ({
-        category: s.category,
-        subcategory: s.subcategory,
-        setFilters: s.setFilters,
-        setCategory: s.setCategory,
-        setSubcategory: s.setSubcategory,
-        reset: s.reset,
-      }))
-    );
-
-  const categories: { value: Category; label: string }[] = [
-    { value: "SHOE", label: productTranslations.category.SHOE[lang] },
-    { value: "BAG", label: productTranslations.category.BAG[lang] },
-  ];
+  const {
+    category,
+    subcategory,
+    setFilters,
+    setCategory,
+    setSubcategory,
+    reset,
+  } = useFiltersStore(
+    useShallow((s) => ({
+      category: s.category,
+      subcategory: s.subcategory,
+      setFilters: s.setFilters,
+      setCategory: s.setCategory,
+      setSubcategory: s.setSubcategory,
+      reset: s.reset,
+    }))
+  );
 
   const updateURL = (cat: Category, subcat: Subcategory) => {
     const params = new URLSearchParams();
-    
-    if (cat) {
-      params.set("category", cat);
-      if (subcat) {
-        params.set("subcategory", subcat);
-      }
-    }
 
-    const newUrl = params.toString() 
-      ? `${pathname}?${params.toString()}` 
+    if (cat) params.set("category", cat as string);
+    if (subcat) params.set("subcategory", subcat as string);
+
+    const newUrl = params.toString()
+      ? `${pathname}?${params.toString()}`
       : pathname;
-
     router.push(newUrl);
   };
 
-  const getSubcategories = () => {
+  const subcategoryMap: Record<NonNullable<Category>, Subcategory[]> = {
+    SHOE: [
+      ProductSubtype.WINTER_BOOTS,
+      ProductSubtype.SNEAKERS,
+      ProductSubtype.PUMPS,
+      ProductSubtype.BALLERINAS,
+      ProductSubtype.LOAFERS,
+      ProductSubtype.SLIPPERS,
+      ProductSubtype.SANDALS,
+    ],
+    BAG: [
+      ProductSubtype.HAND_BAGS,
+      ProductSubtype.SHOULDER_BAGS,
+      ProductSubtype.CROSSBODY_BAGS,
+      ProductSubtype.CLUTCH_BAGS,
+      ProductSubtype.BACKPACKS,
+      ProductSubtype.WALLETS,
+    ],
+  };
+
+  const getSubcategories = (): { value: Subcategory; label: string }[] => {
     if (!category) return [];
-
-    const subcategoryMap = {
-      SHOE: [
-        "WINTER_BOOTS",
-        "SNEAKERS",
-        "PUMPS",
-        "BALLERINAS",
-        "LOAFERS",
-        "SLIPPERS",
-        "SANDALS",
-      ],
-      BAG: [
-        "HAND_BAGS",
-        "SHOULDER_BAGS",
-        "CROSSBODY_BAGS",
-        "CLUTCH_BAGS",
-        "BACKPACKS",
-        "WALLETS",
-      ],
-    };
-
-    return subcategoryMap[category as keyof typeof subcategoryMap].map(
-      (sub) => ({
-        value: sub,
-        label:
-          productTranslations.subcategory[
-            sub as keyof typeof productTranslations.subcategory
-          ][lang],
-      })
-    );
+    return subcategoryMap[category].map((sub) => ({
+      value: sub,
+      label: translateSubcategory(sub, lang),
+    }));
   };
 
   const subcategories = getSubcategories();
 
   const getSelectedCategoryLabel = () => {
     if (!category) return lang === "ar" ? "الفئة" : "Category";
-    return categories.find((c) => c.value === category)?.label || category;
+    return PRODUCT_TYPES.find((c) => c.value === category)?.label || category;
   };
 
   const getSelectedSubcategoryLabel = () => {
@@ -136,7 +132,7 @@ export default function Filters({ lang }: FiltersProps) {
                 {lang === "ar" ? "الكل" : "All Categories"}
               </button>
 
-              {categories.map((c) => (
+              {PRODUCT_TYPES.map((c) => (
                 <button
                   key={c.value}
                   onClick={() => {
@@ -155,7 +151,7 @@ export default function Filters({ lang }: FiltersProps) {
           )}
         </div>
 
-        {/* Subcategory */}
+        {/* Subcategory Dropdown */}
         {category && (
           <div className="relative">
             <button
@@ -203,6 +199,7 @@ export default function Filters({ lang }: FiltersProps) {
           </div>
         )}
 
+        {/* Reset Button */}
         {(category || subcategory) && (
           <button
             onClick={handleReset}

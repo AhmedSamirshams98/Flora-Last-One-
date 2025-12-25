@@ -1,6 +1,6 @@
 "use client";
 import React, { useCallback, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import {
   ShoppingCart,
@@ -8,11 +8,7 @@ import {
   Ruler,
   ArrowRight,
   Package,
-  DollarSign,
-  Shield,
-  Truck,
-  CheckCircle,
-  Star,
+  ArrowLeft,
 } from "lucide-react";
 import Image from "next/image";
 import { useCartStore } from "@/store/cart-store";
@@ -22,13 +18,17 @@ import { EmblaOptionsType } from "embla-carousel";
 import EmblaCarouselSlider from "@/app/components/emblaCarouselSlider/EmblaCarouselSlider";
 import { ProductVariant, PricingType } from "@/types/product";
 import AuthPopup from "@/app/components/AuthPopup";
+import { productTranslations } from "@/lib/translations/products";
+import { ProductSubtype, ProductType } from "@prisma/client";
 
 interface ProductPageProps {
   params: Promise<{ id: string }>;
-  lang?: "ar" | "en"; // أضفت lang هنا
 }
 
-export default function ProductPage({ params, lang = "en" }: ProductPageProps) {
+export default function ProductPage({ params }: ProductPageProps) {
+  const pathname = usePathname();
+  const lang: "ar" | "en" = pathname.startsWith("/ar") ? "ar" : "en";
+
   const router = useRouter();
   const { data: session } = useSession();
   const [showAuthPopup, setShowAuthPopup] = React.useState(false);
@@ -53,13 +53,13 @@ export default function ProductPage({ params, lang = "en" }: ProductPageProps) {
       console.error("Error fetching product:", error);
       toast.error("Error loading product");
     }
-  }, [id, getProductById]); // أضف getProductById كـ dependency
+  }, [id, getProductById]);
 
   useEffect(() => {
     if (id) {
       fetchProduct();
     }
-  }, [id, fetchProduct]); // أضف fetchProduct هنا
+  }, [id, fetchProduct]);
 
   useEffect(() => {
     if (currentProduct?.variants && currentProduct.variants.length > 0) {
@@ -126,6 +126,18 @@ export default function ProductPage({ params, lang = "en" }: ProductPageProps) {
     }
     return 0;
   };
+  const getCategoryLabel = (category?: ProductType) =>
+    category ? productTranslations.category[category][lang] : "";
+
+  const getSubcategoryLabel = (subcategory?: ProductSubtype) => {
+    if (!subcategory) return "";
+    if (subcategory in productTranslations.subcategory) {
+      return productTranslations.subcategory[
+        subcategory as keyof typeof productTranslations.subcategory
+      ][lang];
+    }
+    return "";
+  };
 
   const renderPriceDetails = () => {
     if (!currentProduct) return null;
@@ -136,7 +148,7 @@ export default function ProductPage({ params, lang = "en" }: ProductPageProps) {
       case PricingType.SINGLE_PRICE:
         return (
           <div className="space-y-1">
-            <div className="text-4xl font-bold text-primary">
+            <div className="text-4xl font-medium text-primary">
               {currentProduct.finalPrice.toLocaleString()} {currency}
             </div>
           </div>
@@ -250,21 +262,36 @@ export default function ProductPage({ params, lang = "en" }: ProductPageProps) {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50">
+      <div
+        className="min-h-screen bg-gray-50"
+        dir={lang === "ar" ? "rtl" : "ltr"}
+      >
         <div className="bg-white border-b">
           <div className="container mx-auto px-4 py-3">
             <button
               onClick={() => router.back()}
               className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
-              <ArrowRight size={20} />
-              <span>Back</span>
+              {lang === "ar" ? (
+                <ArrowRight size={20} />
+              ) : (
+                <ArrowLeft size={20} />
+              )}
+              <span
+                className={`${
+                  lang === "ar"
+                    ? "font-medium font-gess text-primary"
+                    : "font-sans text-primary"
+                }`}
+              >
+                {lang === "ar" ? "رجوع" : "Back"}
+              </span>
             </button>
           </div>
         </div>
 
         <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div className="rounded-xl overflow-hidden shadow-lg">
                 {currentImages.length > 1 ? (
@@ -316,39 +343,37 @@ export default function ProductPage({ params, lang = "en" }: ProductPageProps) {
             <div className="space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
-                  <span className="bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full">
-                    {currentProduct.category}
-                  </span>
+                  {currentProduct.category && (
+                    <span className="bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full">
+                      {getCategoryLabel(currentProduct.category)}
+                    </span>
+                  )}
+
                   {currentProduct.subcategory && (
                     <span className="bg-gray-100 text-gray-800 text-xs px-3 py-1 rounded-full">
-                      {currentProduct.subcategory}
+                      {getSubcategoryLabel(currentProduct.subcategory)}
                     </span>
                   )}
+
                   {currentProduct.isNew && (
                     <span className="bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full">
-                      New
+                      {lang === "ar" ? "جديد" : "New"}
                     </span>
                   )}
+
                   {currentProduct.isFeatured && (
                     <span className="bg-yellow-100 text-yellow-800 text-xs px-3 py-1 rounded-full">
-                      Featured
+                      {lang === "ar" ? "مميز" : "Featured"}
                     </span>
                   )}
                 </div>
-
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+                <h1
+                  className={`${
+                    lang === "ar" ? "font-gess font-medium" : "font-sans"
+                  } text-3xl md:text-4xl  text-primary`}
+                >
                   {currentProduct.name}
                 </h1>
-
-                <div className="flex items-center gap-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star
-                      key={star}
-                      className="w-5 h-5 text-yellow-400 fill-yellow-400"
-                    />
-                  ))}
-                  <span className="text-gray-600 text-sm ml-2">(4.8)</span>
-                </div>
               </div>
 
               <div className="border-t border-b py-6">
@@ -356,8 +381,15 @@ export default function ProductPage({ params, lang = "en" }: ProductPageProps) {
               </div>
 
               {selectedVariant.description && (
-                <div className="bg-white rounded-lg p-4 border">
-                  <h3 className="font-semibold mb-2">Color Description</h3>
+                <div className="bg-white rounded-lg p-2 border">
+                  <h3
+                    className={` ${
+                      lang === "ar" ? "font-gess font-medium" : "font-sans"
+                    } text-primary mb-2`}
+                  >
+                    {" "}
+                    {lang === "ar" ? "الوصف" : "Description"}
+                  </h3>
                   <p className="text-gray-600 leading-relaxed">
                     {selectedVariant.description}
                   </p>
@@ -367,7 +399,13 @@ export default function ProductPage({ params, lang = "en" }: ProductPageProps) {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <Palette className="w-5 h-5 text-gray-600" />
-                  <h3 className="font-semibold">Choose Color</h3>
+                  <h3
+                    className={` ${
+                      lang === "ar" ? "font-gess font-medium" : "font-sans"
+                    } text-primary mb-2`}
+                  >
+                    {lang === "ar" ? "اختر اللون" : "Choose Color"}
+                  </h3>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {currentProduct.variants.map((variant) => (
@@ -393,7 +431,13 @@ export default function ProductPage({ params, lang = "en" }: ProductPageProps) {
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <Ruler className="w-5 h-5 text-gray-600" />
-                    <h3 className="font-semibold">Choose Size</h3>
+                    <h3
+                      className={` ${
+                        lang === "ar" ? "font-gess font-medium" : "font-sans"
+                      } text-primary mb-2`}
+                    >
+                      {lang === "ar" ? "اختر المقاس " : "Select Size "}
+                    </h3>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {selectedVariant.sizes.map((size) => (
@@ -417,7 +461,13 @@ export default function ProductPage({ params, lang = "en" }: ProductPageProps) {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Package className="w-5 h-5 text-gray-600" />
-                    <span>Stock:</span>
+                    <span
+                      className={` ${
+                        lang === "ar" ? "font-gess font-medium" : "font-sans"
+                      } text-primary `}
+                    >
+                      {lang === "ar" ? "المخزون" : "Stock"}
+                    </span>
                   </div>
                   <div
                     className={`font-medium ${
@@ -430,7 +480,9 @@ export default function ProductPage({ params, lang = "en" }: ProductPageProps) {
                   >
                     {isOutOfStock
                       ? "Out of stock"
-                      : `${selectedVariant.stock} available`}
+                      : `${selectedVariant.stock} ${
+                          lang === "ar" ? "المتاح" : "available "
+                        }`}
                   </div>
                 </div>
 
@@ -450,60 +502,7 @@ export default function ProductPage({ params, lang = "en" }: ProductPageProps) {
                   <ShoppingCart className="w-6 h-6" />
                   {isOutOfStock ? "Out of stock" : "Add to Cart"}
                 </button>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Truck className="w-4 h-4" />
-                    <span>Fast Shipping</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Shield className="w-4 h-4" />
-                    <span>Quality Guarantee</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4" />
-                    <span>Free Returns</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <DollarSign className="w-4 h-4" />
-                    <span>Best Price</span>
-                  </div>
-                </div>
               </div>
-            </div>
-          </div>
-
-          <div className="bg-white mt-10 rounded-xl p-6 border">
-            <h3 className="text-xl font-bold mb-4">Product Details</h3>
-            <div className="space-y-3">
-              <div className="flex justify-between py-2 border-b">
-                <span className="text-gray-600">Type:</span>
-                <span className="font-medium">{currentProduct.category}</span>
-              </div>
-              {currentProduct.subcategory && (
-                <div className="flex justify-between py-2 border-b">
-                  <span className="text-gray-600">Category:</span>
-                  <span className="font-medium">
-                    {currentProduct.subcategory}
-                  </span>
-                </div>
-              )}
-              <div className="flex justify-between py-2 border-b">
-                <span className="text-gray-600">Status:</span>
-                <span
-                  className={`font-medium ${
-                    currentProduct.inStock ? "text-green-600" : "text-red-600"
-                  }`}
-                >
-                  {currentProduct.inStock ? "Available" : "Unavailable"}
-                </span>
-              </div>
-              {selectedVariant?.description && (
-                <div className="py-2">
-                  <h4 className="font-medium mb-1">Product Description:</h4>
-                  <p className="text-gray-600">{selectedVariant.description}</p>
-                </div>
-              )}
             </div>
           </div>
         </div>

@@ -23,7 +23,6 @@ export default function AboutSection({ lang }: AboutSectionProps) {
 
   const features = [
     { icon: Award, title: t.about.features.quality },
-    { icon: Truck, title: t.about.features.shipping },
     { icon: Heart, title: t.about.features.love },
   ];
 
@@ -33,8 +32,8 @@ export default function AboutSection({ lang }: AboutSectionProps) {
         <div className="text-center mb-2" data-aos="fade-down">
           <h2
             className={`${
-              lang === "ar" ? "font-gess" : "font-sans"
-            } text-4xl mb-4 text-primary font-medium`}
+              lang === "ar" ? "font-gess font-medium" : "font-sans "
+            } text-3xl mb-4 text-primary `}
           >
             {t.about.title}
           </h2>
@@ -66,7 +65,7 @@ export default function AboutSection({ lang }: AboutSectionProps) {
         {/* العداد */}
         <div className="mt-8 grid md:grid-cols-2 gap-8 items-center">
           <div data-aos="fade-right">
-            <h3 className="text-3xl mb-4 text-primary text-center font-gess">
+            <h3 className={`${lang==="ar"?"font-gess font-medium":"font-sans"} text-3xl mb-4 text-primary text-center`}>
               {t.about.storyTitle}
             </h3>
             <p

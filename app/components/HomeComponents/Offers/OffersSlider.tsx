@@ -6,7 +6,10 @@ import { useOffersStore } from "@/store/offers-store";
 import en from "@/messages/en.json";
 import ar from "@/messages/ar.json";
 import logo from "@/public/images/logo.png";
-import EmblaCarousel from "../../emblaCarousel/EmblaCarousel";
+const EmblaCarousel = dynamic(
+  () => import("../../emblaCarousel/EmblaCarousel"),
+  { ssr: false }
+);
 import AOS from "aos";
 import "aos/dist/aos.css";
 import {
@@ -21,6 +24,7 @@ import { Skeleton } from "./Skeleton";
 import { useShallow } from "zustand/shallow";
 import { OfferWithoutImage } from "./OfferWithoutImage";
 import Head from "next/head";
+import dynamic from "next/dynamic";
 
 interface OffersSliderProps {
   lang: "ar" | "en";
@@ -74,7 +78,7 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
             quality={75}
           />
           <div className="absolute left-0 right-0 w-full  bg-gradient-to-r  to-transparent md:from-black/70 md:via-black/50 flex items-center">
-            <div className="container mx-auto px-10 ml-3 font-gess">
+            <div className="container mx-auto p-6 font-gess">
               <div className="max-w-full sm:max-w-md md:max-w-lg bg-black/20 backdrop-blur-lg  rounded-xl md:rounded-2xl p-3 border border-white/10 md:border-white/20">
                 {offer.title && (
                   <h1
@@ -159,6 +163,7 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
               : "Flora Store Homepage flora store kafrelshiekh flora store for woman shoes and bags "
           }
           priority
+          fetchPriority="high" // optional, explicit
           width={IMAGE_SETTINGS.logoSize.width}
           height={IMAGE_SETTINGS.logoSize.height}
           sizes="176px"
@@ -192,7 +197,11 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
     return (
       <section id="offers" className=" py-6" data-aos="fade-left">
         <div className="container mx-auto px-4">
-          <h1 className="font-gess font-medium text-center text-primary text-3xl mb-6 mt-2">
+          <h1
+            className={`text-center text-primary text-3xl mb-6 mt-2 ${
+              lang === "ar" ? "font-gess font-medium" : "font-sans"
+            } `}
+          >
             {t.offers.title}
           </h1>
           <NoOffersMessage lang={lang} />
@@ -220,7 +229,11 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
       </Head>
       <section id="offers" className=" py-6" data-aos="fade-left">
         <div className="container mx-auto px-4">
-          <h1 className="font-gess text-center text-primary font-medium text-3xl mb-3 ">
+          <h1
+            className={`text-center text-primary text-3xl mb-6 mt-2 ${
+              lang === "ar" ? "font-gess font-medium" : "font-sans"
+            } `}
+          >
             {t.offers.title}
           </h1>
           <EmblaCarousel slides={slides} options={EMBLA_OPTIONS} />

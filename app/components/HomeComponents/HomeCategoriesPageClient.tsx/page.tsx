@@ -30,8 +30,8 @@ export default function HomeCategoriesPageClient({
   return (
     <section className="container mx-auto px-4 py-4">
       <h1
-        className={`text-3xl text-center mb-4 ${
-          lang === "ar" ? "font-gess font-medium" : "font-sans font-semibold"
+        className={`text-3xl text-center text-primary mb-4 ${
+          lang === "ar" ? "font-gess font-medium" : "font-sans "
         }`}
       >
         {lang === "ar" ? "الأقسام" : "Categories"}
@@ -77,18 +77,20 @@ export default function HomeCategoriesPageClient({
                 src={item.image}
                 alt={categoryLabel?.en ?? item.category}
                 fill
+                fetchPriority="high"
+                priority
                 sizes="(max-width: 768px) 100vw, 33vw"
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
               />
               <div
-                className={`absolute inset-0 bg-black/50 flex items-end p-4 ${
+                className={`absolute inset-0 bg-black/20 flex items-end p-4 ${
                   lang === "ar"
                     ? "justify-end text-right"
                     : "justify-start text-left"
                 }`}
               >
                 <h2
-                  className={`text-white text-xl md:text-2xl bg-black p-2 rounded-sm font-medium drop-shadow-lg ${
+                  className={`text-white text-xl md:text-2xl bg-primary backdrop-blur-2xl p-2 rounded-sm font-medium drop-shadow-lg ${
                     lang === "ar" ? "font-gess" : "font-sans"
                   }`}
                 >

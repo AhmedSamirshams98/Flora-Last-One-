@@ -15,8 +15,7 @@ const MobileNavLinks = ({ lang, onClose }: any) => {
   const t = useMemo(() => (lang === "ar" ? ar : en), [lang]);
 
   const getText = useCallback(
-    (key: string) =>
-      key.split(".").reduce((obj: any, k) => obj?.[k], t) ?? key,
+    (key: string) => key.split(".").reduce((obj: any, k) => obj?.[k], t) ?? key,
     [t]
   );
 
@@ -30,7 +29,7 @@ const MobileNavLinks = ({ lang, onClose }: any) => {
               handleNavLinkClick(link, pathname, lang, router);
               onClose();
             }}
-            className="block w-full text-right py-2 px-2 text-white hover:bg-white/10 rounded-xl"
+            className="block  py-2 px-2 text-white hover:bg-white/10 rounded-xl"
           >
             {getText(link.labelKey)}
           </button>

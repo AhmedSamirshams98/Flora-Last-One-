@@ -1,14 +1,9 @@
-// lib/translations/products.ts
 export const productTranslations = {
-  // ترجمة أنواع المنتجات
   category: {
     SHOE: { ar: "أحذية", en: "Shoes" },
     BAG: { ar: "شنط", en: "Bags" },
   },
-
-  // ترجمة الأنواع الفرعية
   subcategory: {
-    // أحذية
     WINTER_BOOTS: { ar: "أحذية شتوية", en: "Winter Boots" },
     SNEAKERS: { ar: "أحذية رياضية", en: "Sneakers" },
     PUMPS: { ar: "كعب عالي", en: "Pumps" },
@@ -16,8 +11,6 @@ export const productTranslations = {
     LOAFERS: { ar: "لوفرس", en: "Loafers" },
     SLIPPERS: { ar: "شباشب", en: "Slippers" },
     SANDALS: { ar: "صنادل", en: "Sandals" },
-
-    // شنط
     HAND_BAGS: { ar: "شنط يد", en: "Hand Bags" },
     SHOULDER_BAGS: { ar: "شنط كتف", en: "Shoulder Bags" },
     CROSSBODY_BAGS: { ar: "شنط كروس", en: "Crossbody Bags" },
@@ -26,23 +19,3 @@ export const productTranslations = {
     WALLETS: { ar: "محافظ", en: "Wallets" },
   },
 } as const;
-
-// دالة الترجمة المساعدة
-export function translateCategory(category: string, lang: "ar" | "en"): string {
-  return (
-    productTranslations.category[
-      category as keyof typeof productTranslations.category
-    ]?.[lang] || category
-  );
-}
-
-export function translateSubcategory(
-  subcategory: string,
-  lang: "ar" | "en"
-): string {
-  return (
-    productTranslations.subcategory[
-      subcategory as keyof typeof productTranslations.subcategory
-    ]?.[lang] || subcategory
-  );
-}

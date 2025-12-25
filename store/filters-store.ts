@@ -1,8 +1,8 @@
 // store/filters-store.ts
 import { create } from "zustand";
+import type { ProductType, Subcategory } from "@/types/product"; // ✅ استيراد النوع من types/product
 
-export type Category = "SHOE" | "BAG" | null;
-export type Subcategory = string | null;
+export type Category = ProductType | null;
 
 interface FiltersState {
   category: Category;

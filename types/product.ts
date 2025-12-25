@@ -1,3 +1,4 @@
+import { productTranslations } from "@/lib/translations/products";
 import { Offer } from "./offers";
 
 export interface Product {
@@ -110,8 +111,6 @@ export enum ProductType {
 }
 
 export enum ProductSubtype {
-  // أحذية
-  ALL_SHOES = "ALL_SHOES",
   WINTER_BOOTS = "WINTER_BOOTS",
   SNEAKERS = "SNEAKERS",
   PUMPS = "PUMPS",
@@ -119,9 +118,6 @@ export enum ProductSubtype {
   LOAFERS = "LOAFERS",
   SLIPPERS = "SLIPPERS",
   SANDALS = "SANDALS",
-
-  // شنط
-  ALL_BAGS = "ALL_BAGS",
   HAND_BAGS = "HAND_BAGS",
   SHOULDER_BAGS = "SHOULDER_BAGS",
   CROSSBODY_BAGS = "CROSSBODY_BAGS",
@@ -129,6 +125,28 @@ export enum ProductSubtype {
   BACKPACKS = "BACKPACKS",
   WALLETS = "WALLETS",
 }
+
+export enum ProductFilter {
+  ALL_SHOES = "ALL_SHOES",
+  ALL_BAGS = "ALL_BAGS",
+}
+export type Subcategory = ProductSubtype | ProductFilter | null;
+
+export function translateSubcategory(
+  subcategory: Subcategory,
+  lang: "ar" | "en"
+) {
+  if (!subcategory) return lang === "ar" ? "النوع" : "Type";
+
+  if (subcategory === ProductFilter.ALL_SHOES) 
+    return lang === "ar" ? "جميع الأحذية" : "All Shoes";
+    
+  if (subcategory === ProductFilter.ALL_BAGS) 
+    return lang === "ar" ? "جميع الشنط" : "All Bags";
+
+  return productTranslations.subcategory[subcategory as ProductSubtype][lang];
+}
+
 
 export enum PricingType {
   SINGLE_PRICE = "SINGLE_PRICE",
@@ -143,7 +161,6 @@ export const PRODUCT_TYPES = [
 ];
 
 export const SHOE_SUBTYPES = [
-  { value: ProductSubtype.ALL_SHOES, label: "جميع الأحذية" },
   { value: ProductSubtype.WINTER_BOOTS, label: "أحذية شتوية" },
   { value: ProductSubtype.SNEAKERS, label: "أحذية رياضية" },
   { value: ProductSubtype.PUMPS, label: "كعب عالي" },
@@ -154,7 +171,6 @@ export const SHOE_SUBTYPES = [
 ];
 
 export const BAG_SUBTYPES = [
-  { value: ProductSubtype.ALL_BAGS, label: "جميع الشنط" },
   { value: ProductSubtype.HAND_BAGS, label: "شنط يد" },
   { value: ProductSubtype.SHOULDER_BAGS, label: "شنط كتف" },
   { value: ProductSubtype.CROSSBODY_BAGS, label: "شنط كروس" },

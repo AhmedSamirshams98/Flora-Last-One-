@@ -93,8 +93,8 @@ export default function ReelsCarousel({ lang }: AboutSectionProps) {
     <div className="max-w-6xl mx-auto mt-2  px-4 py-8">
       <div className="mb-8 text-center">
         <h2
-          className={`text-3xl font-medium mb-2 ${
-            lang === "ar" ? "font-gess" : "font-sans"
+          className={`text-3xl text-primary  mb-2 ${
+            lang === "ar" ? "font-gess font-medium" : "font-sans"
           }`}
         >
           {lang === "ar" ? "أحدث الريلز" : "Latest Reels"}
