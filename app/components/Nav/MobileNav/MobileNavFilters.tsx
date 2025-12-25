@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { productTranslations } from "@/lib/translations/products";
-import { Category, Subcategory, useFiltersStore } from "@/store/filters-store";
 import { useRouter } from "next/navigation";
+import { Category } from "@/store/filters-store";
+import { Subcategory } from "@/types/product";
 
 interface MobileNavFiltersProps {
   lang: "ar" | "en";
