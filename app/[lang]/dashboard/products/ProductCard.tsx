@@ -1,7 +1,8 @@
 import Image from "next/image";
 import { Edit, Trash2 } from "lucide-react";
-import { Product } from "@/types/product";
-import { translateSubcategory } from "@/lib/translations/products";
+import { Product, translateSubcategory } from "@/types/product";
+import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 
 interface ProductCardProps {
   product: Product;
@@ -9,11 +10,20 @@ interface ProductCardProps {
   onDelete: (id: string) => void;
 }
 
-export default function ProductCard({ product, onEdit, onDelete }: ProductCardProps) {
+export default function ProductCard({
+  product,
+  onEdit,
+  onDelete,
+}: ProductCardProps) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const lang: "ar" | "en" = pathname.startsWith("/ar") ? "ar" : "en";
+
   const finalPrice = product.finalPrice;
-  const discountPercentage = finalPrice < product.basePrice 
-    ? Math.round(((product.basePrice - finalPrice) / product.basePrice) * 100)
-    : 0;
+  const discountPercentage =
+    finalPrice < product.basePrice
+      ? Math.round(((product.basePrice - finalPrice) / product.basePrice) * 100)
+      : 0;
 
   return (
     <div className="border rounded-lg p-4 hover:shadow-lg transition">
@@ -30,7 +40,7 @@ export default function ProductCard({ product, onEdit, onDelete }: ProductCardPr
 
       <h3 className="font-bold text-lg mb-2">{product.name}</h3>
       <p className="text-sm text-gray-600 mb-3">
-        {translateSubcategory(product.subcategory || "", "ar")}
+        {translateSubcategory(product.subcategory || null, lang)}
       </p>
 
       {/* تفاصيل السعر */}
@@ -59,7 +69,9 @@ export default function ProductCard({ product, onEdit, onDelete }: ProductCardPr
       {/* معلومات المنتج */}
       <div className="text-sm text-gray-600 space-y-1">
         <div>المخزون: {product.inStock ? "متوفر" : "غير متوفر"}</div>
-        <div>القطع: {product.variants.reduce((sum, v) => sum + v.stock, 0)}</div>
+        <div>
+          القطع: {product.variants.reduce((sum, v) => sum + v.stock, 0)}
+        </div>
         <div>الألوان: {product.variants.length}</div>
       </div>
 
