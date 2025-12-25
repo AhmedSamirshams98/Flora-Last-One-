@@ -6,10 +6,7 @@ import { useOffersStore } from "@/store/offers-store";
 import en from "@/messages/en.json";
 import ar from "@/messages/ar.json";
 import logo from "@/public/images/logo.png";
-const EmblaCarousel = dynamic(
-  () => import("../../emblaCarousel/EmblaCarousel"),
-  { ssr: false }
-);
+import EmblaCarousel from "../../emblaCarousel/EmblaCarousel";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import {
@@ -24,7 +21,6 @@ import { Skeleton } from "./Skeleton";
 import { useShallow } from "zustand/shallow";
 import { OfferWithoutImage } from "./OfferWithoutImage";
 import Head from "next/head";
-import dynamic from "next/dynamic";
 
 interface OffersSliderProps {
   lang: "ar" | "en";
