@@ -104,6 +104,8 @@
   },
 
   "checkout": {
+     "emptyTitle": "Your cart is empty",
+    "emptyMessage": "Start shopping to add amazing products to your cart",
     "pageTitle": "Checkout",
     "backToCart": "Back to Cart",
     "shippingAddress": "Shipping Address",

@@ -1,6 +1,13 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
-import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft } from "lucide-react";
+import {
+  Trash2,
+  Plus,
+  Minus,
+  ShoppingBag,
+  ArrowLeft,
+  ArrowRight,
+} from "lucide-react";
 import { useCartStore } from "@/store/cart-store";
 import { toast } from "sonner";
 import Image from "next/image";
@@ -67,11 +74,28 @@ export default function CartPage() {
                 isRTL ? "flex-row" : "flex-row-reverse"
               }`}
             >
-              <ArrowLeft className={`w-5 h-5 ${isRTL ? "" : "rotate-180"}`} />
-              <span className="font-medium">{t.backToShopping}</span>
+              {lang === "ar" && <ArrowRight className="w-5 h-5" />}
+
+              <span
+                className={`${
+                  lang === "ar"
+                    ? "font-gess font-medium"
+                    : "font-sans font-semibold"
+                } text-primary`}
+              >
+                {t.backToShopping}
+              </span>
+
+              {lang === "en" && <ArrowLeft className="w-5 h-5" />}
             </button>
 
-            <h1 className="text-2xl font-bold text-center text-gray-900">
+            <h1
+              className={`${
+                lang === "ar"
+                  ? "font-gess font-medium"
+                  : "font-sans font-semibold"
+              } text-2xl font-bold text-center text-primary`}
+            >
               {t.pageTitle}
             </h1>
           </div>
@@ -79,17 +103,35 @@ export default function CartPage() {
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center max-w-md mx-auto">
               <ShoppingBag className="w-24 h-24 text-gray-400 mx-auto mb-6" />
-              <h2 className="text-2xl font-bold text-gray-800 mb-3">
+              <h2
+                className={`${
+                  lang === "ar"
+                    ? "font-gess font-medium"
+                    : "font-sans font-semibold"
+                } text-2xl font-bold text-center text-primary`}
+              >
+                {" "}
                 {t.emptyTitle}
               </h2>
 
-              <p className="text-gray-600 mb-8 leading-relaxed">
+              <p
+                className={`${
+                  lang === "ar"
+                    ? "font-gess font-medium"
+                    : "font-sans font-semibold"
+                } text-md mb-2 mt-2  font-bold text-center text-primary`}
+              >
+                {" "}
                 {t.emptyMessage}
               </p>
 
               <button
                 onClick={() => router.push(`/${lang}/products`)}
-                className="bg-primary text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
+                className={` ${
+                  lang === "ar"
+                    ? "font-gess font-medium"
+                    : "font-sans font-semibold"
+                } bg-primary text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium`}
               >
                 {t.browseProducts}
               </button>

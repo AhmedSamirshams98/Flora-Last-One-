@@ -20,6 +20,7 @@ import {
   AlertCircle,
   ArrowLeft,
   Image as ImageIcon,
+  ArrowRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
@@ -290,52 +291,66 @@ const OrdersPage = () => {
       dir={isRTL ? "rtl" : "ltr"}
     >
       <div className="container mx-auto px-4">
-        {/* رأس الصفحة */}
+        {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <button
               onClick={() => window.history.back()}
-              className={`flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors ${
-                isRTL ? "flex-row" : "flex-row-reverse"
-              }`}
+              className="flex items-center gap-2 text-primary hover:text-gray-800 transition-colors"
             >
-              <ArrowLeft className={`w-5 h-5 ${isRTL ? "" : "rotate-180"}`} />
-              <span className="font-medium">{t.back || "Back"}</span>
+              {isRTL ? (
+                <ArrowRight className="w-5 h-5" />
+              ) : (
+                <ArrowLeft className="w-5 h-5" />
+              )}
+              <span className="font-medium">{t.back ?? "Back"}</span>
             </button>
-
-            <div className="text-right">
-              <p className="text-sm text-gray-600">{t.welcome || "Welcome"}</p>
-              <p className="font-semibold">
-                {session?.user?.name || session?.user?.email}
+            <div className="text-center">
+              <p className="text-sm text-primary">{t.welcome ?? "Welcome"}</p>
+              <p className="font-semibold text-primary">
+                {session?.user?.name ?? session?.user?.email}
               </p>
             </div>
           </div>
 
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {t.pageTitle || "My Orders"}
+            <h1
+              className={`text-3xl mb-2 ${
+                lang === "ar"
+                  ? "font-gess font-medium"
+                  : "font-sans font-semibold"
+              }`}
+            >
+              {t.pageTitle ?? "My Orders"}
             </h1>
-            <p className="text-gray-600">
-              {t.subtitle || "View and track all your orders"}
+            <p
+              className={`text-xl mb-2 ${
+                lang === "ar"
+                  ? "font-gess font-medium"
+                  : "font-sans font-semibold"
+              }`}
+            >
+              {t.subtitle ?? "View and track all your orders"}
             </p>
           </div>
         </div>
 
+        {/* Orders */}
         {orders.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-xl border">
             <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h2 className="text-xl font-bold text-gray-900 mb-2">
-              {t.noOrders || "No Orders Yet"}
+              {t.noOrders ?? "No Orders Yet"}
             </h2>
             <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              {t.noOrdersMessage ||
+              {t.noOrdersMessage ??
                 "You haven't placed any orders yet. Start shopping to see your orders here."}
             </p>
             <button
               onClick={() => (window.location.href = `/${lang}/products`)}
               className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              {t.startShopping || "Start Shopping"}
+              {t.startShopping ?? "Start Shopping"}
             </button>
           </div>
         ) : (
@@ -348,18 +363,30 @@ const OrdersPage = () => {
                   key={order.id}
                   className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-all"
                 >
-                  {/* Header Section */}
+                  {/* Order Header */}
                   <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
                     <div className="flex-1">
                       <div className="flex flex-wrap items-center gap-3 mb-3">
-                        <h2 className="font-bold text-xl text-gray-900">
-                          {t.order} #{order.orderNumber}
+                        <h2
+                          className={`${
+                            lang === "ar"
+                              ? "font-gess font-medium"
+                              : "font-sans font-semibold"
+                          } text-xl text-gray-900`}
+                        >
+                          {t.order ?? "Order"} #{order.orderNumber}
                         </h2>
                         <div
                           className={`flex items-center gap-2 px-3 py-1 rounded-full ${statusColor.bg} ${statusColor.text}`}
                         >
                           {statusColor.icon}
-                          <span className="font-medium">
+                          <span
+                            className={`${
+                              lang === "ar"
+                                ? "font-gess font-medium"
+                                : "font-sans font-semibold"
+                            }`}
+                          >
                             {translateStatus(order.status)}
                           </span>
                         </div>
@@ -369,16 +396,15 @@ const OrdersPage = () => {
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4 text-gray-500" />
                           <span className="text-gray-600">
-                            {t.orderDate || "Order Date"}:
+                            {t.orderDate ?? "Order Date"}:
                           </span>
                           <span className="font-medium">
                             {formatDate(order.createdAt)}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <DollarSign className="w-4 h-4 text-gray-500" />
                           <span className="text-gray-600">
-                            {t.amount || "Amount"}:
+                            {t.amount ?? "Amount"}:
                           </span>
                           <span className="font-medium text-green-600">
                             {order.finalAmount.toFixed(2)}{" "}
@@ -394,115 +420,109 @@ const OrdersPage = () => {
                     >
                       <Eye className="w-4 h-4" />
                       <span className="font-medium">
-                        {t.viewDetails || "View Details"}
+                        {t.viewDetails ?? "View Details"}
                       </span>
                     </button>
                   </div>
 
-                  {/* Divider */}
+                  {/* Items Summary */}
                   <div className="border-t border-gray-200 my-4"></div>
+                  <h3 className="font-semibold text-gray-800 mb-3">
+                    {t.items ?? "Items"} (
+                    {order.orderItems.reduce(
+                      (sum, item) => sum + item.quantity,
+                      0
+                    )}
+                    )
+                  </h3>
+                  <div className="space-y-4">
+                    {order.orderItems.slice(0, 3).map((item) => {
+                      const images = getProductImages(item);
+                      const firstImage = images?.[0];
 
-                  {/* Order Items Summary مع الصور المصغرة */}
-                  <div>
-                    <h3 className="font-semibold text-gray-800 mb-3">
-                      {t.items || "Items"} (
-                      {order.orderItems.reduce(
-                        (sum, item) => sum + item.quantity,
-                        0
-                      )}
-                      )
-                    </h3>
-                    <div className="space-y-4">
-                      {order.orderItems.slice(0, 3).map((item) => {
-                        const images = getProductImages(item);
-                        const firstImage = images[0];
+                      return (
+                        <div
+                          key={item.id}
+                          className="flex flex-col sm:flex-row gap-4 items-start"
+                        >
+                          <div className="relative w-20 h-20 sm:w-16 sm:h-16 rounded-lg overflow-hidden flex-shrink-0 border border-gray-200">
+                            {firstImage ? (
+                              <Image
+                                src={firstImage}
+                                alt={item.productName}
+                                fill
+                                className="object-cover"
+                                sizes="80px"
+                                unoptimized
+                                onError={(e) => {
+                                  e.currentTarget.src =
+                                    "/api/placeholder/80/80";
+                                }}
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                                <ImageIcon className="w-6 h-6 text-gray-400" />
+                              </div>
+                            )}
+                          </div>
 
-                        return (
-                          <div
-                            key={item.id}
-                            className="flex flex-col sm:flex-row gap-4 items-start"
-                          >
-                            {/* صورة المنتج */}
-                            <div className="relative w-20 h-20 sm:w-16 sm:h-16 rounded-lg overflow-hidden flex-shrink-0 border border-gray-200">
-                              {firstImage ? (
-                                <Image
-                                  src={firstImage}
-                                  alt={item.productName}
-                                  fill
-                                  className="object-cover"
-                                  sizes="80px"
-                                  unoptimized
-                                  onError={(e) => {
-                                    e.currentTarget.src =
-                                      "/api/placeholder/80/80";
-                                  }}
-                                />
-                              ) : (
-                                <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                                  <ImageIcon className="w-6 h-6 text-gray-400" />
-                                </div>
-                              )}
-                            </div>
-
-                            {/* تفاصيل المنتج */}
-                            <div className="flex-1 min-w-0">
-                              <div className="flex justify-between items-start">
-                                <div className="flex-1">
-                                  <p className="font-medium text-gray-900">
-                                    {item.productName}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex justify-between items-start">
+                              <div className="flex-1">
+                                <p className="font-medium text-gray-900">
+                                  {item.productName}
+                                </p>
+                                {item.variantDetails && (
+                                  <p className="text-sm text-gray-600 mt-1">
+                                    {item.variantDetails}
                                   </p>
-                                  {item.variantDetails && (
-                                    <p className="text-sm text-gray-600 mt-1">
-                                      {item.variantDetails}
+                                )}
+                                <div className="flex items-center gap-4 mt-2 text-sm">
+                                  <span className="text-gray-600">
+                                    {t.quantity ?? "Quantity"}:{" "}
+                                    <span className="font-medium">
+                                      {item.quantity}
+                                    </span>
+                                  </span>
+                                  <span className="text-gray-600">
+                                    {t.price ?? "Price"}:{" "}
+                                    <span className="font-medium">
+                                      {item.price.toFixed(2)}{" "}
+                                      {lang === "ar" ? "ج.م" : "EGP"}
+                                    </span>
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="text-right ml-4">
+                                <p className="font-bold text-lg text-blue-600">
+                                  {(item.price * item.quantity).toFixed(2)}{" "}
+                                  {lang === "ar" ? "ج.م" : "EGP"}
+                                </p>
+                                {item.discountAmount &&
+                                  item.discountAmount > 0 && (
+                                    <p className="text-sm text-green-600">
+                                      {t.saved ?? "Saved"}:{" "}
+                                      {item.discountAmount.toFixed(2)}
                                     </p>
                                   )}
-                                  <div className="flex items-center gap-4 mt-2 text-sm">
-                                    <span className="text-gray-600">
-                                      {t.quantity || "Quantity"}:{" "}
-                                      <span className="font-medium">
-                                        {item.quantity}
-                                      </span>
-                                    </span>
-                                    <span className="text-gray-600">
-                                      {t.price || "Price"}:{" "}
-                                      <span className="font-medium">
-                                        {item.price.toFixed(2)}{" "}
-                                        {lang === "ar" ? "ج.م" : "EGP"}
-                                      </span>
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="text-right ml-4">
-                                  <p className="font-bold text-lg text-blue-600">
-                                    {(item.price * item.quantity).toFixed(2)}{" "}
-                                    {lang === "ar" ? "ج.م" : "EGP"}
-                                  </p>
-                                  {item.discountAmount &&
-                                    item.discountAmount > 0 && (
-                                      <p className="text-sm text-green-600">
-                                        {t.saved || "Saved"}:{" "}
-                                        {item.discountAmount.toFixed(2)}
-                                      </p>
-                                    )}
-                                </div>
                               </div>
                             </div>
                           </div>
-                        );
-                      })}
-
-                      {order.orderItems.length > 3 && (
-                        <div className="text-center pt-2 border-t border-gray-100">
-                          <p className="text-sm text-blue-600">
-                            + {order.orderItems.length - 3}{" "}
-                            {t.moreItems || "more items"}
-                          </p>
                         </div>
-                      )}
-                    </div>
+                      );
+                    })}
+
+                    {order.orderItems.length > 3 && (
+                      <div className="text-center pt-2 border-t border-gray-100">
+                        <p className="text-sm text-blue-600">
+                          + {order.orderItems.length - 3}{" "}
+                          {t.moreItems ?? "more items"}
+                        </p>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Shipping Info (if available) */}
+                  {/* Shipping Info */}
                   {(order.shippingAddress ||
                     order.customerName ||
                     order.customerPhone) && (
@@ -510,7 +530,7 @@ const OrdersPage = () => {
                       <div className="border-t border-gray-200 my-4"></div>
                       <div>
                         <h3 className="font-semibold text-gray-800 mb-3">
-                          {t.shippingInfo || "Shipping Information"}
+                          {t.shippingInfo ?? "Shipping Information"}
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           {order.customerName && (
@@ -518,7 +538,7 @@ const OrdersPage = () => {
                               <User className="w-4 h-4 text-gray-500" />
                               <div>
                                 <p className="text-sm text-gray-600">
-                                  {t.customerName || "Customer"}
+                                  {t.customerName ?? "Customer"}
                                 </p>
                                 <p className="font-medium">
                                   {order.customerName}
@@ -531,7 +551,7 @@ const OrdersPage = () => {
                               <Phone className="w-4 h-4 text-gray-500" />
                               <div>
                                 <p className="text-sm text-gray-600">
-                                  {t.phone || "Phone"}
+                                  {t.phone ?? "Phone"}
                                 </p>
                                 <p className="font-medium">
                                   {order.customerPhone}
@@ -544,7 +564,7 @@ const OrdersPage = () => {
                               <MapPin className="w-4 h-4 text-gray-500" />
                               <div>
                                 <p className="text-sm text-gray-600">
-                                  {t.address || "Address"}
+                                  {t.address ?? "Address"}
                                 </p>
                                 <p className="font-medium">
                                   {order.shippingAddress}, {order.shippingCity}
@@ -563,7 +583,6 @@ const OrdersPage = () => {
         )}
       </div>
 
-      {/* Order Details Popup */}
       {showOrderDetails && selectedOrder && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
           <div
@@ -573,10 +592,20 @@ const OrdersPage = () => {
             {/* Header */}
             <div className="sticky top-0 bg-white border-b p-6 flex items-center justify-between z-10">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">
-                  {t.orderDetails || "Order Details"} #
-                  {selectedOrder.orderNumber}
+                <h2
+                  className={`${
+                    lang === "ar" ? "font-gess" : "font-sans"
+                  } text-2xl md:text-3xl font-bold text-primary`}
+                >
+                  {t.orderDetails || "Order Details"}
                 </h2>
+                <p
+                  className={`${
+                    lang === "ar" ? "font-gess" : "font-sans"
+                  } text-lg md:text-xl text-gray-700 mt-1`}
+                >
+                  {selectedOrder.orderNumber}
+                </p>
                 <p className="text-gray-600 mt-1">
                   {t.orderDate || "Order Date"}:{" "}
                   {formatDate(selectedOrder.createdAt)}
@@ -591,38 +620,37 @@ const OrdersPage = () => {
             </div>
 
             {/* Order Status */}
-            <div className="p-6 border-b">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold text-lg mb-2">
-                    {t.orderStatus || "Order Status"}
-                  </h3>
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
-                        getStatusColor(selectedOrder.status).bg
-                      } ${getStatusColor(selectedOrder.status).text}`}
-                    >
-                      {getStatusColor(selectedOrder.status).icon}
-                      <span className="font-medium">
-                        {translateStatus(selectedOrder.status)}
-                      </span>
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      {t.lastUpdated || "Last updated"}:{" "}
-                      {formatDate(selectedOrder.updatedAt)}
-                    </div>
+            <div className="p-6 border-b flex flex-col md:flex-row justify-between gap-4">
+              <div className="flex-1">
+                <h3 className="font-semibold text-lg mb-2">
+                  {t.orderStatus || "Order Status"}
+                </h3>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <div
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                      getStatusColor(selectedOrder.status).bg
+                    } ${getStatusColor(selectedOrder.status).text}`}
+                  >
+                    {getStatusColor(selectedOrder.status).icon}
+                    <span className="font-medium">
+                      {translateStatus(selectedOrder.status)}
+                    </span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    {t.lastUpdated || "Last updated"}:{" "}
+                    {formatDate(selectedOrder.updatedAt)}
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-gray-600">
-                    {t.totalAmount || "Total Amount"}
-                  </p>
-                  <p className="text-3xl font-bold text-green-600">
-                    {selectedOrder.finalAmount.toFixed(2)}{" "}
-                    {lang === "ar" ? "ج.م" : "EGP"}
-                  </p>
-                </div>
+              </div>
+
+              <div className="text-right">
+                <p className="text-gray-600">
+                  {t.totalAmount || "Total Amount"}
+                </p>
+                <p className="text-3xl md:text-4xl font-bold text-green-600">
+                  {selectedOrder.finalAmount.toFixed(2)}{" "}
+                  {lang === "ar" ? "ج.م" : "EGP"}
+                </p>
               </div>
             </div>
 
@@ -643,7 +671,11 @@ const OrdersPage = () => {
                           {t.customerName || "Customer Name"}
                         </p>
                       </div>
-                      <p className="font-medium text-lg">
+                      <p
+                        className={`${
+                          lang === "ar" ? "font-gess" : "font-sans"
+                        } font-medium text-lg`}
+                      >
                         {selectedOrder.customerName}
                       </p>
                     </div>
@@ -656,7 +688,11 @@ const OrdersPage = () => {
                           {t.phone || "Phone Number"}
                         </p>
                       </div>
-                      <p className="font-medium text-lg">
+                      <p
+                        className={`${
+                          lang === "ar" ? "font-gess" : "font-sans"
+                        } font-medium text-lg`}
+                      >
                         {selectedOrder.customerPhone}
                       </p>
                     </div>
@@ -669,7 +705,11 @@ const OrdersPage = () => {
                           {t.shippingAddress || "Shipping Address"}
                         </p>
                       </div>
-                      <p className="font-medium text-lg">
+                      <p
+                        className={`${
+                          lang === "ar" ? "font-gess" : "font-sans"
+                        } font-medium text-lg`}
+                      >
                         {selectedOrder.shippingAddress}
                       </p>
                       {selectedOrder.shippingCity && (
@@ -683,7 +723,7 @@ const OrdersPage = () => {
               </div>
             )}
 
-            {/* Order Items Details مع الصور */}
+            {/* Order Items */}
             <div className="p-6">
               <h3 className="font-semibold text-lg mb-4">
                 {t.orderItems || "Order Items"}
@@ -691,44 +731,44 @@ const OrdersPage = () => {
               <div className="space-y-6">
                 {selectedOrder.orderItems.map((item, index) => {
                   const images = getProductImages(item);
-
                   return (
                     <div
                       key={item.id}
                       className="border rounded-xl overflow-hidden"
                     >
-                      <div className="bg-blue-50 p-4">
-                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                          <h4 className="font-bold text-lg">
-                            {t.item || "Item"} #{index + 1}: {item.productName}
-                          </h4>
-                          <div className="text-right">
-                            <p className="text-2xl font-bold text-green-600">
-                              {item.price.toFixed(2)}{" "}
-                              {lang === "ar" ? "ج.م" : "EGP"}
-                            </p>
-                            {item.originalPrice &&
-                              item.originalPrice > item.price && (
-                                <p className="text-sm text-gray-500 line-through">
-                                  {item.originalPrice.toFixed(2)}{" "}
-                                  {lang === "ar" ? "ج.م" : "EGP"}
-                                </p>
-                              )}
-                          </div>
+                      <div className="bg-blue-50 p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <h4
+                          className={`${
+                            lang === "ar" ? "font-gess" : "font-sans"
+                          } font-bold text-lg`}
+                        >
+                          {t.item || "Item"} #{index + 1}: {item.productName}
+                        </h4>
+                        <div className="text-right">
+                          <p className="text-2xl md:text-3xl font-bold text-green-600">
+                            {item.price.toFixed(2)}{" "}
+                            {lang === "ar" ? "ج.م" : "EGP"}
+                          </p>
+                          {item.originalPrice &&
+                            item.originalPrice > item.price && (
+                              <p className="text-sm text-gray-500 line-through">
+                                {item.originalPrice.toFixed(2)}{" "}
+                                {lang === "ar" ? "ج.م" : "EGP"}
+                              </p>
+                            )}
                         </div>
                       </div>
 
+                      {/* Images */}
                       <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        {/* صور المنتج */}
                         <div className="lg:col-span-1">
                           <h5 className="font-medium text-gray-700 mb-3 flex items-center gap-2">
-                            <ImageIcon className="w-4 h-4" />
+                            <ImageIcon className="w-4 h-4" />{" "}
                             {t.productImages || "Product Images"}
                           </h5>
                           <div className="space-y-3">
                             {images.length > 0 ? (
                               <>
-                                {/* الصورة الرئيسية */}
                                 <div
                                   className="relative w-full h-64 rounded-lg overflow-hidden cursor-pointer border border-gray-200"
                                   onClick={() => openImageModal(images[0])}
@@ -747,18 +787,16 @@ const OrdersPage = () => {
                                   />
                                   <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors duration-300" />
                                 </div>
-
-                                {/* الصور المصغرة */}
                                 {images.length > 1 && (
-                                  <div className="grid grid-cols-4 gap-2">
-                                    {images.slice(1).map((image, idx) => (
+                                  <div className="grid grid-cols-4 gap-2 mt-2">
+                                    {images.slice(1).map((img, idx) => (
                                       <div
                                         key={idx}
                                         className="relative h-20 rounded-md overflow-hidden cursor-pointer border border-gray-200"
-                                        onClick={() => openImageModal(image)}
+                                        onClick={() => openImageModal(img)}
                                       >
                                         <Image
-                                          src={image}
+                                          src={img}
                                           alt={`${item.productName} - ${
                                             idx + 2
                                           }`}
@@ -776,10 +814,6 @@ const OrdersPage = () => {
                                     ))}
                                   </div>
                                 )}
-
-                                <p className="text-xs text-gray-500 text-center">
-                                  {t.clickToEnlarge || "Click to enlarge image"}
-                                </p>
                               </>
                             ) : (
                               <div className="w-full h-64 bg-gray-100 rounded-lg flex flex-col items-center justify-center">
@@ -792,128 +826,29 @@ const OrdersPage = () => {
                           </div>
                         </div>
 
-                        {/* تفاصيل المنتج */}
-                        <div className="lg:col-span-2 space-y-6">
-                          <div className="space-y-4">
-                            <div className="flex items-center gap-3">
-                              <Package className="w-5 h-5 text-gray-500" />
-                              <div>
-                                <p className="text-sm text-gray-600">
-                                  {t.quantity || "Quantity"}
-                                </p>
-                                <p className="font-medium">
-                                  {item.quantity} {t.piece || "piece"}
-                                </p>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center gap-3">
-                              <DollarSign className="w-5 h-5 text-gray-500" />
-                              <div>
-                                <p className="text-sm text-gray-600">
-                                  {t.total || "Total"}
-                                </p>
-                                <p className="font-medium text-lg">
-                                  {(item.price * item.quantity).toFixed(2)}{" "}
-                                  {lang === "ar" ? "ج.م" : "EGP"}
-                                </p>
-                              </div>
-                            </div>
-
-                            {item.discountAmount && item.discountAmount > 0 && (
-                              <div className="flex items-center gap-3">
-                                <Tag className="w-5 h-5 text-green-500" />
-                                <div>
-                                  <p className="text-sm text-gray-600">
-                                    {t.discount || "Discount"}
-                                  </p>
-                                  <p className="font-medium text-green-600">
-                                    -{item.discountAmount.toFixed(2)}{" "}
-                                    {lang === "ar" ? "ج.م" : "EGP"}
-                                  </p>
-                                </div>
-                              </div>
-                            )}
-
-                            {item.product?.category && (
-                              <div className="flex items-center gap-3">
-                                <Tag className="w-5 h-5 text-gray-500" />
-                                <div>
-                                  <p className="text-sm text-gray-600">
-                                    {t.category || "Category"}
-                                  </p>
-                                  <p className="font-medium">
-                                    {item.product.category}
-                                  </p>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-
-                          {/* تفاصيل المتغير */}
-                          {item.variant && (
-                            <div className="border-t pt-4 space-y-4">
-                              <h5 className="font-medium text-gray-700">
-                                {t.variantDetails || "Variant Details"}
-                              </h5>
-                              {item.variant.color && (
-                                <div className="flex items-center gap-3">
-                                  <Palette className="w-5 h-5 text-gray-500" />
-                                  <div className="flex items-center gap-2">
-                                    <p className="text-sm text-gray-600">
-                                      {t.color || "Color"}:
-                                    </p>
-                                    <p className="font-medium">
-                                      {item.variant.color}
-                                    </p>
-                                    {item.variant.colorHex && (
-                                      <div
-                                        className="w-6 h-6 rounded-full border"
-                                        style={{
-                                          backgroundColor:
-                                            item.variant.colorHex,
-                                        }}
-                                        title={item.variant.colorHex}
-                                      />
-                                    )}
-                                  </div>
-                                </div>
-                              )}
-
-                              {item.variant.sizes &&
-                                item.variant.sizes.length > 0 && (
-                                  <div className="flex items-center gap-3">
-                                    <Ruler className="w-5 h-5 text-gray-500" />
-                                    <div>
-                                      <p className="text-sm text-gray-600">
-                                        {t.sizes || "Sizes"}
-                                      </p>
-                                      <div className="flex flex-wrap gap-2 mt-1">
-                                        {item.variant.sizes.map((size) => (
-                                          <span
-                                            key={size}
-                                            className="px-3 py-1 bg-gray-100 rounded-lg text-sm font-medium"
-                                          >
-                                            {size}
-                                          </span>
-                                        ))}
-                                      </div>
-                                    </div>
-                                  </div>
-                                )}
-
-                              {item.variantDetails && (
-                                <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                                  <p className="text-sm text-gray-600 mb-1">
-                                    {t.additionalDetails ||
-                                      "Additional Details"}
-                                  </p>
-                                  <p className="text-gray-800">
-                                    {item.variantDetails}
-                                  </p>
-                                </div>
-                              )}
-                            </div>
+                        {/* Details */}
+                        <div className="lg:col-span-2 space-y-4">
+                          <p className="text-sm text-gray-600">
+                            {t.quantity || "Quantity"}:{" "}
+                            <span className="font-medium">
+                              {item.quantity} {t.piece || "piece"}
+                            </span>
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {t.total || "Total"}:{" "}
+                            <span className="font-medium">
+                              {(item.price * item.quantity).toFixed(2)}{" "}
+                              {lang === "ar" ? "ج.م" : "EGP"}
+                            </span>
+                          </p>
+                          {item.discountAmount && item.discountAmount > 0 && (
+                            <p className="text-sm text-gray-600">
+                              {t.discount || "Discount"}:
+                              <span className="font-medium text-red-600">
+                                -{item.discountAmount?.toFixed(2)}{" "}
+                                {lang === "ar" ? "ج.م" : "EGP"}
+                              </span>
+                            </p>
                           )}
                         </div>
                       </div>
@@ -921,65 +856,39 @@ const OrdersPage = () => {
                   );
                 })}
               </div>
+            </div>
 
-              {/* Order Summary */}
-              <div className="mt-8 border-t pt-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h4 className="font-bold text-lg">
-                    {t.orderSummary || "Order Summary"}
-                  </h4>
-                  <div className="text-right">
-                    <p className="text-3xl font-bold text-green-600">
-                      {selectedOrder.finalAmount.toFixed(2)}{" "}
-                      {lang === "ar" ? "ج.م" : "EGP"}
-                    </p>
-                    {selectedOrder.totalAmount !==
-                      selectedOrder.finalAmount && (
-                      <p className="text-sm text-gray-500 line-through">
-                        {selectedOrder.totalAmount.toFixed(2)}{" "}
-                        {lang === "ar" ? "ج.م" : "EGP"}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <p className="text-sm text-gray-600">
-                      {t.totalItems || "Total Items"}
-                    </p>
-                    <p className="text-2xl font-bold">
-                      {selectedOrder.orderItems.reduce(
-                        (sum, item) => sum + item.quantity,
-                        0
-                      )}
-                    </p>
-                  </div>
-
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <p className="text-sm text-gray-600">
-                      {t.differentItems || "Different Items"}
-                    </p>
-                    <p className="text-2xl font-bold">
-                      {selectedOrder.orderItems.length}
-                    </p>
-                  </div>
-
-                  <div className="bg-yellow-50 p-4 rounded-lg">
-                    <p className="text-sm text-gray-600">
-                      {t.totalDiscount || "Total Discount"}
-                    </p>
-                    <p className="text-2xl font-bold text-red-600">
-                      {selectedOrder.orderItems
-                        .reduce(
-                          (sum, item) => sum + (item.discountAmount || 0),
-                          0
-                        )
-                        .toFixed(2)}{" "}
-                      {lang === "ar" ? "ج.م" : "EGP"}
-                    </p>
-                  </div>
-                </div>
+            {/* Order Summary */}
+            <div className="mt-8 border-t pt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-blue-50 p-4 rounded-lg text-center">
+                <p className="text-sm text-gray-600">
+                  {t.totalItems || "Total Items"}
+                </p>
+                <p className="text-2xl font-bold">
+                  {selectedOrder.orderItems.reduce(
+                    (sum, item) => sum + item.quantity,
+                    0
+                  )}
+                </p>
+              </div>
+              <div className="bg-green-50 p-4 rounded-lg text-center">
+                <p className="text-sm text-gray-600">
+                  {t.differentItems || "Different Items"}
+                </p>
+                <p className="text-2xl font-bold">
+                  {selectedOrder.orderItems.length}
+                </p>
+              </div>
+              <div className="bg-yellow-50 p-4 rounded-lg text-center">
+                <p className="text-sm text-gray-600">
+                  {t.totalDiscount || "Total Discount"}
+                </p>
+                <p className="text-2xl font-bold text-red-600">
+                  {selectedOrder.orderItems
+                    .reduce((sum, item) => sum + (item.discountAmount || 0), 0)
+                    .toFixed(2)}{" "}
+                  {lang === "ar" ? "ج.م" : "EGP"}
+                </p>
               </div>
             </div>
 
@@ -996,7 +905,6 @@ const OrdersPage = () => {
         </div>
       )}
 
-      {/* Modal لعرض الصورة بمقاس كامل */}
       {showImageModal && selectedImage && (
         <div
           className="fixed inset-0 bg-black/90 z-[60] flex items-center justify-center p-4"

@@ -97,7 +97,7 @@ export default function MobileNavFilters({
 
     const category = activeView === "shoes" ? "SHOE" : "BAG";
 
-    const basePath = lang === "ar" ? "/ar/products" : "/products";
+    const basePath = lang === "ar" ? "/ar/products" : "/en/products";
     const params = new URLSearchParams();
 
     params.set("category", category);

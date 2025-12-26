@@ -22,6 +22,16 @@ export default function Filters({ lang }: FiltersProps) {
   const pathname = usePathname();
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isSubcategoryOpen, setIsSubcategoryOpen] = useState(false);
+  const mainCategories = [
+    { id: "SHOE", label: lang === "ar" ? "أحذية" : "Shoes" },
+    { id: "BAG", label: lang === "ar" ? "شنط" : "Bags" },
+  ];
+
+  // الحصول على اسم الفئة المحددة للعرض
+  const getSelectedCategoryLabel = () => {
+    if (!category) return lang === "ar" ? "الفئة" : "Category";
+    return mainCategories.find((c) => c.id === category)?.label || category;
+  };
 
   const {
     category,
@@ -83,11 +93,6 @@ export default function Filters({ lang }: FiltersProps) {
 
   const subcategories = getSubcategories();
 
-  const getSelectedCategoryLabel = () => {
-    if (!category) return lang === "ar" ? "الفئة" : "Category";
-    return PRODUCT_TYPES.find((c) => c.value === category)?.label || category;
-  };
-
   const getSelectedSubcategoryLabel = () => {
     if (!subcategory) return lang === "ar" ? "النوع" : "Type";
     return (
@@ -132,16 +137,16 @@ export default function Filters({ lang }: FiltersProps) {
                 {lang === "ar" ? "الكل" : "All Categories"}
               </button>
 
-              {PRODUCT_TYPES.map((c) => (
+              {mainCategories.map((c) => (
                 <button
-                  key={c.value}
+                  key={c.id}
                   onClick={() => {
-                    setFilters(c.value, null);
-                    updateURL(c.value, null);
+                    setFilters(c.id as Category, null);
+                    updateURL(c.id as Category, null);
                     setIsCategoryOpen(false);
                   }}
                   className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 ${
-                    category === c.value ? "font-medium bg-gray-50" : ""
+                    category === c.id ? "font-medium bg-gray-50" : ""
                   }`}
                 >
                   {c.label}

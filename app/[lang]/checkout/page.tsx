@@ -4,7 +4,14 @@ import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useCartStore } from "@/store/cart-store";
 import { toast } from "sonner";
-import { Loader2, ArrowLeft, MapPin, Plus, ShoppingBag } from "lucide-react";
+import {
+  Loader2,
+  ArrowLeft,
+  MapPin,
+  Plus,
+  ShoppingBag,
+  ArrowRight,
+} from "lucide-react";
 import axios from "axios";
 import { Address, CartItem } from "@/types/cart";
 import ar from "@/messages/ar.json";
@@ -196,15 +203,37 @@ export default function CheckoutPage() {
   if (cart.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <ShoppingBag className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            {t.emptyCartTitle}
+        <div className="text-center max-w-md mx-auto">
+          <ShoppingBag className="w-24 h-24 text-gray-400 mx-auto mb-6" />
+          <h2
+            className={`${
+              lang === "ar"
+                ? "font-gess font-medium"
+                : "font-sans font-semibold"
+            } text-2xl font-bold text-center text-primary`}
+          >
+            {" "}
+            {t.emptyTitle}
           </h2>
-          <p className="text-gray-600 mb-6">{t.emptyCartMessage}</p>
+
+          <p
+            className={`${
+              lang === "ar"
+                ? "font-gess font-medium"
+                : "font-sans font-semibold"
+            } text-md mb-2 mt-2  font-bold text-center text-primary`}
+          >
+            {" "}
+            {t.emptyMessage}
+          </p>
+
           <button
             onClick={() => router.push(`/${lang}/products`)}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            className={` ${
+              lang === "ar"
+                ? "font-gess font-medium"
+                : "font-sans font-semibold"
+            } bg-primary text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium`}
           >
             {t.browseProducts}
           </button>
@@ -231,10 +260,30 @@ export default function CheckoutPage() {
               isRTL ? "flex-row" : "flex-row-reverse"
             }`}
           >
-            <ArrowLeft className={`w-5 h-5 ${isRTL ? "" : "rotate-180"}`} />
-            <span className="font-medium">{t.backToCart}</span>
+            {lang === "ar" && <ArrowRight className="w-5 h-5" />}
+
+            <span
+              className={`${
+                lang === "ar"
+                  ? "font-gess font-medium"
+                  : "font-sans font-semibold"
+              } text-primary`}
+            >
+              {t.backToCart}
+            </span>
+
+            {lang === "en" && <ArrowLeft className="w-5 h-5" />}
           </button>
-          <h1 className="text-3xl font-bold text-gray-900">{t.pageTitle}</h1>
+
+          <h1
+            className={`${
+              lang === "ar"
+                ? "font-gess font-medium"
+                : "font-sans font-semibold"
+            } text-3xl font-bold  text-primary`}
+          >
+            {t.pageTitle}
+          </h1>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -242,7 +291,14 @@ export default function CheckoutPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* عنوان الشحن */}
             <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              <h2
+                className={`${
+                  lang === "ar"
+                    ? "font-gess font-medium"
+                    : "font-sans font-semibold"
+                } text-xl font-bold text-center mb-4 text-primary`}
+              >
+                {" "}
                 {t.shippingAddress}
               </h2>
 
@@ -290,7 +346,15 @@ export default function CheckoutPage() {
               ) : (
                 <div className="text-center py-8">
                   <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                  <p className="text-gray-500 mb-4">{t.noAddresses}</p>
+                  <p
+                    className={`${
+                      lang === "ar"
+                        ? "font-gess font-medium"
+                        : "font-sans font-semibold"
+                    } text-md font-bold text-center mb-2 text-primary`}
+                  >
+                    {t.noAddresses}
+                  </p>
                 </div>
               )}
 
@@ -299,12 +363,26 @@ export default function CheckoutPage() {
                 className="w-full mt-4 flex items-center justify-center gap-2 text-blue-600 border-2 border-dashed border-blue-200 rounded-lg py-4"
               >
                 <Plus className="w-5 h-5" />
-                <span className="font-medium">{t.addNewAddress}</span>
+                <span
+                  className={`${
+                    lang === "ar"
+                      ? "font-gess font-medium"
+                      : "font-sans font-semibold"
+                  } text-xl font-bold text-center text-primary`}
+                >
+                  {t.addNewAddress}
+                </span>
               </button>
 
               {showAddressForm && (
                 <div className="mt-6 p-6 border border-gray-200 rounded-lg bg-gray-50">
-                  <h3 className="font-semibold text-lg mb-4">
+                  <h3
+                    className={`${
+                      lang === "ar"
+                        ? "font-gess font-medium"
+                        : "font-sans font-semibold"
+                    } text-lg font-bold mb-4 text-primary`}
+                  >
                     {t.addNewAddress}
                   </h3>
                   <div className="grid gap-4">
@@ -327,7 +405,9 @@ export default function CheckoutPage() {
                       onChange={(e) =>
                         setNewAddress({ ...newAddress, phone: e.target.value })
                       }
-                      className="w-full p-3 border border-gray-300 rounded-lg"
+                      className={`w-full p-3 border  border-gray-300 rounded-lg ${
+                        lang === "ar" ? "text-right" : "text-left"
+                      }`}
                     />
                     <input
                       type="text"
@@ -339,7 +419,7 @@ export default function CheckoutPage() {
                           address: e.target.value,
                         })
                       }
-                      className="w-full p-3 border border-gray-300 rounded-lg"
+                      className="w-full p-3 border  border-gray-300 rounded-lg"
                     />
                     <input
                       type="text"
@@ -362,7 +442,15 @@ export default function CheckoutPage() {
                         }
                         className="w-4 h-4"
                       />
-                      <span className="text-sm">{t.setAsDefault}</span>
+                      <span
+                        className={`${
+                          lang === "ar"
+                            ? "font-gess font-medium"
+                            : "font-sans font-semibold"
+                        } text-sm font-bold text-center text-primary`}
+                      >
+                        {t.setAsDefault}
+                      </span>
                     </label>
                   </div>
                   <div
@@ -394,13 +482,28 @@ export default function CheckoutPage() {
           {/* القسم الأيمن - ملخص الطلب */}
           <div className="space-y-6">
             <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-6">
+              <h2
+                className={`${
+                  lang === "ar"
+                    ? "font-gess font-medium"
+                    : "font-sans font-semibold"
+                } text-xl font-bold  mb-4  text-primary`}
+              >
+                {" "}
                 {t.orderSummary}
               </h2>
 
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">{t.subtotal}</span>
+                  <span
+                    className={`${
+                      lang === "ar"
+                        ? "font-gess font-medium"
+                        : "font-sans font-semibold"
+                    } text-md font-bold text-center text-primary`}
+                  >
+                    {t.total}
+                  </span>
                   <span
                     className={`font-semibold  ${
                       lang === "ar" ? "font-gess" : "font-sans"
@@ -409,27 +512,25 @@ export default function CheckoutPage() {
                     {subtotal.toFixed(2)} {t.currency}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">{t.shipping}</span>
-                  <span className="font-semibold">
-                    {shipping === 0 ? (
-                      <span className="text-green-600">{t.free}</span>
-                    ) : (
-                      `${shipping.toFixed(2)} ${t.currency}`
-                    )}
+                <div className="mt-1">
+                  <span
+                    className={`${
+                      lang === "ar"
+                        ? "font-gess font-medium"
+                        : "font-sans font-semibold"
+                    } text-md font-bold text-primary`}
+                  >
+                    {t.shipping}
                   </span>
-                </div>
-                <div className="border-t border-gray-200 pt-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-lg font-semibold">{t.total}</span>
-                    <span
-                      className={`text-2xl font-bold text-blue-600 ${
-                        lang === "ar" ? "font-gess" : "font-sans"
-                      } `}
-                    >
-                      {total.toFixed(2)} {t.currency}
-                    </span>
-                  </div>
+                  <p
+                    className={`mt-1 text-sm text-gray-600 ${
+                      lang === "ar" ? "font-gess" : "font-sans"
+                    }`}
+                  >
+                    {lang === "ar"
+                      ? "مصاريف الشحن تختلف حسب شركة الشحن المختارة."
+                      : "Shipping costs may vary depending on the shipping provider."}
+                  </p>
                 </div>
               </div>
 

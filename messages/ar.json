@@ -92,6 +92,8 @@
     }
   },
   "checkout": {
+     "emptyTitle": "سلة التسوق فارغة",
+    "emptyMessage": "ابدأ التسوق لإضافة منتجات رائعة إلى سلتك",
     "pageTitle": "إتمام الشراء",
     "backToCart": "العودة إلى السلة",
     "shippingAddress": "عنوان الشحن",

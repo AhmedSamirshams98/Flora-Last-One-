@@ -24,26 +24,33 @@ export const useCartStore = create<CartStore>()(
       addToCart: (item) => {
         set((state) => {
           // ⚠️ التحديث: البحث باستخدام variantId إذا موجود
-          const existingItem = state.items.find((i) => 
+          const existingItem = state.items.find((i) =>
             item.variantId ? i.variantId === item.variantId : i.id === item.id
           );
-          
+
           let newItems;
 
           if (existingItem) {
             newItems = state.items.map((i) =>
-              (item.variantId ? i.variantId === item.variantId : i.id === item.id) 
-                ? { ...i, quantity: i.quantity + (item.quantity || 1) } 
+              (
+                item.variantId
+                  ? i.variantId === item.variantId
+                  : i.id === item.id
+              )
+                ? { ...i, quantity: i.quantity + (item.quantity || 1) }
                 : i
             );
             toast.success("تم تحديث الكمية");
           } else {
-            newItems = [...state.items, { 
-              ...item, 
-              quantity: item.quantity || 1,
-              isOffer: item.isOffer || false, // ⚠️ تأكيد قيمة isOffer
-              variantId: item.variantId // ⚠️ حفظ variantId
-            }];
+            newItems = [
+              ...state.items,
+              {
+                ...item,
+                quantity: item.quantity || 1,
+                isOffer: item.isOffer || false, // ⚠️ تأكيد قيمة isOffer
+                variantId: item.variantId, // ⚠️ حفظ variantId
+              },
+            ];
             toast.success("تمت إضافة المنتج إلى السلة");
           }
 

@@ -1,226 +1,151 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import AOS from "aos";
-import "aos/dist/aos.css";
-
-interface AboutSectionProps {
-  lang: "ar" | "en";
-}
 
 interface ReelType {
   id: string;
   url: string;
 }
 
+interface AboutSectionProps {
+  lang: "ar" | "en";
+}
+
 export default function ReelsCarousel({ lang }: AboutSectionProps) {
   const [reels, setReels] = useState<ReelType[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef(0);
 
   useEffect(() => {
-    const fetchReels = async () => {
-      try {
-        const res = await fetch("/api/reels");
-        const data = await res.json();
+    fetch("/api/reels")
+      .then((res) => res.json())
+      .then((data) => {
         setReels(data);
-      } catch (err) {
-        console.error(err);
-      } finally {
         setLoading(false);
-      }
-    };
-
-    fetchReels();
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
   }, []);
 
-  useEffect(() => {
-    AOS.init({ duration: 800, once: true });
-  }, []);
+  const nextReel = () => {
+    setCurrentIndex((prev) => (prev + 1) % reels.length);
+  };
 
-  useEffect(() => {
-    AOS.refresh();
-  }, [reels]);
+  const prevReel = () => {
+    setCurrentIndex((prev) => (prev - 1 + reels.length) % reels.length);
+  };
 
-  const nextReel = useCallback(() => {
-    setCurrentIndex((prev) => (prev === reels.length - 1 ? 0 : prev + 1));
-  }, [reels.length]);
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
 
-  const prevReel = useCallback(() => {
-    setCurrentIndex((prev) => (prev === 0 ? reels.length - 1 : prev - 1));
-  }, [reels.length]);
-
-  const goToReel = (index: number) => setCurrentIndex(index);
-
-  const [touchStart, setTouchStart] = useState(0);
-  const [touchEnd, setTouchEnd] = useState(0);
-
-  const handleTouchStart = (e: React.TouchEvent) =>
-    setTouchStart(e.targetTouches[0].clientX);
-
-  const handleTouchMove = (e: React.TouchEvent) =>
-    setTouchEnd(e.targetTouches[0].clientX);
-
-  const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-    const distance = touchStart - touchEnd;
-    if (Math.abs(distance) > 50) {
-      distance > 0 ? nextReel() : prevReel();
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      diff > 0 ? nextReel() : prevReel();
     }
   };
 
-  /* =========================
-     States
-  ========================= */
-  if (loading) return <LoadingSkeleton />;
-
-  if (!reels.length) {
+  if (loading) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">
-          {lang === "ar" ? "لا توجد Reels متاحة حالياً" : "No Reels available"}
-        </p>
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="w-full aspect-[9/16] sm:aspect-[4/3] md:aspect-video bg-gray-200 animate-pulse rounded-xl" />
       </div>
     );
   }
 
-  /* =========================
-     Render
-  ========================= */
-  return (
-    <div className="max-w-6xl mx-auto mt-2  px-4 py-8">
-      <div className="mb-8 text-center">
-        <h2
-          className={`text-3xl text-primary  mb-2 ${
-            lang === "ar" ? "font-gess font-medium" : "font-sans"
-          }`}
-        >
-          {lang === "ar" ? "أحدث الريلز" : "Latest Reels"}
-        </h2>
+  if (!reels.length) {
+    return (
+      <div className="text-center py-12 text-gray-500">
+        {lang === "ar" ? "لا توجد Reels متاحة" : "No Reels available"}
       </div>
+    );
+  }
 
-      <div className="relative" data-aos="fade-right">
-        {/* Previous */}
+  return (
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      {/* العنوان */}
+      <h2
+        className={`text-3xl text-center mb-8 ${
+          lang === "ar" ? "font-medium" : ""
+        }`}
+      >
+        {lang === "ar" ? "أحدث الريلز" : "Latest Reels"}
+      </h2>
+
+      {/* الكاروسيل */}
+      <div className="relative">
+        {/* زر السابق */}
         <button
           onClick={prevReel}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white hover:bg-white p-3 rounded-full shadow-lg backdrop-blur-sm transition-all hover:scale-110"
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow-lg hover:scale-110 transition-transform"
           aria-label={lang === "ar" ? "السابق" : "Previous"}
         >
-          <ChevronLeft className="w-6 h-6" />
+          <ChevronLeft className="w-5 h-5" />
         </button>
 
-        {/* Carousel */}
+        {/* محتوى الكاروسيل */}
         <div
-          ref={containerRef}
-          className="overflow-hidden rounded-2xl"
+          className="overflow-hidden rounded-xl"
           onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
           <div
-            className="flex transition-transform duration-500 ease-out will-change-transform"
-            style={{
-              transform: `translate3d(-${currentIndex * 100}%, 0, 0)`,
-            }}
+            className="flex transition-transform duration-300"
+            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
           >
-            {reels.map((reel, index) => (
-              <Reel
-                key={reel.id}
-                reel={reel}
-                index={index}
-                currentIndex={currentIndex}
-                totalReels={reels.length}
-              />
+            {reels.map((reel, idx) => (
+              <div key={reel.id} className="w-full flex-shrink-0">
+                {Math.abs(idx - currentIndex) <= 1 ? (
+                  <iframe
+                    src={reel.url}
+                    className="w-full aspect-[9/16] sm:aspect-[4/3] md:aspect-video rounded-xl"
+                    loading="lazy"
+                    allow="autoplay; encrypted-media"
+                    allowFullScreen
+                    title={`Reel ${idx + 1}`}
+                  />
+                ) : (
+                  <div className="w-full aspect-[9/16] sm:aspect-[4/3] md:aspect-video bg-gray-100" />
+                )}
+              </div>
             ))}
           </div>
         </div>
 
-        {/* Next */}
+        {/* زر التالي */}
         <button
           onClick={nextReel}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white/80 hover:bg-white p-3 rounded-full shadow-lg backdrop-blur-sm transition-all hover:scale-110"
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow-lg hover:scale-110 transition-transform"
           aria-label={lang === "ar" ? "التالي" : "Next"}
         >
-          <ChevronRight className="w-6 h-6" />
+          <ChevronRight className="w-5 h-5" />
         </button>
 
-        {/* Dots */}
+        {/* النقاط */}
         <div className="flex justify-center mt-6 gap-2">
-          {reels.map((_, index) => (
+          {reels.map((_, idx) => (
             <button
-              key={index}
-              onClick={() => goToReel(index)}
+              key={idx}
+              onClick={() => setCurrentIndex(idx)}
               className={`w-3 h-3 rounded-full transition-all ${
-                index === currentIndex
+                idx === currentIndex
                   ? "bg-primary scale-125"
                   : "bg-gray-300 hover:bg-gray-400"
               }`}
-              aria-label={`${
-                lang === "ar" ? "انتقل إلى الريل" : "Go to reel"
-              } ${index + 1}`}
+              aria-label={`${lang === "ar" ? "الريل" : "Reel"} ${idx + 1}`}
             />
           ))}
         </div>
-      </div>
-    </div>
-  );
-}
 
-const Reel = React.memo(
-  ({
-    reel,
-    index,
-    currentIndex,
-    totalReels,
-  }: {
-    reel: ReelType;
-    index: number;
-    currentIndex: number;
-    totalReels: number;
-  }) => {
-    const shouldRender =
-      index === currentIndex ||
-      index === currentIndex - 1 ||
-      index === currentIndex + 1;
-
-    return (
-      <div className="w-full flex-shrink-0 px-2 relative">
-        {shouldRender ? (
-          <div className="relative w-full aspect-[9/16]    sm:aspect-[16/9]  md:aspect-[4/3]  lg:aspect-[16/9]   ">
-            <iframe
-              src={reel.url}
-              className="rounded-xl shadow-2xl w-full h-full"
-              style={{ border: "none", overflow: "hidden" }}
-              loading="lazy"
-              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-              allowFullScreen
-              title={`Instagram Reel ${index + 1}`}
-            />
-          </div>
-        ) : (
-          <div className="w-full aspect-[9/16] bg-gray-200 animate-pulse rounded-xl" />
-        )}
-
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm rounded-full px-4 py-2 text-white text-sm pointer-events-none">
-          {index + 1} / {totalReels}
+        {/* العداد */}
+        <div className="text-center mt-4 text-sm text-gray-600">
+          {currentIndex + 1} / {reels.length}
         </div>
-      </div>
-    );
-  }
-);
-
-function LoadingSkeleton() {
-  return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <div className="flex justify-center">
-        <div className="w-[350px] h-[620px] animate-pulse rounded-xl bg-gray-200" />
-      </div>
-      <div className="flex justify-center mt-6 gap-2">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="w-3 h-3 rounded-full bg-gray-300" />
-        ))}
       </div>
     </div>
   );

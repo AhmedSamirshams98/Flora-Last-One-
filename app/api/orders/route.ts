@@ -9,7 +9,7 @@ interface CreateOrderItem {
   price: number;
   originalPrice?: number;
   productName: string;
-  variantDetails?: string;  
+  variantDetails?: string;
 }
 
 interface CreateOrderInput {
@@ -120,10 +120,10 @@ export async function POST(req: Request) {
     );
 
     // رقم الطلب الفريد
-    const orderNumber = `ORD-${Date.now()}-${Math.random()
+    const orderNumber = Math.random()
       .toString(36)
-      .substr(2, 9)
-      .toUpperCase()}`;
+      .substring(2, 9)
+      .toUpperCase();
 
     // إنشاء الطلب مع جميع البيانات
     const order = await prisma.order.create({
@@ -222,7 +222,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ error: "فشل في إنشاء الطلب حيث ان الكميه غير متاحة" }, { status: 500 });
+    return NextResponse.json(
+      { error: "فشل في إنشاء الطلب حيث ان الكميه غير متاحة" },
+      { status: 500 }
+    );
   }
 }
 

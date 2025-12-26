@@ -5,7 +5,7 @@ export const productTranslations = {
   },
   subcategory: {
     WINTER_BOOTS: { ar: "أحذية شتوية", en: "Winter Boots" },
-    SNEAKERS: { ar: "أحذية رياضية", en: "Sneakers" },
+    SNEAKERS: { ar: "أحذية رياضية", en: "SNEAKERS" },
     PUMPS: { ar: "كعب عالي", en: "Pumps" },
     BALLERINAS: { ar: "باليرينا", en: "Ballerinas" },
     LOAFERS: { ar: "لوفرس", en: "Loafers" },

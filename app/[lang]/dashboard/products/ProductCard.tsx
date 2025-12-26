@@ -16,7 +16,6 @@ export default function ProductCard({
   onDelete,
 }: ProductCardProps) {
   const pathname = usePathname();
-  const router = useRouter();
   const lang: "ar" | "en" = pathname.startsWith("/ar") ? "ar" : "en";
 
   const finalPrice = product.finalPrice;

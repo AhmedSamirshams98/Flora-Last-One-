@@ -5,6 +5,7 @@ import { X, Upload, Trash2 } from "lucide-react";
 import Image from "next/image";
 
 export interface Variant {
+  code:string;
   color: string;
   sizes: string[];
   price: number;
@@ -31,6 +32,7 @@ export default function VariantsSection({
 
   const handleAddVariant = () => {
     const newVariant: Variant = {
+      code:"",
       color: "",
       sizes: [],
       price: 0,
@@ -230,6 +232,20 @@ export default function VariantsSection({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+  <label className="block text-sm font-medium mb-1">كود المتغير</label>
+  <input
+    type="text"
+    value={variant.code || ""}
+    onChange={(e) => {
+      const newVariants = [...variants];
+      newVariants[index].code = e.target.value;
+      onVariantsChange(newVariants);
+    }}
+    placeholder={`مثال: VAR-${index + 1}`}
+    className="w-full p-2 border rounded-lg"
+  />
+</div>
               <div>
                 <label className="block text-sm font-medium mb-1">
                   اللون *

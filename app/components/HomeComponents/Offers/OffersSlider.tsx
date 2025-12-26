@@ -73,7 +73,7 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
             sizes="(max-width: 640px) 100vw, 410px"
             quality={75}
           />
-          <div className="absolute left-0 right-0 w-full  bg-gradient-to-r  to-transparent md:from-black/70 md:via-black/50 flex items-center">
+          <div className="absolute left-0 right-0 w-full  flex items-center">
             <div className="container mx-auto p-6 font-gess">
               <div className="max-w-full sm:max-w-md md:max-w-lg bg-black/20 backdrop-blur-lg  rounded-xl md:rounded-2xl p-3 border border-white/10 md:border-white/20">
                 {offer.title && (
