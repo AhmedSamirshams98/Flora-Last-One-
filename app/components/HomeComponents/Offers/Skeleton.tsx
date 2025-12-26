@@ -5,7 +5,7 @@ export const Skeleton = () => {
         <div className="text-center mb-6">
           <div className="h-8 bg-gray-300 rounded w-48 mx-auto mb-4 animate-pulse"></div>
         </div>
-        <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] rounded-lg overflow-hidden bg-gray-300 animate-pulse">
+        <div className="relative w-full min-h-[65vh] md:min-h-[500px]] rounded-lg overflow-hidden bg-gray-300 animate-pulse">
           <div className="absolute inset-0 bg-gradient-to-r from-gray-400/60 via-gray-400/40 to-transparent flex items-center">
             <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
               <div className="max-w-full sm:max-w-md md:max-w-lg bg-gray-400/20 backdrop-blur-sm rounded-xl p-4 sm:p-6 md:p-8">

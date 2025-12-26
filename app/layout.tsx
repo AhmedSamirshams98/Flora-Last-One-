@@ -66,7 +66,7 @@ export const metadata: Metadata = {
   ],
   metadataBase: new URL("https://floraegypt.com"),
   icons: {
-    icon: "/public/logo.png",
+    icon: "/logo.png",
   },
 };
 

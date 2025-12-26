@@ -43,7 +43,7 @@ const MobileNavHeader = ({
     <header className="px-3 py-2 border-b  border-white/20">
       <div className="flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" aria-label="Flora Store homepage">
+        <Link href={`/${lang}`} aria-label="Flora Store homepage">
           <Image
             src={logo}
             alt={lang === "ar" ? "فلورا ستور" : "Flora Store"}

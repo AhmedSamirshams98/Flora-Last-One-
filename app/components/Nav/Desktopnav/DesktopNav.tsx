@@ -28,7 +28,7 @@ const DesktopNav = ({
           <div className="flex items-center">
             <Link
               onClick={handleClick}
-              href="/"
+              href={`/${lang}`}
               aria-label="Flora Store Homepage"
             >
               <Image
