@@ -26,13 +26,17 @@ const Contact = () => {
       }`}
       dir={lang === "ar" ? "rtl" : "ltr"}
     >
-      <h2 className={`${lang==="ar" ? "font-gess":"font-sans"} text-3xl text-center text-primary font-medium   mb-6`}>
+      <h2
+        className={`${
+          lang === "ar" ? "font-gess" : "font-sans"
+        } text-3xl text-center text-primary font-medium   mb-6`}
+      >
         {lang === "ar" ? "تواصل معنا" : "Contact Us"}
       </h2>
 
       <ul className="space-y-4">
         {/* العنوان */}
-        <li className="flex items-start gap-3 text-primary font-medium">
+        <li className="flex items-start gap-3 text-primary  font-medium">
           <MapPin className="w-5 h-5 mt-1" />
           <span>{address[lang]}</span>
         </li>
@@ -57,10 +61,7 @@ const Contact = () => {
         {/* البريد الإلكتروني */}
         <li className="flex items-center gap-2 font-medium text-primary">
           <Mail className="w-4 h-4" />
-          <a
-            href={`mailto:${email}`}
-            className=" font-sans text-pruimary"
-          >
+          <a href={`mailto:${email}`} className=" font-sans text-pruimary">
             {email}
           </a>
         </li>

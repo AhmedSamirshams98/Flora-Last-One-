@@ -43,7 +43,7 @@ export default function HomeCategoriesPageClient({
         </p>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3  gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3  gap-6">
         {categories.map((item, index) => {
           const categoryLabel =
             productTranslations.category[
