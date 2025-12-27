@@ -24,7 +24,7 @@ export default function HomeCategoriesPageClient({
   categories = [],
 }: HomeCategoriesPageProps) {
   useEffect(() => {
-    AOS.init({ duration: 800, once: true }); // مدة التحريك 800ms، التشغيل مرة واحدة فقط
+    AOS.init({ duration: 800, once: true });
   }, []);
 
   return (
@@ -55,7 +55,7 @@ export default function HomeCategoriesPageClient({
               ]
             : null;
 
-          const basePath = lang === "ar" ? "/ar/products" : "/products";
+          const basePath = lang === "ar" ? "/ar/products" : "/en/products";
           const params = new URLSearchParams();
           params.set("category", item.category);
           if (item.subcategory) {
