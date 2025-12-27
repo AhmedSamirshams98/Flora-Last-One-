@@ -76,8 +76,11 @@ export const getActiveOffers = (offers: Offer[], now: Date): Offer[] => {
 
 // ============== 5. خيارات carousel ==============
 export const EMBLA_OPTIONS = {
-  loop: true,
-  duration: 60,
+  loop:true,
+    duration: 20, // ⚠️ غير هذا من 100 إلى 20-40
+      align: 'center',
+      containScroll: 'trimSnaps',
+      dragFree: false, // تأكد أن هذا false
 } as const;
 
 // ============== 6. أنماط CSS ==============
