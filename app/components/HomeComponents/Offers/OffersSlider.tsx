@@ -68,7 +68,7 @@ export default function OffersSlider({ lang }: OffersSliderProps) {
               offer.title ||
               "Flora Store Offer فلورا للشنط والاحذيه flora egypt flora store flora egypt store فلورا  "
             }
-            className="w-full h-full object-cover"
+            className="w-full h-full "
             priority={isFirst}
             sizes="(max-width: 640px) 100vw, 410px"
             quality={75}
