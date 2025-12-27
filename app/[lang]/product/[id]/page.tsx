@@ -149,7 +149,7 @@ export default function ProductPage({ params }: ProductPageProps) {
       case PricingType.SINGLE_PRICE:
         return (
           <div className="space-y-1">
-            <div className="text-4xl font-medium text-primary">
+            <div className="text-2xl font-medium text-primary">
               {currentProduct.finalPrice.toLocaleString()} {currency}
             </div>
           </div>
@@ -162,7 +162,7 @@ export default function ProductPage({ params }: ProductPageProps) {
               <span className="text-xl text-gray-500 line-through">
                 {currentProduct.basePrice.toLocaleString()} {currency}
               </span>
-              <span className="text-4xl font-bold text-green-600">
+              <span className="text-2xl font-bold text-primary">
                 {currentProduct.salePrice?.toLocaleString()} {currency}
               </span>
             </div>
@@ -179,7 +179,7 @@ export default function ProductPage({ params }: ProductPageProps) {
               <span className="text-xl text-gray-500 line-through">
                 {currentProduct.basePrice.toLocaleString()} {currency}
               </span>
-              <span className="text-4xl font-bold text-green-600">
+              <span className="text-2xl font-bold text-primary">
                 {currentProduct.finalPrice.toLocaleString()} {currency}
               </span>
             </div>

@@ -11,8 +11,6 @@ interface ProductsListProps {
   lang?: "ar" | "en";
 }
 
-
-
 export default function ProductsList({
   category,
   subcategory,
@@ -63,7 +61,9 @@ export default function ProductsList({
   if (error) {
     return (
       <div className="text-center py-16 text-red-600">
-        {lang === "ar" ? "حدث خطأ عند تحميل المنتجات" : "Failed to load products"}
+        {lang === "ar"
+          ? "حدث خطأ عند تحميل المنتجات"
+          : "Failed to load products"}
       </div>
     );
   }
@@ -77,7 +77,7 @@ export default function ProductsList({
   }
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-2 container mx-auto lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {products.map((product) => (
         <ProductCard key={product.id} product={product} lang={lang} />
       ))}
