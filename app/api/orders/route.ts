@@ -178,30 +178,31 @@ export async function POST(req: Request) {
       },
     });
 
-    // تحديث كميات المنتجات (المتغيرات فقط)
     for (const item of itemDetails) {
       if (item.variant) {
         await prisma.productVariant.update({
           where: { id: item.variant.id },
-          data: {
-            stock: {
-              decrement: item.quantity,
-            },
-          },
+          data: { stock: { decrement: item.quantity } },
         });
 
-        // تحديث حالة المنتج الرئيسي إذا نفذ المخزون
-        const updatedVariant = await prisma.productVariant.findUnique({
-          where: { id: item.variant.id },
+        // تحديث حالة المنتج الرئيسي إذا انتهى المخزون
+        const totalStock = await prisma.productVariant.aggregate({
+          where: { productId: item.productId },
+          _sum: { stock: true },
         });
 
-        if (updatedVariant && updatedVariant.stock <= 0) {
-          // يمكنك تحديث المنتج الرئيسي إذا أردت
-          // await prisma.product.update({
-          //   where: { id: item.product.id },
-          //   data: { inStock: false }
-          // });
+        if (totalStock._sum.stock! <= 0) {
+          await prisma.product.update({
+            where: { id: item.productId },
+            data: { inStock: false },
+          });
         }
+      } else {
+        // المنتج ليس له متغير → تحديث المنتج مباشرة
+        await prisma.product.update({
+          where: { id: item.productId },
+          data: { inStock: false }, // أو stock إذا أضفت حقل
+        });
       }
     }
 

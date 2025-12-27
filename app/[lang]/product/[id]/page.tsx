@@ -20,6 +20,7 @@ import { ProductVariant, PricingType } from "@/types/product";
 import AuthPopup from "@/app/components/AuthPopup";
 import { productTranslations } from "@/lib/translations/products";
 import { ProductSubtype, ProductType } from "@prisma/client";
+import ProductsList from "@/app/components/ProductsList";
 
 interface ProductPageProps {
   params: Promise<{ id: string }>;
@@ -507,11 +508,23 @@ export default function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
       </div>
-
       <AuthPopup
         lang={lang}
         isOpen={showAuthPopup}
         onClose={() => setShowAuthPopup(false)}
+      />
+      <h1
+        className={`text-2xl text-primary text-center mb-4   ${
+          lang === "ar" ? "font-gess font-medium" : "font-sans font-semibold"
+        }`}
+      >
+        {lang === "ar" ? "قد يعجبك أيضاً" : "YOU MAY ALSO LIKE"}
+      </h1>{" "}
+      <ProductsList
+        category={currentProduct.category}
+        subcategory={currentProduct.subcategory}
+        excludeId={currentProduct.id}
+        lang={lang}
       />
     </>
   );

@@ -11,8 +11,6 @@ export async function GET() {
       return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
     }
 
-    console.log("Fetching addresses for user:", session.user.id);
-
     // التحقق من وجود المستخدم في قاعدة البيانات
     const userExists = await prisma.user.findUnique({
       where: { id: session.user.id },
@@ -32,7 +30,6 @@ export async function GET() {
       orderBy: { isDefault: "desc" },
     });
 
-    console.log("Found addresses:", addresses.length);
     return NextResponse.json(addresses);
   } catch (error) {
     console.error("Error fetching addresses:", error);
@@ -47,8 +44,6 @@ export async function POST(request: NextRequest) {
     if (!session?.user?.id) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
     }
-
-    console.log("Creating address for user:", session.user.id);
 
     // التحقق من وجود المستخدم في قاعدة البيانات أولاً
     const userExists = await prisma.user.findUnique({
@@ -67,9 +62,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { fullName, phone, address, city, isDefault = false } = body;
 
-    console.log("Address data:", { fullName, phone, address, city, isDefault });
-
-    // التحقق من البيانات المطلوبة
     if (
       !fullName?.trim() ||
       !phone?.trim() ||
@@ -82,7 +74,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // إذا كان العنوان الافتراضي، إلغاء كل العناوين الافتراضية الأخرى
     if (isDefault) {
       await prisma.address.updateMany({
         where: {
@@ -93,7 +84,6 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // إنشاء العنوان الجديد
     const newAddress = await prisma.address.create({
       data: {
         userId: session.user.id,
@@ -109,7 +99,5 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(newAddress, { status: 201 });
   } catch (error) {
     console.error("Error creating address:", error);
-
-    // معالجة الأخطاء المختلفة
   }
 }

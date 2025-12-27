@@ -9,7 +9,6 @@ import {
 import { saveProductImage } from "@/lib/saveProductImage";
 import { calculateFinalPrice } from "@/lib/pricing";
 
-
 // ==============================
 // 📌 POST إنشاء منتج
 // ==============================
@@ -120,10 +119,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("❌ إنشاء المنتج:", error);
-    return NextResponse.json(
-      { error: "فشل في إنشاء المنتج" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "فشل في إنشاء المنتج" }, { status: 500 });
   }
 }
 
@@ -135,12 +131,17 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category");
     const subcategory = searchParams.get("subcategory");
+    const exclude = searchParams.get("exclude"); // ✅ جديد
 
     const where: Prisma.ProductWhereInput = {};
 
     if (category) where.category = { equals: category as ProductType };
     if (subcategory)
       where.subcategory = { equals: subcategory as ProductSubtype };
+
+    if (exclude) {
+      where.id = { not: exclude }; // ✅ جديد
+    }
 
     const products = await prisma.product.findMany({
       where,
@@ -150,9 +151,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json(products);
   } catch {
-    return NextResponse.json(
-      { error: "فشل في جلب المنتجات" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "فشل في جلب المنتجات" }, { status: 500 });
   }
 }
