@@ -21,6 +21,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, lang }) => {
       await signIn("google", {
         callbackUrl: "/",
         redirect: true,
+        prompt: "select_account",
       });
     } catch (error) {
       console.error("Error signing in:", error);

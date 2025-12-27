@@ -49,13 +49,39 @@ export default function ReelsCarousel({ lang }: AboutSectionProps) {
       diff > 0 ? nextReel() : prevReel();
     }
   };
-
-  if (loading) {
+  function ReelsCarouselSkeleton({ lang }: { lang: "ar" | "en" }) {
     return (
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="w-full aspect-[9/16] sm:aspect-[4/3] md:aspect-video bg-gray-200 animate-pulse rounded-xl" />
+      <div className="max-w-6xl mx-auto px-4 py-8 animate-pulse">
+        {/* العنوان */}
+        <div className="h-8 w-48 mx-auto mb-8 bg-gray-200 rounded" />
+
+        {/* الكاروسيل */}
+        <div className="relative">
+          {/* زر السابق */}
+          <div className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-gray-200 rounded-full" />
+
+          {/* الفيديو */}
+          <div className="w-full aspect-[9/16] sm:aspect-[4/3] md:aspect-video bg-gray-200 rounded-xl" />
+
+          {/* زر التالي */}
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-gray-200 rounded-full" />
+        </div>
+
+        {/* النقاط */}
+        <div className="flex justify-center mt-6 gap-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="w-3 h-3 bg-gray-200 rounded-full" />
+          ))}
+        </div>
+
+        {/* العداد */}
+        <div className="h-4 w-16 mx-auto mt-4 bg-gray-200 rounded" />
       </div>
     );
+  }
+
+  if (loading) {
+    return <ReelsCarouselSkeleton lang={lang} />;
   }
 
   if (!reels.length) {
