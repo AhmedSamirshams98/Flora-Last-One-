@@ -38,17 +38,13 @@ export async function saveOfferImage(file: File): Promise<string> {
   const randomStr = randomBytes(4).toString("hex");
   const originalName = file.name.replace(/[^a-zA-Z0-9]/g, "_");
 
-  // ضغط وتحويل الصورة إلى WebP
-  const compressedBuffer = await sharp(buffer)
-    .resize({ width: 410, height: 535, fit: "cover" }) // يطابق أبعاد العرض
-    .webp({ quality: 75 })
-    .toBuffer();
+
 
   const filename = `${timestamp}-${randomStr}-${originalName}.webp`;
 
   await fs.mkdir(UPLOAD_DIR, { recursive: true });
   const filePath = path.join(UPLOAD_DIR, filename);
-  await fs.writeFile(filePath, compressedBuffer);
+  await fs.writeFile(filePath, buffer);
 
   console.log("✓ Offer image saved:", filePath);
   return `/api/images/offers/${filename}`;
