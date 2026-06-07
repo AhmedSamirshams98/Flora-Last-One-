@@ -45,7 +45,7 @@ A full-stack, production-ready bilingual (Arabic/English) fashion e-commerce pla
 
 ```
 ├── app/
-│   ├── [locale]/          # Localized routes (ar/en)
+│   ├── [lang]/          # Localized routes (ar/en)
 │   │   ├── (store)/       # Customer-facing pages
 │   │   └── (admin)/       # Admin dashboard pages
 │   └── api/               # API routes
