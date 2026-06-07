@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌸 Flora Egypt — Bilingual shoes and bags  E-Commerce Store
 
-## Getting Started
+A full-stack, production-ready bilingual (Arabic/English) fashion e-commerce platform built with Next.js, TypeScript, PostgreSQL, and Prisma ORM. Customers can browse products, manage their cart and wishlist, and checkout securely — while admins control everything through a powerful CMS dashboard.
 
-First, run the development server:
+🌐 **Live Site:** [floraegypt.com](https://floraegypt.com)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## ✨ Features
+
+### Customer Side
+- 🌍 **Bilingual support** — full Arabic & English with RTL/LTR switching (next-intl)
+- 🛍️ Browse products by category with filters and search
+- ❤️ Wishlist — save favourite products
+- 🛒 Cart — add, update, and remove items
+- 💳 Secure checkout .
+- 📦 Order tracking and order history dashboard
+- 📱 Fully responsive — mobile-first design
+
+### Admin Dashboard
+- Manage products (add, edit, delete, images upload)
+- Manage categories and collections
+- View and manage all customer orders
+- Update order statuses in real-time
+- Manage promotions and featured products
+- Full CMS — non-technical admins can update content independently
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | Next.js 14, TypeScript, Tailwind CSS, shadcn/ui |
+| Backend | Next.js API Routes, Node.js |
+| Database | PostgreSQL + PLpgSQL (custom DB functions) |
+| ORM | Prisma |
+| i18n | next-intl (Arabic + English) |
+| State | Zustand |
+| Deployment | Vercel |
+
+---
+
+## 📁 Project Structure
+
+```
+├── app/
+│   ├── [locale]/          # Localized routes (ar/en)
+│   │   ├── (store)/       # Customer-facing pages
+│   │   └── (admin)/       # Admin dashboard pages
+│   └── api/               # API routes
+├── messages/
+│   ├── ar.json            # Arabic translations
+│   └── en.json            # English translations
+├── prisma/
+│   └── schema.prisma      # Database schema
+├── lib/                   # Utility functions & helpers
+├── store/                 # Zustand state management
+├── constants/             # App-wide constants
+├── types/                 # TypeScript types
+└── middleware.ts          # i18n + auth middleware
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Getting Started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Prerequisites
+- Node.js 18+
+- PostgreSQL database
+- Stripe account (for payments)
+- npm or yarn
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The app supports two locales:
+- Arabic: [http://localhost:3000/ar](http://localhost:3000/ar)
+- English: [http://localhost:3000/en](http://localhost:3000/en)
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 👨‍💻 Developer
+
+**Ahmed Shams** — Full Stack Developer
+
+- 🌐 Portfolio: [ahmedshamsportfolioooo.netlify.app](https://ahmedshamsportfolioooo.netlify.app)
+- 💼 LinkedIn: [linkedin.com/in/ahmed-shams-42aa62216](https://www.linkedin.com/in/ahmed-shams-42aa62216)
+- 🐙 GitHub: [@AhmedSamirshams98](https://github.com/AhmedSamirshams98)
+
