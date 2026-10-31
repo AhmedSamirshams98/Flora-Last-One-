@@ -31,25 +31,29 @@ export default function ProductWishlistButtons({
     }
   };
 
+  const label = isWishlisted
+    ? lang === "ar"
+      ? "إزالة من المفضلة"
+      : "Remove from wishlist"
+    : lang === "ar"
+    ? "أضف إلى المفضلة"
+    : "Add to wishlist";
+
   return (
     <button
       onClick={handleClick}
-      className={`absolute top-3 right-3 z-10 p-2 rounded-full transition-colors ${
-        isWishlisted
-          ? "bg-red-100 text-red-600 hover:bg-red-200"
-          : "bg-white/90 text-gray-600 hover:bg-white hover:text-red-600"
-      }`}
-      title={
-        isWishlisted
-          ? lang === "ar"
-            ? "إزالة من المفضلة"
-            : "Remove from wishlist"
-          : lang === "ar"
-          ? "أضف إلى المفضلة"
-          : "Add to wishlist"
-      }
+      aria-label={label}
+      aria-pressed={isWishlisted}
+      title={label}
+      className="absolute end-2 top-2 z-10 grid h-11 w-11 place-items-center rounded-full text-primary transition-colors hover:bg-white/70"
     >
-      <Heart className={`w-4 h-4 ${isWishlisted ? "fill-red-600" : ""}`} />
+      <span
+        className={`grid h-9 w-9 place-items-center rounded-full ${
+          isWishlisted ? "bg-primary text-gold" : "bg-white/85"
+        }`}
+      >
+        <Heart className={`h-4 w-4 ${isWishlisted ? "fill-gold" : ""}`} aria-hidden="true" />
+      </span>
     </button>
   );
 }

@@ -1,5 +1,4 @@
 "use client";
-import { Star } from "lucide-react";
 
 interface ProductBadgeProps {
   discountPercentage: number;
@@ -8,52 +7,33 @@ interface ProductBadgeProps {
   lang: "ar" | "en";
 }
 
+/* One small label at most, the most useful one: a discount, else "new", else "featured". */
 export default function ProductBadge({
   discountPercentage,
   isNew,
   isFeatured,
   lang,
 }: ProductBadgeProps) {
-  const hasDiscount = discountPercentage > 0;
+  const isAr = lang === "ar";
+  let text = "";
+  let sale = false;
+  if (discountPercentage > 0) {
+    text = isAr ? `خصم ${discountPercentage}%` : `${discountPercentage}% off`;
+    sale = true;
+  } else if (isNew) {
+    text = isAr ? "جديد" : "New";
+  } else if (isFeatured) {
+    text = isAr ? "مميز" : "Featured";
+  }
+  if (!text) return null;
 
   return (
-    <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
-      {hasDiscount && (
-        <div className="px-2 py-1 rounded-lg font-bold text-xs bg-red-600 text-white flex items-center gap-1">
-          <span className={lang === "ar" ? "font-gess" : "font-sans"}>
-            {lang === "ar" ? "خصم" : "Discount"}
-          </span>
-        </div>
-      )}
-
-      {isNew && (
-        <div
-          className={`px-2 py-1 rounded-lg font-bold text-xs flex items-center gap-1 ${
-            lang === "ar"
-              ? "bg-green-600 text-white"
-              : "bg-green-600 text-white"
-          }`}
-        >
-          <span className={lang === "ar" ? "font-gess" : "font-sans"}>
-            {lang === "ar" ? "جديد" : "New"}
-          </span>
-        </div>
-      )}
-
-      {isFeatured && (
-        <div
-          className={`px-2 py-1 rounded-lg font-bold text-xs flex items-center gap-1 ${
-            lang === "ar"
-              ? "bg-yellow-600 text-white"
-              : "bg-yellow-600 text-white"
-          }`}
-        >
-          <Star className="w-3 h-3" />
-          <span className={lang === "ar" ? "font-gess" : "font-sans"}>
-            {lang === "ar" ? "مميز" : "Featured"}
-          </span>
-        </div>
-      )}
-    </div>
+    <span
+      className={`absolute start-3 top-3 z-10 rounded-full px-3 py-1 text-xs font-medium ${
+        sale ? "bg-gold text-[#2a1608]" : "bg-[#fff7ee]/95 text-primary"
+      } ${isAr ? "font-gess" : "tracking-wide"}`}
+    >
+      {text}
+    </span>
   );
 }

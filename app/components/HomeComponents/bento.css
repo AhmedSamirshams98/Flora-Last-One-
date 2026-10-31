@@ -1,0 +1,13 @@
+/* Home page shapes and type (the chosen "bento" design). Colours stay Flora's own,
+   from globals.css; this only rounds the buttons and lightens the display type. */
+[data-home="bento"] .fl-display {
+  font-weight: 300;
+  text-transform: none;
+  letter-spacing: -0.01em;
+}
+[data-home="bento"] .fl-display[lang="en"] {
+  font-family: var(--font-sans);
+}
+[data-home="bento"] .fl-btn-gold {
+  border-radius: 999px;
+}

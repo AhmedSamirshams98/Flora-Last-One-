@@ -13,13 +13,13 @@ const SocialFooter = () => {
   const iconClass = isContactPage ? "w-5 h-5 text-primary" : "w-5 h-5"; // بدون لون → يرث اللون
 
   return (
-    <div className="flex gap-4 w-full items-center justify-center">
+    <div className="-ms-3 flex items-center">
       <a
         href="https://www.facebook.com/share/1BT3kJVN5D/?mibextid=wwXIfr"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Facebook"
-        className="hover:text-accent transition-colors"
+        className="grid h-11 w-11 place-items-center transition-colors hover:text-gold"
       >
         <FaFacebookF className={iconClass} />
       </a>
@@ -29,7 +29,7 @@ const SocialFooter = () => {
         target="_blank"
         rel="noopener noreferrer"
         title="Chat on WhatsApp"
-        className="hover:text-accent transition-colors"
+        className="grid h-11 w-11 place-items-center transition-colors hover:text-gold"
       >
         <FaWhatsapp className={iconClass} />
       </a>
@@ -39,7 +39,7 @@ const SocialFooter = () => {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Instagram"
-        className="hover:text-accent transition-colors"
+        className="grid h-11 w-11 place-items-center transition-colors hover:text-gold"
       >
         <FaInstagram className={iconClass} />
       </a>
@@ -49,7 +49,7 @@ const SocialFooter = () => {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="TikTok"
-        className="hover:text-accent transition-colors"
+        className="grid h-11 w-11 place-items-center transition-colors hover:text-gold"
       >
         <FaTiktok className={iconClass} />
       </a>

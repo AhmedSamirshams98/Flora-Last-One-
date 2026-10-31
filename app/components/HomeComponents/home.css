@@ -1,0 +1,462 @@
+/* Home page styles: display type, buttons, arches, stats arc, and the motion
+   (rise, ken-burns, fade). Gold (#c9a24a) is used only on dark fields; on the
+   light page it fails contrast. */
+
+/* ---------- Display type ---------- */
+.fl-display {
+  font-weight: 400;
+  text-wrap: balance;
+}
+
+.fl-display[lang="ar"] {
+  font-family: var(--font-display-ar);
+  line-height: 1.4;
+}
+
+.fl-display[lang="en"] {
+  font-family: var(--font-display-en);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.12;
+}
+
+.fl-ctl {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid rgb(246 241 234 / 0.28);
+  color: var(--primary-foreground);
+  background: transparent;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.fl-ctl:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--primary);
+}
+
+.fl-btn-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3rem;
+  padding: 0 1.75rem;
+  background: var(--gold);
+  color: var(--primary);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.fl-btn-gold:hover {
+  background: #d9b45c;
+}
+
+.fl-btn-gold svg {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fl-btn-gold:hover svg {
+  transform: translateX(4px);
+}
+
+[dir="rtl"] .fl-btn-gold:hover svg {
+  transform: translateX(-4px);
+}
+
+.fl-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  min-height: 3rem;
+  padding: 0 1.75rem;
+  border: 1px solid rgb(250 249 246 / 0.45);
+  color: var(--primary-foreground);
+  letter-spacing: 0.02em;
+  transition: border-color 0.3s, color 0.3s;
+}
+
+.fl-btn-ghost:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* ---------- Home hero: cocoa gradient with a gold glow ---------- */
+.fl-hero {
+  background: radial-gradient(60% 50% at 50% 18%, rgb(201 162 74 / 0.3), transparent 72%),
+    radial-gradient(40% 40% at 12% 85%, rgb(201 162 74 / 0.12), transparent 70%),
+    linear-gradient(180deg, var(--primary) 0%, #3a2211 100%);
+}
+.fl-hero .fl-btn-gold,
+.fl-offer .fl-btn-gold {
+  background: linear-gradient(180deg, #ecd08a 0%, #c9a24a 55%, #ab8530 100%);
+  color: #2a1608;
+  box-shadow: inset 0 1px 0 rgb(255 245 215 / 0.65), 0 8px 28px rgb(201 162 74 / 0.35);
+}
+.fl-hero .fl-btn-gold:hover,
+.fl-offer .fl-btn-gold:hover {
+  box-shadow: inset 0 1px 0 rgb(255 245 215 / 0.8), 0 10px 36px rgb(201 162 74 / 0.5);
+}
+.fl-hero .fl-btn-ghost {
+  background: rgb(255 247 238 / 0.08);
+  border-color: rgb(255 247 238 / 0.35);
+  backdrop-filter: blur(8px);
+  border-radius: 9999px;
+  color: #fff7ee;
+}
+.fl-hero a:focus-visible {
+  outline: 2px solid #fff7ee;
+  outline-offset: 3px;
+}
+.fl-hero .fl-btn-ghost:hover {
+  background: rgb(255 247 238 / 0.14);
+}
+
+.fl-ctl-light {
+  border-color: rgb(107 68 35 / 0.35);
+  color: var(--primary);
+}
+
+.fl-ctl-light:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.fl-btn-oval {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3.25rem;
+  padding: 0 2.25rem;
+  border: 1px solid var(--primary);
+  border-radius: 999px;
+  color: var(--primary);
+  letter-spacing: 0.02em;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.fl-btn-oval:hover {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* ---------- Section heading: heading + hairline ---------- */
+.fl-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ---------- Category tiles ---------- */
+.fl-tile img {
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fl-tile:hover img {
+  transform: scale(1.04);
+}
+
+.fl-tile .fl-tile-label::after {
+  content: "";
+  display: block;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: var(--origin, left);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[dir="rtl"] .fl-tile .fl-tile-label::after {
+  --origin: right;
+}
+
+.fl-tile:hover .fl-tile-label::after {
+  transform: scaleX(1);
+}
+
+/* ---------- Mobile side menu ---------- */
+.fl-menu {
+  background: radial-gradient(70% 35% at 50% 0%, rgb(201 162 74 / 0.22), transparent 75%),
+    linear-gradient(180deg, var(--primary) 0%, #34200f 100%);
+}
+
+/* ---------- Frosted glass panel (offers) ---------- */
+.fl-glass {
+  background: linear-gradient(135deg, rgb(48 24 8 / 0.5), rgb(48 24 8 / 0.34));
+  border: 1px solid rgb(255 247 238 / 0.28);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25), 0 20px 50px rgb(20 8 2 / 0.35);
+  backdrop-filter: blur(18px);
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .fl-glass {
+    background: rgb(36 16 5 / 0.72);
+  }
+}
+
+/* ---------- Figures band + offers ground ---------- */
+.fl-band {
+  background: radial-gradient(55% 70% at 50% 0%, rgb(201 162 74 / 0.28), transparent 75%),
+    linear-gradient(180deg, var(--primary) 0%, #3a2211 100%);
+}
+@media (min-width: 768px) {
+  .fl-band-cell + .fl-band-cell {
+    border-inline-start: 1px solid rgb(201 162 74 / 0.35);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fl-tile img, .fl-tile .fl-tile-label::after, .fl-btn-gold svg {
+    transition: none;
+  }
+}
+
+/* ---------- Scroll reveal (see Reveal.tsx) ---------- */
+[data-reveal] {
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--rd, 0ms),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--rd, 0ms);
+}
+
+[data-reveal="pending"] {
+  opacity: 0;
+  transform: translateY(26px);
+}
+
+[data-reveal="pending"][data-variant="fade"] {
+  transform: none;
+}
+
+[data-reveal="pending"][data-variant="scale"] {
+  transform: scale(0.96);
+}
+
+[data-reveal="done"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- Page fade between routes + press feedback ---------- */
+@keyframes fl-page-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fl-page {
+  animation: fl-page-in 0.5s ease-out both;
+}
+
+.fl-btn-gold:active, .fl-btn-oval:active, .fl-btn-ghost:active {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fl-page {
+    animation: none;
+  }
+  [data-reveal] {
+    transition: none;
+  }
+
+}
+
+/* ---------- Hero: headline by word, slow zoom, label fade ---------- */
+.fl-word {
+  opacity: 0;
+  animation: fl-blurrise 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(0.3s + var(--i, 0) * 110ms);
+}
+@keyframes fl-blurrise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+    filter: blur(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+/* the last word of the slogan: gold, with a line drawn under it */
+.fl-accent {
+  position: relative;
+  color: var(--fl-accent, var(--gold));
+}
+.fl-accent::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0.05em;
+  bottom: 0.02em;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: fl-draw 0.9s cubic-bezier(0.65, 0, 0.35, 1) 1.1s forwards;
+}
+[dir="rtl"] .fl-accent::after {
+  transform-origin: right;
+}
+@keyframes fl-draw {
+  to {
+    transform: scaleX(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fl-word {
+    opacity: 1;
+    animation: none;
+    filter: none;
+  }
+  .fl-accent::after {
+    animation: none;
+    transform: scaleX(1);
+  }
+
+}
+
+/* ---------- Products page: the filters beside the grid ---------- */
+.fl-shop {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2rem;
+}
+@media (min-width: 1024px) {
+  .fl-shop {
+    grid-template-columns: 13rem minmax(0, 1fr);
+    gap: 3.5rem;
+  }
+  .fl-shop > aside {
+    position: sticky;
+    top: 7rem;
+    align-self: start;
+  }
+}
+
+.fl-products-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 0.75rem;
+  row-gap: 2.25rem;
+}
+@media (min-width: 768px) {
+  .fl-products-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 1.25rem;
+    row-gap: 3rem;
+  }
+}
+@media (min-width: 1280px) {
+  .fl-products-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* ---------- One product ---------- */
+.fl-pdp-wrap {
+  padding-bottom: 7rem;
+}
+.fl-pdp {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.75rem;
+}
+.fl-cta {
+  display: inline-flex;
+  min-height: 3.25rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border-radius: 9999px;
+  padding: 0 2rem;
+  background: linear-gradient(180deg, #ecd08a 0%, #c9a24a 55%, #ab8530 100%);
+  color: #2a1608;
+  font-size: 1.05rem;
+  font-weight: 500;
+  box-shadow: inset 0 1px 0 rgb(255 245 215 / 0.65), 0 8px 24px rgb(201 162 74 / 0.3);
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+.fl-cta:hover:not(:disabled) {
+  box-shadow: inset 0 1px 0 rgb(255 245 215 / 0.8), 0 10px 32px rgb(201 162 74 / 0.45);
+}
+.fl-cta:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.fl-cta:disabled {
+  background: rgb(61 40 23 / 0.15);
+  box-shadow: none;
+  color: rgb(61 40 23 / 0.55);
+}
+.fl-pdp-bar {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+  background: rgb(250 249 246 / 0.96);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgb(61 40 23 / 0.12);
+}
+.fl-pdp-bar .text-3xl {
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+.fl-pdp-bar .text-lg {
+  display: none; /* the old price stays out of the narrow bar */
+}
+.fl-pdp-bar .fl-cta {
+  padding: 0 1rem;
+  white-space: nowrap;
+}
+.fl-cta.fl-pdp-cta-inline {
+  display: none;
+}
+/* the picture: square on a phone, 4:5 from a tablet up, and never wider than 28rem */
+.fl-pdp-gallery {
+  width: 100%;
+  max-width: 28rem;
+  margin-inline: auto;
+}
+.fl-pdp-main {
+  aspect-ratio: 1 / 1;
+}
+@media (min-width: 768px) {
+  .fl-pdp-main {
+    aspect-ratio: 4 / 5;
+  }
+}
+@media (min-width: 1024px) {
+  .fl-pdp-wrap {
+    padding-bottom: 5rem;
+  }
+  .fl-pdp {
+    grid-template-columns: minmax(0, 28rem) minmax(0, 34rem);
+    justify-content: center;
+    gap: 4.5rem;
+  }
+  .fl-pdp-gallery {
+    position: sticky;
+    top: 7rem;
+    align-self: start;
+    margin-inline: 0;
+  }
+  .fl-pdp-info {
+    position: sticky;
+    top: 7rem;
+    align-self: start;
+  }
+  .fl-cta.fl-pdp-cta-inline {
+    display: inline-flex;
+    width: 100%;
+  }
+  .fl-pdp-bar {
+    display: none;
+  }
+}

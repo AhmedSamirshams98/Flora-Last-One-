@@ -12,6 +12,8 @@ interface ProductImagesProps {
   lang: "ar" | "en";
 }
 
+/* The picture sits on a soft ivory tile, no frame and no shadow (after the minimalist
+   category page). A second picture is reached with the small arrows on hover. */
 export default function ProductImages({
   currentImages,
   currentImageIndex,
@@ -21,43 +23,36 @@ export default function ProductImages({
   onNextImage,
   lang,
 }: ProductImagesProps) {
+  const arrow =
+    "absolute top-1/2 z-10 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-white/85 text-primary opacity-0 transition-opacity hover:bg-white focus-visible:opacity-100 group-hover:opacity-100 max-md:hidden";
   return (
-    <div className="relative overflow-hidden aspect-square bg-gray-50">
-      <div className="relative w-full h-full">
-        <Image
-          quality={75}
-          loading="eager"
-          fill
-          sizes="(max-width: 768px) 100vw, 1200px"
-          src={currentImages[currentImageIndex]}
-          alt={`${productName} - ${variantColor}`}
-          className="w-full h-full object-cover"
-        />
-
-        {currentImages.length > 1 && (
-          <>
-            <button
-              onClick={onPrevImage}
-              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-1 transition-all z-10 opacity-0 group-hover:opacity-100"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <button
-              onClick={onNextImage}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-1 transition-all z-10 opacity-0 group-hover:opacity-100"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </>
-        )}
-      </div>
+    <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-[#f3eee6]">
+      <Image
+        quality={75}
+        fill
+        sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 22vw"
+        src={currentImages[currentImageIndex]}
+        alt={`${productName} - ${variantColor}`}
+        className="object-cover transition-transform duration-700 group-hover:scale-[1.04] motion-reduce:transition-none"
+      />
 
       {currentImages.length > 1 && (
-        <div className="absolute bottom-3 right-3 z-10">
-          <span className="bg-black/70 text-white px-2 py-1 rounded text-xs font-medium">
-            {currentImageIndex + 1}/{currentImages.length}
-          </span>
-        </div>
+        <>
+          <button
+            onClick={onPrevImage}
+            aria-label={lang === "ar" ? "الصورة السابقة" : "Previous picture"}
+            className={`${arrow} left-2`}
+          >
+            <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+          </button>
+          <button
+            onClick={onNextImage}
+            aria-label={lang === "ar" ? "الصورة التالية" : "Next picture"}
+            className={`${arrow} right-2`}
+          >
+            <ChevronRight className="h-4 w-4" aria-hidden="true" />
+          </button>
+        </>
       )}
     </div>
   );

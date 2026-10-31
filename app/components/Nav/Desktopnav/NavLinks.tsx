@@ -21,21 +21,29 @@ const NavLinks = ({ lang }: { lang: "ar" | "en" }) => {
     [t]
   );
 
+  const pill =
+    "cursor-pointer whitespace-nowrap rounded-full px-5 py-2 transition-colors focus-visible:outline-[#fff7ee]";
+
   return (
     <div
-      className="hidden lg:flex justify-center font-gess gap-10 mr-[6vw] "
+      className={`hidden items-center gap-1 rounded-full border border-primary-foreground/20 bg-primary-foreground/5 p-1 text-[0.95rem] tracking-wide xl:flex ${
+        lang === "ar" ? "font-gess" : ""
+      }`}
       dir={lang === "ar" ? "rtl" : "ltr"}
     >
       {NAV_LINKS.map((link) => {
-        const isActive = pathname === link.href;
+        const isActive =
+          (pathname.replace(/^\/(ar|en)/, "") || "/") === link.href;
+        const tone = isActive
+          ? "bg-gold text-[#2a1608]"
+          : "text-primary-foreground/85 hover:bg-primary-foreground/10 hover:text-primary-foreground";
 
         return link.type === "anchor" ? (
           <button
             key={link.href}
-            onClick={(e) => handleNavLinkClick(link, pathname, lang, router)}
-            className={
-              isActive ? "text-accent cursor-pointer" : "cursor-pointer"
-            }
+            onClick={() => handleNavLinkClick(link, pathname, lang, router)}
+            aria-current={isActive ? "page" : undefined}
+            className={`${pill} ${tone}`}
           >
             {getText(link.labelKey)}
           </button>
@@ -43,9 +51,8 @@ const NavLinks = ({ lang }: { lang: "ar" | "en" }) => {
           <Link
             key={link.href}
             href={link.href}
-            className={
-              isActive ? "text-accent cursor-pointer" : "cursor-pointer"
-            }
+            aria-current={isActive ? "page" : undefined}
+            className={`${pill} ${tone}`}
           >
             {getText(link.labelKey)}
           </Link>

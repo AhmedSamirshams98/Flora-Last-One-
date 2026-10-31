@@ -19,7 +19,10 @@ const UserMenu = ({ lang }: { lang: "ar" | "en" }) => {
 
   return (
     <div className="relative hidden md:block">
-      <div onClick={toggle} className="cursor-pointer">
+      <div
+        onClick={toggle}
+        className="grid h-10 w-10 cursor-pointer place-items-center rounded-full transition-colors hover:bg-primary-foreground/10"
+      >
         {session?.user?.image ? (
           <Image
             src={session.user.image}
@@ -29,7 +32,7 @@ const UserMenu = ({ lang }: { lang: "ar" | "en" }) => {
             className="rounded-full"
           />
         ) : (
-          <User2Icon />
+          <User2Icon className="h-5 w-5 transition-colors hover:text-gold" />
         )}
       </div>
 
