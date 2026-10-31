@@ -1,29 +1,11 @@
 @import "tailwindcss";
 
-@font-face {
-  font-family: "Gess";
-  src: url("/fonts/GE_SS_Two_Light.otf") format("opentype");
-  font-weight: 300;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Gess";
-  src: url("/fonts/GE_SS_Two_Medium.otf") format("opentype");
-  font-weight: 500;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Gess";
-  src: url("/fonts/GE_SS_Two_Bold.otf") format("opentype");
-  font-weight: 700;
-  font-display: swap;
-}
-
 :root {
   --font-rubik: "Rubik", sans-serif;
-  --font-gess: "Gess", sans-serif;
+  /* kept under the old name so every existing `font-gess` class now renders Readex Pro */
+  --font-gess: var(--font-readex), system-ui, sans-serif;
+  --font-display-ar: var(--font-amiri), var(--font-readex), serif;
+  --font-display-en: var(--font-marcellus), Georgia, serif;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -95,7 +77,10 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
+  --radius: 0.25rem;
+  --gold: #c9a24a;
+  --ribbon: #7a5f3b;
+  --cocoa-raised: #573719;
   --sidebar: #faf9f6;
   --sidebar-foreground: #3d2817;
   --sidebar-primary: #6b4423;
@@ -137,6 +122,10 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --color-gold: var(--gold);
+  --color-ribbon: var(--ribbon);
+  --color-cocoa-raised: var(--cocoa-raised);
+  --font-sans: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -216,3 +205,41 @@ html {
   font-size: var(--font-size);
 }
 
+
+/* ---------- Browser surfaces themed from the palette ---------- */
+::selection {
+  background: var(--gold);
+  color: var(--primary);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* on the dark cocoa grounds (top bar, side menu, footer, hero, offer banners) the ring is cream */
+nav :focus-visible,
+footer :focus-visible,
+.fl-menu :focus-visible,
+.fl-hero :focus-visible,
+.fl-offer:focus-visible {
+  outline-color: #fff7ee;
+}
+
+html {
+  scrollbar-color: var(--accent) var(--background);
+  scrollbar-width: thin;
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  font-family: var(--font-sans);
+  font-feature-settings: "tnum" 1;
+  -webkit-font-smoothing: antialiased;
+}

@@ -32,7 +32,7 @@ const MobileNavUser = ({ lang, onUserClick, onClose }: Props) => {
 
   return (
     <section
-      className="mt-8 pt-6 border-t border-white/20 p-2"
+      className="px-5 pb-4 pt-6"
       aria-label={lang === "ar" ? "حساب المستخدم" : "User account"}
     >
       {status === "authenticated" ? (
@@ -125,22 +125,11 @@ const MobileNavUser = ({ lang, onUserClick, onClose }: Props) => {
       ) : (
         <button
           onClick={onUserClick}
-          className="w-full py-4 px-4 text-white hover:bg-white/10 rounded-xl font-gess text-lg flex items-center gap-3 border border-transparent hover:border-white/20 transition"
-          style={{
-            flexDirection:
-              lang === "ar" ? "row" : "row-reverse",
-          }}
+          className="flex h-12 w-full items-center justify-center gap-3 rounded-full border border-primary-foreground/30 px-4 font-gess text-lg text-primary-foreground transition-colors hover:border-gold hover:text-gold focus-visible:outline-[#fff7ee]"
           aria-label={lang === "ar" ? "تسجيل الدخول" : "Sign in"}
         >
-          <User2Icon className="w-5 h-5" aria-hidden="true" />
-          <span
-            className="flex-1"
-            style={{
-              textAlign: lang === "ar" ? "right" : "left",
-            }}
-          >
-            {lang === "ar" ? "تسجيل الدخول" : "Sign In"}
-          </span>
+          <User2Icon className="h-5 w-5" aria-hidden="true" />
+          {lang === "ar" ? "تسجيل الدخول" : "Sign In"}
         </button>
       )}
     </section>

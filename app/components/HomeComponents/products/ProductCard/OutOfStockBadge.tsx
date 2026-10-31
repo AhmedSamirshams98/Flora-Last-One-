@@ -9,16 +9,12 @@ export default function OutOfStockBadge({ isOutOfStock, lang }: OutOfStockBadgeP
   if (!isOutOfStock) return null;
 
   return (
-    <div className="absolute top-3 right-3 z-10">
-      <div
-        className={`px-2 py-1 rounded-lg font-bold text-xs flex items-center gap-1 ${
-          lang === "ar" ? "bg-red-600 text-white" : "bg-red-600 text-white"
-        }`}
-      >
-        <span className={lang === "ar" ? "font-gess" : "font-sans"}>
-          {lang === "ar" ? "نفذ" : "Out of Stock"}
-        </span>
-      </div>
-    </div>
+    <span
+      className={`absolute bottom-3 start-3 z-10 rounded-full bg-primary/85 px-3 py-1 text-xs text-primary-foreground ${
+        lang === "ar" ? "font-gess" : "tracking-wide"
+      }`}
+    >
+      {lang === "ar" ? "نفذ" : "Out of stock"}
+    </span>
   );
 }

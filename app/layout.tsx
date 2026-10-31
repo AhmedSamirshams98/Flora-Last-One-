@@ -1,11 +1,42 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import MainNav from "./components/Nav/MainNav";
-import MarqueeBanner from "./[lang]/Marquee";
 import Footer from "./[lang]/footer/Footer";
 import { Toaster } from "sonner";
 import Head from "next/head";
+import { Jost, Marcellus, Amiri, Readex_Pro } from "next/font/google";
 import { Providers } from "./providers";
+const jost = Jost({
+  subsets: ["latin"],
+  weight: ["300", "400", "500"],
+  variable: "--font-jost",
+  display: "swap",
+});
+
+// English display: classical flared serif that echoes the engraved wordmark.
+const marcellus = Marcellus({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-marcellus",
+  display: "swap",
+});
+
+// Arabic display: a calm classical naskh for headlines.
+const amiri = Amiri({
+  subsets: ["arabic", "latin"],
+  weight: ["400", "700"],
+  variable: "--font-amiri",
+  display: "swap",
+});
+
+// Arabic text (free; replaces the commercial Gess files).
+const readex = Readex_Pro({
+  subsets: ["arabic", "latin"],
+  weight: ["300", "400", "500", "600"],
+  variable: "--font-readex",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title:
     "Flora Store Egypt |  فلورا لأفضل صيحات الموضة في الشنط والأحذية  النسائية في مصر ",
@@ -76,7 +107,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar">
+    <html
+      lang="ar"
+      className={`${jost.variable} ${marcellus.variable} ${amiri.variable} ${readex.variable}`}
+    >
       <body className="">
         <Head>
           <link rel="icon" href="/logo.png" type="image/png" />
@@ -92,7 +126,6 @@ export default function RootLayout({
         </Head>
         <Providers>
           <div className="sticky top-0 left-0 right-0 z-50 w-full">
-            <MarqueeBanner />
             <MainNav />
           </div>
           <main>{children}</main>

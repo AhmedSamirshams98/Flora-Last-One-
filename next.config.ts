@@ -22,9 +22,6 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === "production",
   },
 
-  // Enable SWC minification
-  swcMinify: true,
-
   // Compression
   compress: true,
 

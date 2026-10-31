@@ -8,6 +8,7 @@ import { useProductsStore } from "@/store/products-store";
 import { useFiltersStore, Category } from "@/store/filters-store";
 import { useShallow } from "zustand/shallow";
 import { Subcategory } from "@/types/product";
+import "../../components/HomeComponents/home.css";
 
 export default function ProductsPage() {
   const pathname = usePathname();
@@ -109,75 +110,82 @@ export default function ProductsPage() {
 
   return (
     <div
-      className="min-h-screen bg-background py-8"
+      className="min-h-screen bg-background pb-20 pt-10 md:pt-14"
       style={{ direction: lang === "ar" ? "rtl" : "ltr" }}
     >
       <div className="container mx-auto px-4">
-        <div className="mb-8 flex flex-col md:flex-row justify-between items-center">
-          <h1 className="text-4xl font-bold text-primary font-gess mb-4 text-center md:text-left">
-            {titleText}
-          </h1>
-          <div className="w-full md:w-auto flex items-center justify-center">
-            <Filters lang={lang} />
-          </div>
-        </div>
-
-        {loading ? (
-          <div className="text-center py-16">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-            <p className="mt-4 text-gray-600">
-              {lang === "ar" ? "جاري تحميل المنتجات..." : "Loading products..."}
-            </p>
-          </div>
-        ) : displayProducts.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-lg shadow-sm border border-gray-100">
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">
-              {lang === "ar" ? "لا توجد منتجات" : "No products"}
-            </h3>
-            <p className="text-gray-500 mb-4">
-              {lang === "ar"
-                ? "لا توجد منتجات متاحة حالياً."
-                : "No products available."}
-            </p>
-            {(category || subcategory) && (
-              <button
-                onClick={reset}
-                className="mt-4 px-6 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
-              >
-                {lang === "ar" ? "مسح الفلاتر" : "Clear Filters"}
-              </button>
-            )}
-          </div>
-        ) : (
-          <>
-            <div className="mb-6 flex justify-between items-center">
-              <p className="text-gray-600">
+        {/* the title, a thin gold line, and how many are shown */}
+        <header className="mb-8 md:mb-12">
+          <span className="mb-4 block h-px w-12 bg-gold" aria-hidden="true" />
+          <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+            <h1 lang={lang} className="fl-display text-4xl text-primary md:text-6xl">
+              {titleText}
+            </h1>
+            {!loading && displayProducts.length > 0 && (
+              <p className={`text-sm text-muted-foreground ${lang === "ar" ? "font-gess" : ""}`}>
                 {lang === "ar" ? (
                   <>
-                    عرض <span className="font-semibold">{filteredCount}</span>{" "}
-                    من <span className="font-semibold">{totalCount}</span> منتج
+                    عرض <span className="font-medium text-primary">{filteredCount}</span> من{" "}
+                    <span className="font-medium text-primary">{totalCount}</span> منتج
                   </>
                 ) : (
                   <>
-                    Showing{" "}
-                    <span className="font-semibold">{filteredCount}</span> of{" "}
-                    <span className="font-semibold">{totalCount}</span> products
+                    Showing <span className="font-medium text-primary">{filteredCount}</span> of{" "}
+                    <span className="font-medium text-primary">{totalCount}</span> products
                   </>
                 )}
               </p>
-            </div>
+            )}
+          </div>
+        </header>
 
-            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {displayProducts.map((product) => (
-                <ProductCard
-                  key={`product-${product.id}`}
-                  product={product}
-                  lang={lang}
-                />
-              ))}
-            </div>
-          </>
-        )}
+        <div className="fl-shop">
+          <aside>
+            <Filters lang={lang} />
+          </aside>
+
+          <div className="min-w-0">
+            {loading ? (
+              <div className="py-24 text-center">
+                <div className="inline-block h-10 w-10 animate-spin rounded-full border-2 border-primary/20 border-t-primary" />
+                <p className={`mt-4 text-muted-foreground ${lang === "ar" ? "font-gess" : ""}`}>
+                  {lang === "ar" ? "جاري تحميل المنتجات..." : "Loading products..."}
+                </p>
+              </div>
+            ) : displayProducts.length === 0 ? (
+              <div className="py-24 text-center">
+                <h2 lang={lang} className="fl-display text-2xl text-primary md:text-3xl">
+                  {lang === "ar" ? "لا توجد منتجات" : "No products"}
+                </h2>
+                <p className={`mt-2 text-muted-foreground ${lang === "ar" ? "font-gess" : ""}`}>
+                  {lang === "ar"
+                    ? "لا توجد منتجات متاحة حالياً."
+                    : "No products available."}
+                </p>
+                {(category || subcategory) && (
+                  <button
+                    onClick={reset}
+                    className={`mt-6 inline-flex h-11 items-center rounded-full border border-primary/30 px-6 text-primary transition-colors hover:border-primary ${
+                      lang === "ar" ? "font-gess" : ""
+                    }`}
+                  >
+                    {lang === "ar" ? "مسح الفلاتر" : "Clear Filters"}
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="fl-products-grid">
+                {displayProducts.map((product) => (
+                  <ProductCard
+                    key={`product-${product.id}`}
+                    product={product}
+                    lang={lang}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
