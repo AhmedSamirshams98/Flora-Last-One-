@@ -187,10 +187,10 @@ export default function CheckoutPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="flex min-h-[60vh] items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">{t.loading}</p>
+          <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin text-primary" />
+          <p className="text-primary/70">{t.loading}</p>
         </div>
       </div>
     );
@@ -202,9 +202,9 @@ export default function CheckoutPage() {
 
   if (cart.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="flex min-h-[60vh] items-center justify-center">
         <div className="text-center max-w-md mx-auto">
-          <ShoppingBag className="w-24 h-24 text-gray-400 mx-auto mb-6" />
+          <ShoppingBag className="mx-auto mb-6 h-16 w-16 text-gold" />
           <h2
             className={`${
               lang === "ar"
@@ -229,11 +229,7 @@ export default function CheckoutPage() {
 
           <button
             onClick={() => router.push(`/${lang}/products`)}
-            className={` ${
-              lang === "ar"
-                ? "font-gess font-medium"
-                : "font-sans font-semibold"
-            } bg-primary text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium`}
+            className={`fl-cta mt-4 ${lang === "ar" ? "font-gess" : ""}`}
           >
             {t.browseProducts}
           </button>
@@ -248,7 +244,7 @@ export default function CheckoutPage() {
 
   return (
     <div
-      className="min-h-screen bg-gray-50 py-8 font-gess"
+      className="py-8 font-gess md:py-12"
       dir={isRTL ? "rtl" : "ltr"}
     >
       <div className="container mx-auto px-4">
@@ -256,7 +252,7 @@ export default function CheckoutPage() {
         <div className="mb-8">
           <button
             onClick={() => router.push(`/${lang}/cart`)}
-            className={`flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors duration-200 mb-6 ${
+            className={`mb-6 flex min-h-11 items-center gap-2 text-primary/80 transition-colors hover:text-primary ${
               isRTL ? "flex-row" : "flex-row-reverse"
             }`}
           >
@@ -275,44 +271,32 @@ export default function CheckoutPage() {
             {lang === "en" && <ArrowLeft className="w-5 h-5" />}
           </button>
 
-          <h1
-            className={`${
-              lang === "ar"
-                ? "font-gess font-medium"
-                : "font-sans font-semibold"
-            } text-3xl font-bold  text-primary`}
-          >
+          <h1 lang={lang} className="fl-display text-3xl text-primary md:text-5xl">
             {t.pageTitle}
           </h1>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid items-start gap-6 lg:grid-cols-3 lg:gap-8">
           {/* القسم الأيسر */}
           <div className="lg:col-span-2 space-y-6">
             {/* عنوان الشحن */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h2
-                className={`${
-                  lang === "ar"
-                    ? "font-gess font-medium"
-                    : "font-sans font-semibold"
-                } text-xl font-bold text-center mb-4 text-primary`}
-              >
+            <div className="fl-pcard !p-6">
+              <h2 lang={lang} className="fl-display mb-5 text-2xl text-primary">
                 {" "}
                 {t.shippingAddress}
               </h2>
 
               {addressLoading ? (
                 <div className="text-center py-8">
-                  <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-                  <p className="text-gray-600">{t.loading}</p>
+                  <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin text-primary" />
+                  <p className="text-primary/70">{t.loading}</p>
                 </div>
               ) : addresses.length > 0 ? (
                 <div className="space-y-3">
                   {addresses.map((address) => (
                     <label
                       key={address.id}
-                      className={`flex items-start gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 ${
+                      className={`flex cursor-pointer items-start gap-3 rounded-xl border border-gold/40 p-4 transition-colors hover:bg-secondary/50 has-[:checked]:border-gold has-[:checked]:bg-gold/10 ${
                         isRTL ? "text-right" : "text-left"
                       }`}
                     >
@@ -322,7 +306,7 @@ export default function CheckoutPage() {
                         value={address.id}
                         checked={selectedAddress === address.id}
                         onChange={(e) => setSelectedAddress(e.target.value)}
-                        className="mt-1 text-blue-600"
+                        className="mt-1 h-5 w-5 accent-primary"
                       />
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
@@ -330,22 +314,22 @@ export default function CheckoutPage() {
                             {address.fullName}
                           </span>
                           {address.isDefault && (
-                            <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded">
+                            <span className="rounded-full bg-gold/25 px-2 py-0.5 text-xs text-primary">
                               {t.default}
                             </span>
                           )}
                         </div>
-                        <p className="text-gray-600 text-sm">
+                        <p className="text-sm text-primary/75">
                           {address.address}، {address.city}
                         </p>
-                        <p className="text-gray-600 text-sm">{address.phone}</p>
+                        <p className="text-sm text-primary/75">{address.phone}</p>
                       </div>
                     </label>
                   ))}
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                  <MapPin className="mx-auto mb-3 h-12 w-12 text-gold" />
                   <p
                     className={`${
                       lang === "ar"
@@ -360,7 +344,7 @@ export default function CheckoutPage() {
 
               <button
                 onClick={() => setShowAddressForm(!showAddressForm)}
-                className="w-full mt-4 flex items-center justify-center gap-2 text-blue-600 border-2 border-dashed border-blue-200 rounded-lg py-4"
+                className="fl-btn-oval mt-4 w-full justify-center"
               >
                 <Plus className="w-5 h-5" />
                 <span
@@ -375,7 +359,7 @@ export default function CheckoutPage() {
               </button>
 
               {showAddressForm && (
-                <div className="mt-6 p-6 border border-gray-200 rounded-lg bg-gray-50">
+                <div className="mt-6 rounded-xl border border-gold/40 bg-secondary/40 p-5 md:p-6">
                   <h3
                     className={`${
                       lang === "ar"
@@ -396,7 +380,7 @@ export default function CheckoutPage() {
                           fullName: e.target.value,
                         })
                       }
-                      className="w-full p-3 border border-gray-300 rounded-lg"
+                      className="fl-input"
                     />
                     <input
                       type="tel"
@@ -405,7 +389,7 @@ export default function CheckoutPage() {
                       onChange={(e) =>
                         setNewAddress({ ...newAddress, phone: e.target.value })
                       }
-                      className={`w-full p-3 border  border-gray-300 rounded-lg ${
+                      className={`fl-input ${
                         lang === "ar" ? "text-right" : "text-left"
                       }`}
                     />
@@ -419,7 +403,7 @@ export default function CheckoutPage() {
                           address: e.target.value,
                         })
                       }
-                      className="w-full p-3 border  border-gray-300 rounded-lg"
+                      className="fl-input"
                     />
                     <input
                       type="text"
@@ -428,7 +412,7 @@ export default function CheckoutPage() {
                       onChange={(e) =>
                         setNewAddress({ ...newAddress, city: e.target.value })
                       }
-                      className="w-full p-3 border border-gray-300 rounded-lg"
+                      className="fl-input"
                     />
                     <label className="flex items-center gap-2">
                       <input
@@ -440,7 +424,7 @@ export default function CheckoutPage() {
                             isDefault: e.target.checked,
                           })
                         }
-                        className="w-4 h-4"
+                        className="h-5 w-5 accent-primary"
                       />
                       <span
                         className={`${
@@ -461,15 +445,13 @@ export default function CheckoutPage() {
                     <button
                       onClick={handleAddAddress}
                       disabled={addressLoading}
-                      className={`flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors ${
-                        addressLoading ? "opacity-50 cursor-not-allowed" : ""
-                      }`}
+                      className="fl-cta flex-1"
                     >
                       {addressLoading ? t.loading : t.saveAddress}
                     </button>
                     <button
                       onClick={() => setShowAddressForm(false)}
-                      className="flex-1 bg-gray-500 text-white py-3 px-4 rounded-lg hover:bg-gray-600 transition-colors"
+                      className="fl-btn-oval flex-1 justify-center"
                     >
                       {t.cancel}
                     </button>
@@ -481,14 +463,8 @@ export default function CheckoutPage() {
 
           {/* القسم الأيمن - ملخص الطلب */}
           <div className="space-y-6">
-            <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-6">
-              <h2
-                className={`${
-                  lang === "ar"
-                    ? "font-gess font-medium"
-                    : "font-sans font-semibold"
-                } text-xl font-bold  mb-4  text-primary`}
-              >
+            <div className="fl-pcard !p-6 lg:sticky lg:top-24">
+              <h2 lang={lang} className="fl-display mb-5 text-2xl text-primary">
                 {" "}
                 {t.orderSummary}
               </h2>
@@ -523,7 +499,7 @@ export default function CheckoutPage() {
                     {t.shipping}
                   </span>
                   <p
-                    className={`mt-1 text-sm text-gray-600 ${
+                    className={`mt-1 text-sm text-primary/70 ${
                       lang === "ar" ? "font-gess" : "font-sans"
                     }`}
                   >
@@ -537,7 +513,7 @@ export default function CheckoutPage() {
               <button
                 onClick={handleCreateOrder}
                 disabled={isLoading || !selectedAddress}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="fl-cta w-full"
               >
                 {isLoading ? (
                   <>
@@ -553,7 +529,7 @@ export default function CheckoutPage() {
               </button>
 
               {!selectedAddress && (
-                <p className="text-red-600 text-sm mt-3 text-center">
+                <p className="mt-3 text-center text-sm text-[#9b2c1f]">
                   {t.selectAddressWarning}
                 </p>
               )}

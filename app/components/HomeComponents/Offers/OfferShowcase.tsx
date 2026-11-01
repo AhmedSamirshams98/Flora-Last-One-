@@ -44,7 +44,7 @@ export default function OfferShowcase({ lang, offers }: { lang: "ar" | "en"; off
   const t = isAr ? ar : en;
   const Arrow = isAr ? ArrowLeft : ArrowRight;
   const href = `/${lang}/products`;
-  const cta = isAr ? "تسوّقي العرض" : "Shop the offer";
+  const cta = isAr ? "تسوق الآن" : "Shop Now";
 
   return (
     <section id="offers" className="container mx-auto px-4 pb-0 pt-12 md:pt-16" dir={isAr ? "rtl" : "ltr"}>

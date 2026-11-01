@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { signIn } from "next-auth/react";
 import en from "@/messages/en.json";
 import ar from "@/messages/ar.json";
+import AdminModal from "./AdminModal";
 
 interface AuthPopupProps {
   isOpen: boolean;
@@ -29,28 +30,25 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, lang }) => {
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black/60 font-gess backdrop-blur-md bg-opacity-20 flex items-center justify-center z-50 p-4"
-      dir={lang === "ar" ? "rtl" : "ltr"}
-    >
-      <div className="bg-white rounded-lg p-6 max-w-sm w-full relative">
+    <AdminModal onClose={onClose} label={t.auth.title} narrow dir={lang === "ar" ? "rtl" : "ltr"}>
+      <div className="relative p-6 pt-8 text-center">
         <button
           onClick={onClose}
-          className="absolute top-3 text-gray-500 hover:text-gray-700"
+          aria-label={lang === "ar" ? "إغلاق" : "Close"}
+          className="absolute top-3 grid h-11 w-11 place-items-center rounded-full text-primary/70 transition-colors hover:bg-primary/10 hover:text-primary"
           style={lang === "ar" ? { left: 12 } : { right: 12 }}
         >
-          <X className="w-5 h-5" />
+          <X className="h-5 w-5" aria-hidden="true" />
         </button>
 
-        <div className="text-center pt-4">
-          <h2 className="text-xl font-bold text-gray-800 mb-3">
+        <div>
+          <h2 lang={lang} className="fl-display mb-3 text-3xl text-primary">
             {t.auth.title}
           </h2>
-          <p className="text-gray-600 mb-4 text-sm">{t.auth.description}</p>
-
+          <p className="mb-6 text-sm leading-7 text-primary/75">{t.auth.description}</p>
           <button
             onClick={handleGoogleSignIn}
-            className="w-full bg-primary text-white text-sm md:text-base font-gess py-3 px-4 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-3"
+            className="fl-cta w-full font-gess"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -74,7 +72,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, lang }) => {
           </button>
         </div>
       </div>
-    </div>
+    </AdminModal>
   );
 };
 

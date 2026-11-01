@@ -156,8 +156,8 @@ const OrdersPage = () => {
         };
       default:
         return {
-          bg: "bg-gray-100",
-          text: "text-gray-800",
+          bg: "bg-secondary",
+          text: "text-primary",
           icon: <Clock className="w-4 h-4" />,
         };
     }
@@ -240,10 +240,10 @@ const OrdersPage = () => {
 
   if (sessionStatus === "loading" || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="flex min-h-[60vh] items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">{t.loading || "Loading..."}</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold mx-auto mb-4"></div>
+          <p className="text-primary/75">{t.loading || "Loading..."}</p>
         </div>
       </div>
     );
@@ -251,13 +251,13 @@ const OrdersPage = () => {
 
   if (sessionStatus === "unauthenticated") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="flex min-h-[60vh] items-center justify-center">
         <div className="text-center p-8">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          <h1 className="fl-display mb-2 text-3xl text-primary">
             {t.loginRequired || "Login Required"}
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-primary/75 mb-6">
             {t.loginMessage || "Please login to view your orders"}
           </p>
         </div>
@@ -267,16 +267,16 @@ const OrdersPage = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="flex min-h-[60vh] items-center justify-center">
         <div className="text-center p-8">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          <h1 className="fl-display mb-2 text-3xl text-primary">
             {t.error || "Error"}
           </h1>
-          <p className="text-gray-600 mb-6">{error}</p>
+          <p className="text-primary/75 mb-6">{error}</p>
           <button
             onClick={fetchUserOrders}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            className="fl-cta"
           >
             {t.retry || "Retry"}
           </button>
@@ -287,7 +287,7 @@ const OrdersPage = () => {
 
   return (
     <div
-      className="min-h-screen bg-gray-50 py-8 font-gess"
+      className="min-h-[60vh] py-8 font-gess"
       dir={isRTL ? "rtl" : "ltr"}
     >
       <div className="container mx-auto px-4">
@@ -296,7 +296,7 @@ const OrdersPage = () => {
           <div className="flex items-center justify-between mb-6">
             <button
               onClick={() => window.history.back()}
-              className="flex items-center gap-2 text-primary hover:text-gray-800 transition-colors"
+              className="flex items-center gap-2 text-primary hover:text-primary transition-colors"
             >
               {isRTL ? (
                 <ArrowRight className="w-5 h-5" />
@@ -314,41 +314,27 @@ const OrdersPage = () => {
           </div>
 
           <div className="text-center mb-8">
-            <h1
-              className={`text-3xl mb-2 ${
-                lang === "ar"
-                  ? "font-gess font-medium"
-                  : "font-sans font-semibold"
-              }`}
-            >
+            <h1 lang={lang} className="fl-display mb-2 text-3xl text-primary md:text-5xl">
               {t.pageTitle ?? "My Orders"}
             </h1>
-            <p
-              className={`text-xl mb-2 ${
-                lang === "ar"
-                  ? "font-gess font-medium"
-                  : "font-sans font-semibold"
-              }`}
-            >
-              {t.subtitle ?? "View and track all your orders"}
-            </p>
+            <p className="text-lg text-primary/75">{t.subtitle ?? "View and track all your orders"}</p>
           </div>
         </div>
 
         {/* Orders */}
         {orders.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-xl border">
-            <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-gray-900 mb-2">
+          <div className="fl-pcard text-center !py-12">
+            <Package className="w-16 h-16 text-primary/55 mx-auto mb-4" />
+            <h2 className="text-xl font-bold text-primary mb-2">
               {t.noOrders ?? "No Orders Yet"}
             </h2>
-            <p className="text-gray-600 mb-6 max-w-md mx-auto">
+            <p className="text-primary/75 mb-6 max-w-md mx-auto">
               {t.noOrdersMessage ??
                 "You haven't placed any orders yet. Start shopping to see your orders here."}
             </p>
             <button
               onClick={() => (window.location.href = `/${lang}/products`)}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+              className="fl-cta"
             >
               {t.startShopping ?? "Start Shopping"}
             </button>
@@ -361,7 +347,7 @@ const OrdersPage = () => {
               return (
                 <div
                   key={order.id}
-                  className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-all"
+                  className="bg-white rounded-xl border border-gold/40 p-6 shadow-sm hover:shadow-md transition-all"
                 >
                   {/* Order Header */}
                   <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
@@ -372,7 +358,7 @@ const OrdersPage = () => {
                             lang === "ar"
                               ? "font-gess font-medium"
                               : "font-sans font-semibold"
-                          } text-xl text-gray-900`}
+                          } text-xl text-primary`}
                         >
                           {t.order ?? "Order"} #{order.orderNumber}
                         </h2>
@@ -394,8 +380,8 @@ const OrdersPage = () => {
 
                       <div className="flex flex-wrap gap-4 text-sm">
                         <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-gray-500" />
-                          <span className="text-gray-600">
+                          <Calendar className="w-4 h-4 text-primary/70" />
+                          <span className="text-primary/75">
                             {t.orderDate ?? "Order Date"}:
                           </span>
                           <span className="font-medium">
@@ -403,7 +389,7 @@ const OrdersPage = () => {
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-gray-600">
+                          <span className="text-primary/75">
                             {t.amount ?? "Amount"}:
                           </span>
                           <span className="font-medium text-green-600">
@@ -416,7 +402,7 @@ const OrdersPage = () => {
 
                     <button
                       onClick={() => openOrderDetails(order)}
-                      className="flex items-center gap-2 text-blue-600 hover:text-blue-800 px-4 py-2 rounded-lg border border-blue-200 hover:bg-blue-50 transition-colors"
+                      className="fl-btn-oval"
                     >
                       <Eye className="w-4 h-4" />
                       <span className="font-medium">
@@ -426,8 +412,8 @@ const OrdersPage = () => {
                   </div>
 
                   {/* Items Summary */}
-                  <div className="border-t border-gray-200 my-4"></div>
-                  <h3 className="font-semibold text-gray-800 mb-3">
+                  <div className="border-t border-gold/40 my-4"></div>
+                  <h3 className="font-semibold text-primary mb-3">
                     {t.items ?? "Items"} (
                     {order.orderItems.reduce(
                       (sum, item) => sum + item.quantity,
@@ -445,7 +431,7 @@ const OrdersPage = () => {
                           key={item.id}
                           className="flex flex-col sm:flex-row gap-4 items-start"
                         >
-                          <div className="relative w-20 h-20 sm:w-16 sm:h-16 rounded-lg overflow-hidden flex-shrink-0 border border-gray-200">
+                          <div className="relative w-20 h-20 sm:w-16 sm:h-16 rounded-lg overflow-hidden flex-shrink-0 border border-gold/40">
                             {firstImage ? (
                               <Image
                                 src={firstImage}
@@ -460,8 +446,8 @@ const OrdersPage = () => {
                                 }}
                               />
                             ) : (
-                              <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                                <ImageIcon className="w-6 h-6 text-gray-400" />
+                              <div className="w-full h-full bg-secondary flex items-center justify-center">
+                                <ImageIcon className="w-6 h-6 text-primary/55" />
                               </div>
                             )}
                           </div>
@@ -469,22 +455,22 @@ const OrdersPage = () => {
                           <div className="flex-1 min-w-0">
                             <div className="flex justify-between items-start">
                               <div className="flex-1">
-                                <p className="font-medium text-gray-900">
+                                <p className="font-medium text-primary">
                                   {item.productName}
                                 </p>
                                 {item.variantDetails && (
-                                  <p className="text-sm text-gray-600 mt-1">
+                                  <p className="text-sm text-primary/75 mt-1">
                                     {item.variantDetails}
                                   </p>
                                 )}
                                 <div className="flex items-center gap-4 mt-2 text-sm">
-                                  <span className="text-gray-600">
+                                  <span className="text-primary/75">
                                     {t.quantity ?? "Quantity"}:{" "}
                                     <span className="font-medium">
                                       {item.quantity}
                                     </span>
                                   </span>
-                                  <span className="text-gray-600">
+                                  <span className="text-primary/75">
                                     {t.price ?? "Price"}:{" "}
                                     <span className="font-medium">
                                       {item.price.toFixed(2)}{" "}
@@ -494,7 +480,7 @@ const OrdersPage = () => {
                                 </div>
                               </div>
                               <div className="text-right ml-4">
-                                <p className="font-bold text-lg text-blue-600">
+                                <p className="font-bold text-lg text-primary">
                                   {(item.price * item.quantity).toFixed(2)}{" "}
                                   {lang === "ar" ? "ج.م" : "EGP"}
                                 </p>
@@ -513,8 +499,8 @@ const OrdersPage = () => {
                     })}
 
                     {order.orderItems.length > 3 && (
-                      <div className="text-center pt-2 border-t border-gray-100">
-                        <p className="text-sm text-blue-600">
+                      <div className="text-center pt-2 border-t border-gold/30">
+                        <p className="text-sm text-primary">
                           + {order.orderItems.length - 3}{" "}
                           {t.moreItems ?? "more items"}
                         </p>
@@ -527,17 +513,17 @@ const OrdersPage = () => {
                     order.customerName ||
                     order.customerPhone) && (
                     <>
-                      <div className="border-t border-gray-200 my-4"></div>
+                      <div className="border-t border-gold/40 my-4"></div>
                       <div>
-                        <h3 className="font-semibold text-gray-800 mb-3">
+                        <h3 className="font-semibold text-primary mb-3">
                           {t.shippingInfo ?? "Shipping Information"}
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           {order.customerName && (
                             <div className="flex items-center gap-2">
-                              <User className="w-4 h-4 text-gray-500" />
+                              <User className="w-4 h-4 text-primary/70" />
                               <div>
-                                <p className="text-sm text-gray-600">
+                                <p className="text-sm text-primary/75">
                                   {t.customerName ?? "Customer"}
                                 </p>
                                 <p className="font-medium">
@@ -548,9 +534,9 @@ const OrdersPage = () => {
                           )}
                           {order.customerPhone && (
                             <div className="flex items-center gap-2">
-                              <Phone className="w-4 h-4 text-gray-500" />
+                              <Phone className="w-4 h-4 text-primary/70" />
                               <div>
-                                <p className="text-sm text-gray-600">
+                                <p className="text-sm text-primary/75">
                                   {t.phone ?? "Phone"}
                                 </p>
                                 <p className="font-medium">
@@ -561,9 +547,9 @@ const OrdersPage = () => {
                           )}
                           {order.shippingAddress && (
                             <div className="flex items-center gap-2">
-                              <MapPin className="w-4 h-4 text-gray-500" />
+                              <MapPin className="w-4 h-4 text-primary/70" />
                               <div>
-                                <p className="text-sm text-gray-600">
+                                <p className="text-sm text-primary/75">
                                   {t.address ?? "Address"}
                                 </p>
                                 <p className="font-medium">
@@ -602,18 +588,18 @@ const OrdersPage = () => {
                 <p
                   className={`${
                     lang === "ar" ? "font-gess" : "font-sans"
-                  } text-lg md:text-xl text-gray-700 mt-1`}
+                  } text-lg md:text-xl text-primary/85 mt-1`}
                 >
                   {selectedOrder.orderNumber}
                 </p>
-                <p className="text-gray-600 mt-1">
+                <p className="text-primary/75 mt-1">
                   {t.orderDate || "Order Date"}:{" "}
                   {formatDate(selectedOrder.createdAt)}
                 </p>
               </div>
               <button
                 onClick={closeOrderDetails}
-                className="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100"
+                className="text-primary/70 hover:text-primary/85 p-2 rounded-full hover:bg-secondary"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -636,7 +622,7 @@ const OrdersPage = () => {
                       {translateStatus(selectedOrder.status)}
                     </span>
                   </div>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-primary/75">
                     {t.lastUpdated || "Last updated"}:{" "}
                     {formatDate(selectedOrder.updatedAt)}
                   </div>
@@ -644,7 +630,7 @@ const OrdersPage = () => {
               </div>
 
               <div className="text-right">
-                <p className="text-gray-600">
+                <p className="text-primary/75">
                   {t.totalAmount || "Total Amount"}
                 </p>
                 <p className="text-3xl md:text-4xl font-bold text-green-600">
@@ -664,10 +650,10 @@ const OrdersPage = () => {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {selectedOrder.customerName && (
-                    <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="bg-secondary/40 p-4 rounded-lg">
                       <div className="flex items-center gap-2 mb-2">
-                        <User className="w-5 h-5 text-gray-500" />
-                        <p className="text-sm text-gray-600">
+                        <User className="w-5 h-5 text-primary/70" />
+                        <p className="text-sm text-primary/75">
                           {t.customerName || "Customer Name"}
                         </p>
                       </div>
@@ -681,10 +667,10 @@ const OrdersPage = () => {
                     </div>
                   )}
                   {selectedOrder.customerPhone && (
-                    <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="bg-secondary/40 p-4 rounded-lg">
                       <div className="flex items-center gap-2 mb-2">
-                        <Phone className="w-5 h-5 text-gray-500" />
-                        <p className="text-sm text-gray-600">
+                        <Phone className="w-5 h-5 text-primary/70" />
+                        <p className="text-sm text-primary/75">
                           {t.phone || "Phone Number"}
                         </p>
                       </div>
@@ -698,10 +684,10 @@ const OrdersPage = () => {
                     </div>
                   )}
                   {selectedOrder.shippingAddress && (
-                    <div className="bg-gray-50 p-4 rounded-lg md:col-span-2 lg:col-span-1">
+                    <div className="bg-secondary/40 p-4 rounded-lg md:col-span-2 lg:col-span-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <MapPin className="w-5 h-5 text-gray-500" />
-                        <p className="text-sm text-gray-600">
+                        <MapPin className="w-5 h-5 text-primary/70" />
+                        <p className="text-sm text-primary/75">
                           {t.shippingAddress || "Shipping Address"}
                         </p>
                       </div>
@@ -713,7 +699,7 @@ const OrdersPage = () => {
                         {selectedOrder.shippingAddress}
                       </p>
                       {selectedOrder.shippingCity && (
-                        <p className="text-gray-600">
+                        <p className="text-primary/75">
                           {selectedOrder.shippingCity}
                         </p>
                       )}
@@ -736,7 +722,7 @@ const OrdersPage = () => {
                       key={item.id}
                       className="border rounded-xl overflow-hidden"
                     >
-                      <div className="bg-blue-50 p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                      <div className="bg-gold/10 p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                         <h4
                           className={`${
                             lang === "ar" ? "font-gess" : "font-sans"
@@ -751,7 +737,7 @@ const OrdersPage = () => {
                           </p>
                           {item.originalPrice &&
                             item.originalPrice > item.price && (
-                              <p className="text-sm text-gray-500 line-through">
+                              <p className="text-sm text-primary/70 line-through">
                                 {item.originalPrice.toFixed(2)}{" "}
                                 {lang === "ar" ? "ج.م" : "EGP"}
                               </p>
@@ -762,7 +748,7 @@ const OrdersPage = () => {
                       {/* Images */}
                       <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-1">
-                          <h5 className="font-medium text-gray-700 mb-3 flex items-center gap-2">
+                          <h5 className="font-medium text-primary/85 mb-3 flex items-center gap-2">
                             <ImageIcon className="w-4 h-4" />{" "}
                             {t.productImages || "Product Images"}
                           </h5>
@@ -770,7 +756,7 @@ const OrdersPage = () => {
                             {images.length > 0 ? (
                               <>
                                 <div
-                                  className="relative w-full h-64 rounded-lg overflow-hidden cursor-pointer border border-gray-200"
+                                  className="relative w-full h-64 rounded-lg overflow-hidden cursor-pointer border border-gold/40"
                                   onClick={() => openImageModal(images[0])}
                                 >
                                   <Image
@@ -792,7 +778,7 @@ const OrdersPage = () => {
                                     {images.slice(1).map((img, idx) => (
                                       <div
                                         key={idx}
-                                        className="relative h-20 rounded-md overflow-hidden cursor-pointer border border-gray-200"
+                                        className="relative h-20 rounded-md overflow-hidden cursor-pointer border border-gold/40"
                                         onClick={() => openImageModal(img)}
                                       >
                                         <Image
@@ -816,9 +802,9 @@ const OrdersPage = () => {
                                 )}
                               </>
                             ) : (
-                              <div className="w-full h-64 bg-gray-100 rounded-lg flex flex-col items-center justify-center">
-                                <ImageIcon className="w-12 h-12 text-gray-400 mb-2" />
-                                <p className="text-gray-500">
+                              <div className="w-full h-64 bg-secondary rounded-lg flex flex-col items-center justify-center">
+                                <ImageIcon className="w-12 h-12 text-primary/55 mb-2" />
+                                <p className="text-primary/70">
                                   {t.noImages || "No images available"}
                                 </p>
                               </div>
@@ -828,13 +814,13 @@ const OrdersPage = () => {
 
                         {/* Details */}
                         <div className="lg:col-span-2 space-y-4">
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm text-primary/75">
                             {t.quantity || "Quantity"}:{" "}
                             <span className="font-medium">
                               {item.quantity} {t.piece || "piece"}
                             </span>
                           </p>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm text-primary/75">
                             {t.total || "Total"}:{" "}
                             <span className="font-medium">
                               {(item.price * item.quantity).toFixed(2)}{" "}
@@ -842,7 +828,7 @@ const OrdersPage = () => {
                             </span>
                           </p>
                           {item.discountAmount && item.discountAmount > 0 && (
-                            <p className="text-sm text-gray-600">
+                            <p className="text-sm text-primary/75">
                               {t.discount || "Discount"}:
                               <span className="font-medium text-red-600">
                                 -{item.discountAmount?.toFixed(2)}{" "}
@@ -860,8 +846,8 @@ const OrdersPage = () => {
 
             {/* Order Summary */}
             <div className="mt-8 border-t pt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-blue-50 p-4 rounded-lg text-center">
-                <p className="text-sm text-gray-600">
+              <div className="bg-gold/10 p-4 rounded-lg text-center">
+                <p className="text-sm text-primary/75">
                   {t.totalItems || "Total Items"}
                 </p>
                 <p className="text-2xl font-bold">
@@ -872,7 +858,7 @@ const OrdersPage = () => {
                 </p>
               </div>
               <div className="bg-green-50 p-4 rounded-lg text-center">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-primary/75">
                   {t.differentItems || "Different Items"}
                 </p>
                 <p className="text-2xl font-bold">
@@ -880,7 +866,7 @@ const OrdersPage = () => {
                 </p>
               </div>
               <div className="bg-yellow-50 p-4 rounded-lg text-center">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-primary/75">
                   {t.totalDiscount || "Total Discount"}
                 </p>
                 <p className="text-2xl font-bold text-red-600">
@@ -896,7 +882,7 @@ const OrdersPage = () => {
             <div className="sticky bottom-0 bg-white border-t p-4">
               <button
                 onClick={closeOrderDetails}
-                className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                className="fl-cta w-full"
               >
                 {t.close || "Close"}
               </button>

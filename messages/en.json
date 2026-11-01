@@ -7,7 +7,7 @@
       "shipping": "Free Shipping",
       "love": "Made with Love"
     },
-    "storyTitle": "Our Story",
+    "storyTitle": "About Us",
     "storyText1": "Flora was founded in 2024, and since then we have been committed to offering the finest selection of leather products and shoes. Every piece in our collection is carefully chosen to ensure quality, design, and durability.",
     "storyText2": "We work directly with artisans and designers who share our passion for excellence, ensuring that every product meets our high standards. When you choose Flora, you choose a legacy of craftsmanship and elegance."
   },
@@ -124,7 +124,7 @@
     "total": "Total",
     "confirmOrder": "Confirm Order",
     "creatingOrder": "Creating Order...",
-    "selectAddressWarning": "⚠️ Please select a shipping address",
+    "selectAddressWarning": "Please select a shipping address",
     "emptyCartTitle": "Your cart is empty",
     "emptyCartMessage": "You haven't added any products yet",
     "browseProducts": "Browse Products",
@@ -146,6 +146,7 @@
   },
 
   "cart": {
+    "remove": "Remove",
     "pageTitle": "Shopping Cart",
     "backToShopping": "Back to Shopping",
     "emptyTitle": "Your cart is empty",

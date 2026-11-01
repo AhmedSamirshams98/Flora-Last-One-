@@ -41,9 +41,11 @@ export const NAV_LINKS = [
     type: "page",
   },
   {
-    href: ROUTES.CONTACT,
+    // there is no contact page any more: the footer (on every page) carries the details
+    href: "#contact",
     labelKey: "nav.contact",
-    type: "page",
+    type: "anchor",
+    anchorId: "contact",
   },
 ] as const;
 

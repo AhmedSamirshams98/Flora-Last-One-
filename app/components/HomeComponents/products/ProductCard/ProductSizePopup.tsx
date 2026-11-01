@@ -1,7 +1,12 @@
 "use client";
-import { ShoppingCart, X, Check, AlertCircle } from "lucide-react";
+
+/* The size picker that opens before a product goes into the cart: the shop's pop-up (drawn into
+   <body>, Esc closes), the shop's colours and buttons, and both languages. The old one was in English
+   only and had a "Size Guide" button that did nothing, so it is gone. */
+
 import Image from "next/image";
-import { toast } from "sonner";
+import { Check, ShoppingCart, X } from "lucide-react";
+import AdminModal from "@/app/components/AdminModal";
 
 interface ProductSizesPopupProps {
   isOpen: boolean;
@@ -34,136 +39,110 @@ export default function ProductSizesPopup({
 }: ProductSizesPopupProps) {
   if (!isOpen) return null;
 
-  const hasSizes = sizes && sizes.length > 0;
+  const isAr = lang === "ar";
+  const hasSizes = !!sizes && sizes.length > 0;
   const isOutOfStock = stock === 0;
+  const blocked = isOutOfStock || (hasSizes && !selectedSize);
+  const T = isAr
+    ? {
+        pick: "اختر المقاس",
+        chosen: "المقاس",
+        none: "لا توجد مقاسات لهذا المنتج",
+        out: "هذا المنتج غير متوفر حاليًا",
+        left: `باقي ${stock} قطع فقط`,
+        inStock: "متوفر",
+        add: "أضف إلى السلة",
+        outBtn: "غير متوفر",
+        pickFirst: "اختر المقاس أولًا",
+        cancel: "إلغاء",
+        close: "إغلاق",
+      }
+    : {
+        pick: "Select Size",
+        chosen: "Size",
+        none: "No sizes available for this product",
+        out: "This item is currently out of stock",
+        left: `Only ${stock} left`,
+        inStock: "In stock",
+        add: "Add to Cart",
+        outBtn: "Out of Stock",
+        pickFirst: "Select a size first",
+        cancel: "Cancel",
+        close: "Close",
+      };
 
   return (
-    <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-      <div
-        className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="p-4 border-b flex justify-between items-center">
-          <div>
-            <h3 className="font-bold text-lg">{productName}</h3>
-            <p className="text-sm text-gray-600">{variantColor}</p>
+    <AdminModal onClose={onClose} label={productName} narrow dir={isAr ? "rtl" : "ltr"}>
+      <div className={`p-5 ${isAr ? "font-gess" : ""}`}>
+        <div className="flex items-start gap-4">
+          <div className="relative aspect-[4/5] w-20 shrink-0 overflow-hidden rounded-xl bg-secondary">
+            {variantImages[0] && <Image src={variantImages[0]} alt="" fill sizes="80px" className="object-cover" />}
+          </div>
+          <div className="min-w-0 flex-1">
+            <h3 className="line-clamp-2 text-lg text-primary">{productName}</h3>
+            <p className="mt-0.5 text-sm text-primary/70">{variantColor}</p>
+            <p dir="ltr" className={`mt-2 text-lg font-medium text-primary ${isAr ? "text-end" : ""}`}>
+              EGP {finalPrice.toLocaleString("en-US")}
+            </p>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
+            aria-label={T.close}
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-primary/70 transition-colors hover:bg-primary/10 hover:text-primary"
           >
-            <X className="w-5 h-5" />
+            <X className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
 
-        {/* Product Preview */}
-        <div className="p-4 border-b">
-          <div className="flex items-start gap-4">
-            <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
-              <Image
-                quality={80}
-                src={variantImages[0] || "/placeholder.jpg"}
-                alt={variantColor}
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div className="flex-1">
-              <h4 className="font-medium mb-1">{productName}</h4>
-              <p className="text-sm text-gray-600 mb-2">{variantColor}</p>
-              <div className="text-lg font-bold text-primary">
-                {finalPrice.toLocaleString()} EGP
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Size Selection */}
-        <div className="p-4 border-b">
-          <div className="flex items-center justify-between mb-3">
-            <h4 className="font-bold">Select Size</h4>
+        <div className="mt-5 border-t border-gold/40 pt-5">
+          <div className="mb-3 flex items-center justify-between">
+            <h4 className="text-primary">{T.pick}</h4>
             {selectedSize && (
-              <span className="text-sm text-primary">Selected: {selectedSize}</span>
+              <span className="text-sm text-primary/75">
+                {T.chosen}: {selectedSize}
+              </span>
             )}
           </div>
 
           {hasSizes ? (
-            <div className="grid grid-cols-4 gap-2">
-              {sizes.map((size) => (
-                <button
-                  key={size}
-                  onClick={() => onSizeSelect(size)}
-                  className={`p-3 rounded-lg border-2 flex flex-col items-center justify-center transition-all ${
-                    selectedSize === size
-                      ? "border-primary bg-blue-50 text-primary"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
-                >
-                  <span className="font-medium">{size}</span>
-                  {selectedSize === size && (
-                    <Check className="w-4 h-4 mt-1 text-primary" />
-                  )}
-                </button>
-              ))}
+            <div className="grid grid-cols-4 gap-2" role="radiogroup" aria-label={T.pick}>
+              {sizes!.map((size) => {
+                const on = selectedSize === size;
+                return (
+                  <button
+                    key={size}
+                    role="radio"
+                    aria-checked={on}
+                    onClick={() => onSizeSelect(size)}
+                    className={`flex min-h-12 items-center justify-center gap-1 rounded-xl border transition-colors ${
+                      on
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-primary/25 text-primary hover:border-gold hover:bg-gold/10"
+                    }`}
+                  >
+                    {size}
+                    {on && <Check className="h-4 w-4" aria-hidden="true" />}
+                  </button>
+                );
+              })}
             </div>
           ) : (
-            <div className="text-center py-4 text-gray-500">
-              No sizes available for this product
-            </div>
-          )}
-
-          {/* Size Guide */}
-          <button className="mt-4 text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1">
-            <AlertCircle className="w-4 h-4" />
-            Size Guide
-          </button>
-        </div>
-
-        {/* Stock Status */}
-        <div className="p-4 border-b">
-          {isOutOfStock ? (
-            <div className="bg-red-50 text-red-700 p-3 rounded-lg flex items-center gap-2">
-              <AlertCircle className="w-5 h-5" />
-              <span>This item is currently out of stock</span>
-            </div>
-          ) : stock < 10 ? (
-            <div className="bg-yellow-50 text-yellow-700 p-3 rounded-lg flex items-center gap-2">
-              <AlertCircle className="w-5 h-5" />
-              <span>Only {stock} items left in stock</span>
-            </div>
-          ) : (
-            <div className="bg-green-50 text-green-700 p-3 rounded-lg flex items-center gap-2">
-              <Check className="w-5 h-5" />
-              <span>In stock - {stock} items available</span>
-            </div>
+            <p className="py-3 text-center text-primary/70">{T.none}</p>
           )}
         </div>
 
-        {/* Action Buttons */}
-        <div className="p-4">
-          <button
-            onClick={onAddToCart}
-            disabled={isOutOfStock || (hasSizes && !selectedSize)}
-            className={`w-full py-3 rounded-lg font-bold text-white flex items-center justify-center gap-2 transition-colors ${
-              isOutOfStock || (hasSizes && !selectedSize)
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-primary hover:bg-primary/90"
-            }`}
-          >
-            <ShoppingCart className="w-5 h-5" />
-            {isOutOfStock ? "Out of Stock" : "Add to Cart"}
-            {selectedSize && ` - Size: ${selectedSize}`}
-          </button>
+        <p className={`mt-4 text-sm ${isOutOfStock ? "text-[#9b2c1f]" : "text-primary/75"}`} aria-live="polite">
+          {isOutOfStock ? T.out : stock < 10 ? T.left : T.inStock}
+        </p>
 
-          <button
-            onClick={onClose}
-            className="w-full mt-2 py-2 text-gray-600 hover:text-gray-800"
-          >
-            Cancel
-          </button>
-        </div>
+        <button onClick={onAddToCart} disabled={blocked} className={`fl-cta mt-5 w-full ${isAr ? "font-gess" : ""}`}>
+          <ShoppingCart className="h-5 w-5" aria-hidden="true" />
+          {isOutOfStock ? T.outBtn : hasSizes && !selectedSize ? T.pickFirst : T.add}
+        </button>
+        <button onClick={onClose} className="mt-2 min-h-11 w-full text-primary/70 transition-colors hover:text-primary">
+          {T.cancel}
+        </button>
       </div>
-    </div>
+    </AdminModal>
   );
 }

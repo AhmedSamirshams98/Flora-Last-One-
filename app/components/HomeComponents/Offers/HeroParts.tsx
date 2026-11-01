@@ -52,7 +52,7 @@ export function Actions({
   return (
     <div className="flex flex-wrap items-center gap-3">
       <Link href={`/${lang}/products`} className={`fl-btn-gold ${isAr ? "font-gess" : ""}`}>
-        {isAr ? "تسوّقي الآن" : "Shop now"}
+        {isAr ? "تسوق الآن" : "Shop Now"}
         <Arrow aria-hidden="true" className="h-4 w-4" />
       </Link>
       <a

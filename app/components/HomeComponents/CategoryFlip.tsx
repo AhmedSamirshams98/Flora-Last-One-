@@ -71,7 +71,7 @@ export default function CategoryFlip({ lang, items }: { lang: "ar" | "en"; items
   };
 
   return (
-    <div className="overflow-hidden rounded-[1.75rem] bg-[#f3eee6]" dir={isAr ? "rtl" : "ltr"}>
+    <div className="fl-cat overflow-hidden rounded-[1.75rem]" dir={isAr ? "rtl" : "ltr"}>
       {/* until we know the screen, keep the height so nothing jumps */}
       <div style={{ minHeight: photoH + 150 }}>
         {phone !== null && (
@@ -93,7 +93,7 @@ export default function CategoryFlip({ lang, items }: { lang: "ar" | "en"; items
       </div>
 
       <div className="px-5 pb-8 pt-2 text-center">
-        <p className="text-xs uppercase tracking-[0.18em] text-primary/50">
+        <p dir="ltr" className="text-xs uppercase tracking-[0.18em] text-primary/60">
           {String(position).padStart(2, "0")} / {String(n).padStart(2, "0")}
         </p>
         <h3 lang={lang} className="fl-display mt-2 text-3xl text-primary md:text-4xl">
@@ -105,7 +105,7 @@ export default function CategoryFlip({ lang, items }: { lang: "ar" | "en"; items
             className={`fl-cta mt-5 ${isAr ? "font-gess" : ""}`}
             style={{ display: "inline-flex" }}
           >
-            {isAr ? "تسوّقي القسم" : "Shop this category"}
+            {isAr ? "عرض المنتجات" : "View Products"}
             <Arrow aria-hidden="true" className="h-4 w-4" />
           </Link>
         )}

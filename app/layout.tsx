@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import Head from "next/head";
 import { Jost, Marcellus, Amiri, Readex_Pro } from "next/font/google";
 import { Providers } from "./providers";
+import FloatingContact from "./components/FloatingContact";
 const jost = Jost({
   subsets: ["latin"],
   weight: ["300", "400", "500"],
@@ -143,6 +144,7 @@ export default function RootLayout({
           />
 
           <Footer />
+          <FloatingContact />
         </Providers>
       </body>
     </html>
