@@ -26,7 +26,7 @@ export default function ProductCard({
       : 0;
 
   return (
-    <div className="border rounded-lg p-4 hover:shadow-lg transition">
+    <div className="fl-pcard">
       {product.variants[0]?.images[0] && (
         <div className="relative w-full h-48 mb-4">
           <Image
@@ -38,27 +38,27 @@ export default function ProductCard({
         </div>
       )}
 
-      <h3 className="font-bold text-lg mb-2">{product.name}</h3>
-      <p className="text-sm text-gray-600 mb-3">
+      <h3 className="fl-display text-xl text-primary mb-1">{product.name}</h3>
+      <p className="text-sm text-primary/75 mb-3">
         {translateSubcategory(product.subcategory || null, lang)}
       </p>
 
       {/* تفاصيل السعر */}
       <div className="mb-3">
         {product.pricingType === "SINGLE_PRICE" ? (
-          <span className="text-2xl font-bold text-gray-900">
+          <span className="fl-display text-2xl text-primary">
             {finalPrice.toLocaleString()} ج.م
           </span>
         ) : (
           <div className="space-y-1">
-            <div className="text-gray-400 line-through text-sm">
+            <div className="text-primary/50 line-through text-sm">
               {product.basePrice.toLocaleString()} ج.م
             </div>
-            <div className="text-2xl font-bold text-red-600">
+            <div className="fl-display text-2xl text-primary">
               {finalPrice.toLocaleString()} ج.م
             </div>
             {discountPercentage > 0 && (
-              <span className="bg-red-100 text-red-600 px-2 py-1 rounded text-xs">
+              <span className="bg-gold/25 text-primary px-2 py-1 rounded text-xs">
                 خصم {discountPercentage}%
               </span>
             )}
@@ -67,7 +67,7 @@ export default function ProductCard({
       </div>
 
       {/* معلومات المنتج */}
-      <div className="text-sm text-gray-600 space-y-1">
+      <div className="text-sm text-primary/75 space-y-1">
         <div>المخزون: {product.inStock ? "متوفر" : "غير متوفر"}</div>
         <div>
           القطع: {product.variants.reduce((sum, v) => sum + v.stock, 0)}
@@ -79,7 +79,7 @@ export default function ProductCard({
       <div className="flex gap-2 mt-4">
         <button
           onClick={() => onEdit(product)}
-          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded flex items-center justify-center gap-2"
+          className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground min-h-11 rounded-full flex items-center justify-center gap-2"
         >
           <Edit size={16} />
           تعديل
@@ -90,7 +90,7 @@ export default function ProductCard({
               onDelete(product.id);
             }
           }}
-          className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded flex items-center justify-center gap-2"
+          className="flex-1 fl-danger min-h-11 rounded-full flex items-center justify-center gap-2"
         >
           <Trash2 size={16} />
           حذف

@@ -183,10 +183,10 @@ export default function ProductsPage() {
       {/* الهيدر */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">
+          <h1 className="text-3xl md:text-4xl">
             إدارة المنتجات
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-primary/75 mt-1">
             إجمالي المنتجات:{" "}
             <span className="font-semibold">{products.length}</span>
           </p>
@@ -194,7 +194,7 @@ export default function ProductsPage() {
 
         <button
           onClick={() => setShowForm(true)}
-          className="bg-primary hover:bg-primary/90 text-white px-5 py-3 rounded-lg flex items-center gap-2 font-medium shadow-md transition-all hover:shadow-lg"
+          className="fl-btn-oval !min-h-11 text-sm"
         >
           <Plus size={20} />
           إضافة منتج جديد
@@ -205,12 +205,12 @@ export default function ProductsPage() {
       {loading ? (
         <div className="text-center py-12">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-          <p className="mt-4 text-gray-600">جاري تحميل المنتجات...</p>
+          <p className="mt-4 text-primary/75">جاري تحميل المنتجات...</p>
         </div>
       ) : products.length === 0 ? (
-        <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
-          <p className="text-gray-500 text-lg">لا توجد منتجات حتى الآن</p>
-          <p className="text-gray-400 mt-2">ابدأ بإضافة منتجك الأول</p>
+        <div className="text-center py-12 border-2 border-dashed border-gold/50 rounded-lg">
+          <p className="text-primary/70 text-lg">لا توجد منتجات حتى الآن</p>
+          <p className="text-primary/50 mt-2">ابدأ بإضافة منتجك الأول</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

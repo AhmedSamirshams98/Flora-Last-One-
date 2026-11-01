@@ -38,17 +38,17 @@ export const OfferCard = memo(
     const hasDate = offer.startDate || offer.endDate;
 
     return (
-      <div className="bg-white shadow rounded-lg border overflow-hidden flex flex-col h-full">
-        <div className="p-4 border-b flex justify-between">
+      <div className="fl-pcard !p-0 overflow-hidden flex flex-col h-full">
+        <div className="p-4 border-b border-gold/40 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <span className="text-xl">{getOfferIcon(offer.offerType)}</span>
-            <h3 className="font-semibold">{offer.title}</h3>
+            <h3 className="fl-display text-xl text-primary">{offer.title}</h3>
           </div>
           <button
             className={`p-2 rounded-full ${
               offer.isActive
-                ? "bg-green-100 text-green-600"
-                : "bg-gray-200 text-gray-700"
+                ? "bg-gold/25 text-primary"
+                : "bg-secondary text-primary/70"
             }`}
             onClick={() => onToggleStatus(offer.id)}
           >
@@ -69,13 +69,13 @@ export const OfferCard = memo(
 
         {/* Content - هذا القسم سيمتد لملء المساحة المتاحة */}
         <div className="p-4 space-y-2 flex-grow">
-          <div className="text-sm font-medium text-gray-700">
+          <div className="text-sm font-medium text-primary/85">
             {getOfferDetails(offer)}
           </div>
 
           {/* التاريخ - سيظهر فقط إذا كان موجودًا */}
           {hasDate && (
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-primary/70">
               {offer.startDate &&
                 `من ${new Date(offer.startDate).toLocaleDateString("ar")}`}
               {offer.endDate &&
@@ -83,25 +83,25 @@ export const OfferCard = memo(
             </div>
           )}
 
-          <div className="text-xs text-blue-600">
+          <div className="text-xs text-primary">
             <Tag size={12} className="inline mr-1" />
             {offer.products?.length ?? 0} منتج
           </div>
         </div>
 
         {/* Buttons - ستكون دائمًا في الأسفل */}
-        <div className="p-4 border-t">
+        <div className="p-4 border-t border-gold/40">
           <div className="flex gap-2">
             <button
               onClick={() => onEdit(offer)}
-              className="flex-1 bg-blue-600 text-white py-2 rounded-lg flex items-center justify-center gap-1 hover:bg-blue-700 transition-colors"
+              className="flex-1 bg-primary text-primary-foreground min-h-11 rounded-full flex items-center justify-center gap-1 hover:bg-primary/90 transition-colors"
             >
               <Edit size={16} />
               تعديل
             </button>
             <button
               onClick={handleDeleteClick}
-              className="flex-1 bg-red-600 text-white py-2 rounded-lg flex items-center justify-center gap-1 hover:bg-red-700 transition-colors"
+              className="fl-danger flex-1 min-h-11 rounded-full flex items-center justify-center gap-1"
             >
               <Trash2 size={16} />
               حذف

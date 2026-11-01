@@ -209,7 +209,7 @@ export default function OfferForm({
         <button
           type="button"
           onClick={onClose}
-          className="text-gray-500 hover:text-gray-700"
+          className="text-primary/70 hover:text-primary/85"
         >
           ✕
         </button>
@@ -224,7 +224,7 @@ export default function OfferForm({
               type="text"
               value={formData.title}
               onChange={(e) => handleChange("title", e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="fl-input"
               required
               disabled={isSubmitting}
             />
@@ -238,7 +238,7 @@ export default function OfferForm({
               type="text"
               value={formData.titleEn}
               onChange={(e) => handleChange("titleEn", e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="fl-input"
               required
               disabled={isSubmitting}
             />
@@ -252,7 +252,7 @@ export default function OfferForm({
               type="text"
               value={formData.subtitle}
               onChange={(e) => handleChange("subtitle", e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="fl-input"
               disabled={isSubmitting}
             />
           </div>
@@ -265,7 +265,7 @@ export default function OfferForm({
               type="text"
               value={formData.subtitleEn}
               onChange={(e) => handleChange("subtitleEn", e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="fl-input"
               disabled={isSubmitting}
             />
           </div>
@@ -276,7 +276,7 @@ export default function OfferForm({
               value={formData.description}
               onChange={(e) => handleChange("description", e.target.value)}
               rows={3}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="fl-input"
               disabled={isSubmitting}
             />
           </div>
@@ -289,7 +289,7 @@ export default function OfferForm({
               value={formData.descriptionEn}
               onChange={(e) => handleChange("descriptionEn", e.target.value)}
               rows={3}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="fl-input"
               disabled={isSubmitting}
             />
           </div>
@@ -304,8 +304,8 @@ export default function OfferForm({
                 key={type.value}
                 className={`p-4 border rounded-lg cursor-pointer transition-colors ${
                   formData.offerType === type.value
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-gray-200 hover:border-gray-300"
+                    ? "border-gold bg-secondary/60"
+                    : "border-gold/40 hover:border-gold/70"
                 } ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
               >
                 <input
@@ -327,7 +327,7 @@ export default function OfferForm({
         {/* تفاصيل العرض حسب النوع */}
         {formData.offerType !== OfferType.SIMPLE &&
           formData.offerType !== OfferType.FREE_SHIPPING && (
-            <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="bg-secondary/40 p-4 rounded-lg">
               <h4 className="font-medium mb-4">تفاصيل العرض</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {formData.offerType === OfferType.PERCENTAGE_DISCOUNT && (
@@ -344,10 +344,10 @@ export default function OfferForm({
                       onChange={(e) =>
                         handleChange("discountPercentage", e.target.value)
                       }
-                      className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="fl-input"
                       disabled={isSubmitting}
                     />
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-primary/70 mt-1">
                       أدخل نسبة الخصم من 0 إلى 100
                     </p>
                   </div>
@@ -366,7 +366,7 @@ export default function OfferForm({
                       onChange={(e) =>
                         handleChange("discountAmount", e.target.value)
                       }
-                      className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="fl-input"
                       disabled={isSubmitting}
                     />
                   </div>
@@ -385,7 +385,7 @@ export default function OfferForm({
                       onChange={(e) =>
                         handleChange("fixedPrice", e.target.value)
                       }
-                      className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="fl-input"
                       disabled={isSubmitting}
                     />
                   </div>
@@ -406,7 +406,7 @@ export default function OfferForm({
               type="date"
               value={formData.startDate}
               onChange={(e) => handleChange("startDate", e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="fl-input"
               disabled={isSubmitting}
             />
           </div>
@@ -419,7 +419,7 @@ export default function OfferForm({
               type="date"
               value={formData.endDate}
               onChange={(e) => handleChange("endDate", e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="fl-input"
               disabled={isSubmitting}
             />
           </div>
@@ -432,7 +432,7 @@ export default function OfferForm({
             id="isActive"
             checked={formData.isActive}
             onChange={(e) => handleChange("isActive", e.target.checked)}
-            className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            className="h-5 w-5 rounded accent-[#6b4423]"
             disabled={isSubmitting}
           />
           <label
@@ -460,15 +460,15 @@ export default function OfferForm({
               htmlFor="upload-img"
               className={`inline-flex items-center gap-2 px-4 py-3 rounded-lg cursor-pointer transition-colors ${
                 isSubmitting
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-blue-600 text-white hover:bg-blue-700"
+                  ? "bg-secondary text-primary/50 cursor-not-allowed"
+                  : "bg-primary text-primary-foreground hover:bg-primary/90"
               }`}
             >
               <Plus size={18} />
               {uploadingImage ? "تغيير الصورة" : "رفع صورة"}
             </label>
 
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-primary/70">
               الصورة الاختيارية. حجم الملف الأقصى 5MB
             </p>
           </div>
@@ -488,7 +488,7 @@ export default function OfferForm({
                   type="button"
                   onClick={handleRemoveImage}
                   disabled={isSubmitting}
-                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 disabled:bg-red-300"
+                  className="absolute -top-2 -right-2 bg-[#9b2c1f] text-white rounded-full p-1 hover:opacity-90 disabled:opacity-50"
                 >
                   <X size={16} />
                 </button>
@@ -504,8 +504,8 @@ export default function OfferForm({
             disabled={isSubmitting}
             className={`flex-1 py-3 px-6 rounded-lg font-medium transition-colors ${
               isSubmitting
-                ? "bg-blue-400 cursor-not-allowed"
-                : "bg-blue-600 text-white hover:bg-blue-700"
+                ? "bg-primary/50 cursor-not-allowed"
+                : "bg-primary text-primary-foreground hover:bg-primary/90"
             }`}
           >
             {isSubmitting ? (
@@ -539,7 +539,7 @@ export default function OfferForm({
             type="button"
             onClick={onClose}
             disabled={isSubmitting}
-            className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+            className="px-6 py-3 border border-gold/60 text-primary rounded-lg hover:bg-secondary/50 disabled:opacity-50"
           >
             إلغاء
           </button>

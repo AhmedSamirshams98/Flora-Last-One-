@@ -70,9 +70,9 @@ export default function OffersDashboard() {
   return (
     <div className="p-6" style={{ direction: "rtl" }}>
       <div className="flex justify-between mb-6 font-gess">
-        <h1 className="text-3xl font-bold">إدارة العروض</h1>
+        <h1 className="text-3xl md:text-4xl">إدارة العروض</h1>
         <button
-          className="bg-primary text-white px-4 py-2 rounded-lg flex items-center gap-2"
+          className="fl-btn-oval !min-h-11 text-sm"
           onClick={() => setShowForm(true)}
         >
           إضافة عرض جديد
