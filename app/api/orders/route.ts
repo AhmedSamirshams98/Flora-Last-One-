@@ -1,3 +1,4 @@
+import { requireAdmin, requireUser } from "@/lib/require-session";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -23,10 +24,15 @@ interface CreateOrderInput {
 // 📌 CREATE ORDER - النظام المحسن
 // ================================
 export async function POST(req: Request) {
+  const gate = await requireUser();
+  if (gate.error) return gate.error;
   try {
     const data: CreateOrderInput = await req.json();
 
-    console.log("Order data received:", data);
+    // the order is always the signed-in customer's own
+    if (data.userId !== gate.user.id) {
+      return NextResponse.json({ error: "لا تملك صلاحية لهذا الإجراء" }, { status: 403 });
+    }
 
     // التحقق من البيانات الأساسية
     if (
@@ -53,6 +59,10 @@ export async function POST(req: Request) {
         },
       },
     });
+
+    if (address && address.userId !== gate.user.id) {
+      return NextResponse.json({ error: "عنوان الشحن غير موجود" }, { status: 404 });
+    }
 
     if (!address) {
       return NextResponse.json(
@@ -234,6 +244,8 @@ export async function POST(req: Request) {
 // 📌 GET ALL ORDERS
 // ================================
 export async function GET() {
+  const gate = await requireAdmin();
+  if (gate.error) return gate.error;
   try {
     const orders = await prisma.order.findMany({
       include: {

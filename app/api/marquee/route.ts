@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/require-session";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
@@ -15,6 +16,8 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const gate = await requireAdmin();
+  if (gate.error) return gate.error;
   try {
     const data = await request.json();
 
@@ -39,6 +42,8 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE() {
+  const gate = await requireAdmin();
+  if (gate.error) return gate.error;
   try {
     const activeMarquee = await prisma.marquee.findFirst({
       where: { isActive: true },

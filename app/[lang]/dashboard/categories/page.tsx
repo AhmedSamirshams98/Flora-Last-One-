@@ -1,4 +1,6 @@
 "use client";
+import { toast } from "sonner";
+import { confirmAction } from "@/app/components/AdminConfirm";
 import { useEffect, useState } from "react";
 
 type HomeCategory = {
@@ -65,20 +67,29 @@ export default function HomeCategoriesDashboard() {
       ? `/api/home-categories/${editingId}`
       : "/api/home-categories";
 
-    await fetch(url, { method, body: formData });
-
-    setImageFile(null);
-    setCategory("");
-    setSubcategory("");
-    setEditingId(null);
-    setLoading(false);
-    fetchCategories();
+    try {
+      const res = await fetch(url, { method, body: formData });
+      if (!res.ok) throw new Error((await res.json().catch(() => null))?.error || "فشل في الحفظ");
+      toast.success(editingId ? "تم تعديل القسم" : "تمت إضافة القسم");
+      setImageFile(null);
+      setCategory("");
+      setSubcategory("");
+      setEditingId(null);
+      fetchCategories();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "فشل في الحفظ");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("هل أنت متأكد من الحذف؟")) return;
-    await fetch(`/api/home-categories/${id}`, { method: "DELETE" });
-    fetchCategories();
+    if (!(await confirmAction("هل أنت متأكد من حذف هذا القسم؟"))) return;
+    const res = await fetch(`/api/home-categories/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      toast.success("تم حذف القسم");
+      fetchCategories();
+    } else toast.error("فشل في الحذف");
   };
 
   const startEdit = (item: HomeCategory) => {
@@ -89,7 +100,7 @@ export default function HomeCategoriesDashboard() {
 
   return (
     <section className="p-6 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Home Categories</h1>
+      <h1 className="text-3xl font-bold mb-6">أقسام الصفحة الرئيسية</h1>
 
       <form
         onSubmit={handleSubmit}
@@ -99,14 +110,14 @@ export default function HomeCategoriesDashboard() {
           type="file"
           accept="image/*"
           onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-          className="border p-2 rounded"
+          className="border p-2 rounded w-full min-w-0"
           required={!editingId}
         />
 
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="border p-2 rounded"
+          className="border p-2 rounded w-full min-w-0"
           required
         >
           <option value="">اختر القسم</option>
@@ -120,7 +131,7 @@ export default function HomeCategoriesDashboard() {
         <select
           value={subcategory}
           onChange={(e) => setSubcategory(e.target.value)}
-          className="border p-2 rounded"
+          className="border p-2 rounded w-full min-w-0"
         >
           <option value="">اختر النوع الفرعي</option>
           {category &&

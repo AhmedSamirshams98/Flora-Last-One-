@@ -774,3 +774,118 @@
     transform: none;
   }
 }
+
+/* ---------- Dashboard: the same fonts as the shop, and one pop-up that is always on top ---------- */
+.fl-admin {
+  font-family: var(--font-gess);
+}
+.fl-admin h1,
+.fl-admin h2 {
+  font-family: var(--font-display-ar);
+  font-weight: 400;
+  color: var(--primary);
+}
+.fl-admin input,
+.fl-admin select,
+.fl-admin textarea,
+.fl-admin button {
+  font-family: inherit;
+}
+.fl-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100; /* above the sticky nav (50); the toasts are higher */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgb(26 14 6 / 0.6);
+  overscroll-behavior: contain;
+}
+.fl-modal-panel {
+  width: 100%;
+  max-width: 42rem;
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 30px 80px -20px rgb(0 0 0 / 0.5);
+  outline: none;
+}
+.fl-modal-panel.fl-modal-wide {
+  max-width: 56rem;
+}
+
+/* Dashboard look: the shop's colours on top of the pages' own Tailwind classes (kept simple on purpose) */
+.fl-admin {
+  color: var(--primary);
+}
+.fl-admin-page {
+  min-height: 70vh;
+  background: #faf9f6;
+}
+.fl-admin .bg-gray-50,
+.fl-admin .bg-gray-100 {
+  background-color: #f6f2ea;
+}
+.fl-admin .bg-blue-500,
+.fl-admin .bg-blue-600,
+.fl-admin .bg-green-500,
+.fl-admin .bg-green-600 {
+  background-color: var(--primary);
+  color: var(--primary-foreground, #fff7ee);
+}
+.fl-admin .hover\:bg-blue-700:hover,
+.fl-admin .hover\:bg-blue-600:hover,
+.fl-admin .hover\:bg-green-700:hover {
+  background-color: #3a2211;
+}
+.fl-admin .text-blue-600,
+.fl-admin .text-blue-700 {
+  color: var(--primary);
+}
+.fl-admin .border-gray-200,
+.fl-admin .border-gray-300 {
+  border-color: rgb(107 68 35 / 0.18);
+}
+.fl-admin input:focus-visible,
+.fl-admin select:focus-visible,
+.fl-admin textarea:focus-visible,
+.fl-admin button:focus-visible,
+.fl-admin a:focus-visible {
+  outline: 2px solid #c9a24a;
+  outline-offset: 2px;
+}
+.fl-admin-tile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-radius: 1.25rem;
+  border: 1px solid rgb(201 162 74 / 0.45);
+  background: #fff;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.fl-admin-tile:hover {
+  transform: translateY(-3px);
+  border-color: #c9a24a;
+  box-shadow: 0 16px 32px -18px rgb(107 68 35 / 0.5);
+}
+.fl-admin-tile-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 9999px;
+  background: var(--primary);
+  color: #f3e2b0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fl-admin-tile {
+    transition: none;
+  }
+  .fl-admin-tile:hover {
+    transform: none;
+  }
+}

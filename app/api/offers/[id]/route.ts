@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/require-session";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { OfferType } from "@prisma/client";
@@ -7,6 +8,8 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const gate = await requireAdmin();
+  if (gate.error) return gate.error;
   try {
     const { id } = await params;
 
@@ -194,6 +197,8 @@ export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const gate = await requireAdmin();
+  if (gate.error) return gate.error;
   try {
     const { id } = await params;
 

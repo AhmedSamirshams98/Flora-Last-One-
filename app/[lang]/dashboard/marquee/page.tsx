@@ -1,5 +1,6 @@
 "use client";
 
+import { confirmAction } from "@/app/components/AdminConfirm";
 import { useState, useEffect } from "react";
 import { Edit2, Save, X, Trash2, AlertCircle } from "lucide-react";
 import { useMarqueeStore } from "@/store/marquee-store";
@@ -62,10 +63,7 @@ export default function MarqueeDashboard() {
       return;
     }
 
-    const confirmDelete = window.confirm(
-      "هل أنت متأكد من إزالة الشريط المتحرك؟"
-    );
-    if (!confirmDelete) return;
+    if (!(await confirmAction("هل أنت متأكد من إزالة الشريط المتحرك؟", "إزالة"))) return;
 
     try {
       await deleteMarquee();
@@ -142,10 +140,10 @@ export default function MarqueeDashboard() {
         {isEditing ? (
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="marqueepag-1">
                 النص العربي (مطلوب):
               </label>
-              <textarea
+              <textarea id="marqueepag-1"
                 value={marqueeAr}
                 onChange={(e) => setMarqueeAr(e.target.value)}
                 className="w-full h-28 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
@@ -156,16 +154,16 @@ export default function MarqueeDashboard() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="marqueepag-2">
                 النص الإنجليزي (اختياري):
                 <span className="text-gray-400 text-sm mr-2">
                   - سيظهر عند اختيار اللغة الإنجليزية
                 </span>
               </label>
-              <textarea
+              <textarea id="marqueepag-2"
                 value={marqueeEn}
                 onChange={(e) => setMarqueeEn(e.target.value)}
-                className="w-full h-28 p-3 border font-sans border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                className="w-full h-28 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                 placeholder="Write English marquee text (optional)..."
                 dir="ltr"
                 disabled={isLoading}

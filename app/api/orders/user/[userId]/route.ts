@@ -1,3 +1,4 @@
+import { isAdminRole, requireUser } from "@/lib/require-session";
 import { prisma } from "@/lib/prisma";
 import { NextResponse, NextRequest } from "next/server";
 
@@ -8,7 +9,13 @@ export async function GET(
   req: NextRequest,
   context: { params: Promise<{ userId: string }> }
 ) {
+  const gate = await requireUser();
+  if (gate.error) return gate.error;
   const { userId } = await context.params;
+  // a customer reads only their own orders
+  if (!isAdminRole(gate.user.role) && gate.user.id !== userId) {
+    return NextResponse.json({ error: "لا تملك صلاحية لهذا الإجراء" }, { status: 403 });
+  }
 
   try {
     const orders = await prisma.order.findMany({

@@ -1,3 +1,4 @@
+import { confirmAction } from "@/app/components/AdminConfirm";
 import Image from "next/image";
 import { Edit, Trash2 } from "lucide-react";
 import { Product, translateSubcategory } from "@/types/product";
@@ -84,8 +85,8 @@ export default function ProductCard({
           تعديل
         </button>
         <button
-          onClick={() => {
-            if (window.confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
+          onClick={async () => {
+            if (await confirmAction("هل أنت متأكد من حذف هذا المنتج؟")) {
               onDelete(product.id);
             }
           }}

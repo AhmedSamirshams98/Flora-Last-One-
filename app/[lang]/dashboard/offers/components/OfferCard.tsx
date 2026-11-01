@@ -1,4 +1,5 @@
 "use client";
+import { confirmAction } from "@/app/components/AdminConfirm";
 import { memo } from "react";
 import { Edit, Trash2, Eye, EyeOff, Tag } from "lucide-react";
 import Image from "next/image";
@@ -23,10 +24,8 @@ export const OfferCard = memo(
       }
     };
 
-    const handleDeleteClick = () => {
-      let message = `هل أنت متأكد أنك تريد حذف العرض "${offer.title}"؟`;
-
-      if (window.confirm(message)) {
+    const handleDeleteClick = async () => {
+      if (await confirmAction(`هل أنت متأكد أنك تريد حذف العرض "${offer.title}"؟`)) {
         onDelete(offer.id);
       }
     };

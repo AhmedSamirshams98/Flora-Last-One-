@@ -264,7 +264,7 @@ export default function VariantsSection({
 
               <div>
                 <label className="block text-sm font-medium mb-1">
-                  السعر (دينار)
+                  السعر (جنيه)
                 </label>
                 <input
                   type="number"

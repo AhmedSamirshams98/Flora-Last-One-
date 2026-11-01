@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/require-session";
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Offer } from "@prisma/client";
@@ -9,6 +10,8 @@ export async function PATCH(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
+  const gate = await requireAdmin();
+  if (gate.error) return gate.error;
   try {
     const { id: productId } = await context.params;
 
