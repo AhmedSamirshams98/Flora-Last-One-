@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import AdminModal from "@/app/components/AdminModal";
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { confirmAction } from "@/app/components/AdminConfirm";
 import {
   X,
   Eye,
@@ -48,6 +49,12 @@ interface Order {
     name: string;
     email: string;
   };
+  // who to deliver to (on the order itself; for a guest order this is the only place it is)
+  customerName?: string | null;
+  customerPhone?: string | null;
+  shippingAddress?: string | null;
+  shippingCity?: string | null;
+  notes?: string | null;
   assignedAdminId?: string;
   assignedAdmin?: {
     id: string;
@@ -66,7 +73,82 @@ const ORDER_STATUSES = [
   "SHIPPED",
   "DELIVERED",
   "CANCELLED",
+  "REFUNDED",
 ];
+
+// the Arabic word and the colours of every status, used by the list, the filter and the details
+const STATUS: Record<string, { ar: string; chip: string; solid: string }> = {
+  PENDING: { ar: "قيد الانتظار", chip: "bg-yellow-100 text-yellow-800", solid: "bg-yellow-600" },
+  CONFIRMED: { ar: "مؤكد", chip: "bg-blue-100 text-blue-800", solid: "bg-blue-600" },
+  PROCESSING: { ar: "قيد المعالجة", chip: "bg-indigo-100 text-indigo-800", solid: "bg-indigo-600" },
+  SHIPPED: { ar: "تم الشحن", chip: "bg-purple-100 text-purple-800", solid: "bg-purple-600" },
+  DELIVERED: { ar: "تم التوصيل", chip: "bg-green-100 text-green-800", solid: "bg-green-600" },
+  CANCELLED: { ar: "ملغي", chip: "bg-red-100 text-red-800", solid: "bg-red-600" },
+  REFUNDED: { ar: "مسترجع", chip: "bg-red-100 text-red-800", solid: "bg-red-600" },
+};
+const statusAr = (s: string) => STATUS[s]?.ar ?? s;
+const CLOSED = ["CANCELLED", "REFUNDED"];
+
+// Gregorian date and time in Arabic words with western digits ("ar-SA" would print the Hijri calendar)
+const fmtDate = (d: string) =>
+  new Date(d).toLocaleString("ar-EG-u-nu-latn", { day: "numeric", month: "long", year: "numeric", hour: "numeric", minute: "2-digit" });
+const CATEGORY_AR: Record<string, string> = { SHOE: "أحذية", BAG: "شنط" };
+const PAGE = 15;
+
+const GUEST_EMAIL = "guest-orders@flora.invalid";
+const isGuest = (o: Order) => o.user?.email === GUEST_EMAIL;
+
+/* Everything the person who packs and delivers the order needs: who, phone (tap to call, or WhatsApp),
+   where, and the customer's note. The name and phone come from the order itself, so a guest order
+   (no account) shows the same as a signed-in one. */
+function CustomerBlock({ order }: { order: Order }) {
+  const name = order.customerName || order.user?.name;
+  const phone = order.customerPhone;
+  // Egypt is +20 and the number keeps its 0: 01012345678 -> 201012345678
+  const wa = phone ? `https://wa.me/2${phone}` : null;
+  const row = "rounded-lg bg-secondary/40 p-3";
+  return (
+    <div className="grid gap-3 md:grid-cols-2">
+      <div className={row}>
+        <p className="text-sm text-gray-600">الاسم</p>
+        <p className="font-medium">{name || "—"}</p>
+      </div>
+      <div className={row}>
+        <p className="text-sm text-gray-600">الهاتف</p>
+        {phone ? (
+          <p className="flex flex-wrap items-center gap-3 font-medium">
+            <a href={`tel:+2${phone}`} dir="ltr" className="underline decoration-gold underline-offset-4">{phone}</a>
+            {wa && (
+              <a href={wa} target="_blank" rel="noopener noreferrer" className="text-sm text-primary underline decoration-gold underline-offset-4">
+                واتساب
+              </a>
+            )}
+          </p>
+        ) : (
+          <p className="font-medium">—</p>
+        )}
+      </div>
+      <div className={`${row} md:col-span-2`}>
+        <p className="text-sm text-gray-600">العنوان</p>
+        <p className="font-medium">
+          {[order.shippingAddress, order.shippingCity].filter(Boolean).join("، ") || "—"}
+        </p>
+      </div>
+      {order.notes && (
+        <div className={`${row} md:col-span-2`}>
+          <p className="text-sm text-gray-600">ملاحظات العميل</p>
+          <p className="font-medium">{order.notes}</p>
+        </div>
+      )}
+      {!isGuest(order) && order.user?.email && (
+        <div className={`${row} md:col-span-2`}>
+          <p className="text-sm text-gray-600">البريد الإلكتروني (حساب Google)</p>
+          <p dir="ltr" className="font-medium">{order.user.email}</p>
+        </div>
+      )}
+    </div>
+  );
+}
 
 const Page = () => {
   const { data: session } = useSession();
@@ -77,6 +159,10 @@ const Page = () => {
   // حالة لعرض popup
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
+  // the list: search, a status filter, and "show more" (15 at a time)
+  const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState<string>("ALL");
+  const [shown, setShown] = useState(PAGE);
 
   useEffect(() => {
     async function fetchOrders() {
@@ -85,7 +171,8 @@ const Page = () => {
         if (!res.ok) throw new Error("فشل في جلب الطلبات");
         const data = await res.json();
         setOrders(data);
-      } catch {
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "فشل في جلب الطلبات");
       } finally {
         setLoading(false);
       }
@@ -97,6 +184,15 @@ const Page = () => {
     if (!session?.user?.id) {
       toast.error("يجب تسجيل الدخول كأدمن أولاً");
       return;
+    }
+
+    const current = orders.find((o) => o.id === orderId);
+    if (current && !CLOSED.includes(current.status) && CLOSED.includes(newStatus)) {
+      const ok = await confirmAction(
+        `سيتم ${newStatus === "CANCELLED" ? "إلغاء" : "استرجاع"} الطلب وإرجاع قطعه إلى المخزون. هل أنت متأكد؟`,
+        newStatus === "CANCELLED" ? "إلغاء الطلب" : "استرجاع الطلب"
+      );
+      if (!ok) return;
     }
 
     try {
@@ -149,8 +245,25 @@ const Page = () => {
     setShowOrderDetails(false);
   };
 
-  if (loading) return <p>جاري التحميل...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
+  const q = query.trim().toLowerCase();
+  const visibleOrders = orders.filter(
+    (o) =>
+      (filter === "ALL" || o.status === filter) &&
+      (!q ||
+        [o.orderNumber, o.customerName, o.customerPhone, o.user?.name, o.user?.email]
+          .filter(Boolean)
+          .some((v) => String(v).toLowerCase().includes(q)))
+  );
+
+  if (loading) return <p className="p-8 text-center text-primary/70">جاري تحميل الطلبات...</p>;
+  if (error) {
+    return (
+      <div className="p-8 text-center">
+        <p className="mb-4 text-[#9b2c1f]">{error}</p>
+        <button onClick={() => location.reload()} className="fl-btn-oval">إعادة المحاولة</button>
+      </div>
+    );
+  }
 
   if (
     !session ||
@@ -189,13 +302,56 @@ const Page = () => {
         </div>
       </div>
 
+      {orders.length > 0 && (
+        <div className="mb-6 space-y-3">
+          <label htmlFor="orders-q" className="sr-only">بحث في الطلبات</label>
+          <input
+            id="orders-q"
+            type="search"
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setShown(PAGE);
+            }}
+            placeholder="ابحث برقم الطلب أو اسم العميل أو رقم الهاتف"
+            className="fl-input"
+          />
+          <div className="flex flex-wrap gap-2" role="group" aria-label="تصفية حسب الحالة">
+            {["ALL", ...ORDER_STATUSES].map((st) => {
+              const n = st === "ALL" ? orders.length : orders.filter((o) => o.status === st).length;
+              if (st !== "ALL" && n === 0) return null;
+              const on = filter === st;
+              return (
+                <button
+                  key={st}
+                  type="button"
+                  aria-pressed={on}
+                  onClick={() => {
+                    setFilter(st);
+                    setShown(PAGE);
+                  }}
+                  className={`inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-sm transition-colors ${
+                    on ? "border-primary bg-primary text-primary-foreground" : "border-primary/25 text-primary hover:border-primary/60"
+                  }`}
+                >
+                  {st === "ALL" ? "الكل" : statusAr(st)}
+                  <span className="text-xs opacity-80">{n}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {orders.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-500 text-lg">لا توجد طلبات حتى الآن</p>
         </div>
+      ) : visibleOrders.length === 0 ? (
+        <p className="py-12 text-center text-primary/70">لا توجد طلبات تطابق البحث</p>
       ) : (
         <div className="space-y-6">
-          {orders.map((order) => {
+          {visibleOrders.slice(0, shown).map((order) => {
             const canEditStatus =
               session.user.role === "SUPERADMIN" ||
               (session.user.role === "ADMIN" &&
@@ -217,25 +373,14 @@ const Page = () => {
                       <h2 className="font-bold text-lg text-gray-800">
                         الطلب #{order.orderNumber}
                       </h2>
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          order.status === "PENDING"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : order.status === "CONFIRMED"
-                            ? "bg-blue-100 text-blue-800"
-                            : order.status === "PROCESSING"
-                            ? "bg-indigo-100 text-indigo-800"
-                            : order.status === "SHIPPED"
-                            ? "bg-purple-100 text-purple-800"
-                            : order.status === "DELIVERED"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {order.status}
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${STATUS[order.status]?.chip ?? "bg-gray-100 text-gray-800"}`}>
+                        {statusAr(order.status)}
                       </span>
                     </div>
 
+                    <p className="mb-2 text-sm text-primary/75">
+                      {fmtDate(order.createdAt)} · {order.orderItems.reduce((n, i) => n + i.quantity, 0)} قطعة
+                    </p>
                     <div className="flex flex-wrap gap-4 text-sm">
                       <div className="flex items-center gap-2">
                         <span className="text-gray-600">المسؤول:</span>
@@ -263,17 +408,7 @@ const Page = () => {
                         >
                           {ORDER_STATUSES.map((status) => (
                             <option key={status} value={status}>
-                              {status === "PENDING"
-                                ? "قيد الانتظار"
-                                : status === "CONFIRMED"
-                                ? "مؤكد"
-                                : status === "PROCESSING"
-                                ? "قيد المعالجة"
-                                : status === "SHIPPED"
-                                ? "تم الشحن"
-                                : status === "DELIVERED"
-                                ? "تم التوصيل"
-                                : "ملغي"}
+                              {statusAr(status)}
                             </option>
                           ))}
                         </select>
@@ -306,21 +441,12 @@ const Page = () => {
                 {/* Divider */}
                 <div className="border-t border-gray-200 my-4"></div>
 
-                {/* Customer Info */}
+                {/* Customer Info: name, phone, address, city, notes (the e-mail only for a real account) */}
                 <div className="mb-4">
                   <h3 className="font-semibold text-gray-700 mb-2">
-                    معلومات العميل
+                    معلومات العميل والتوصيل {isGuest(order) && <span className="ms-2 rounded-full bg-gold/25 px-2 py-0.5 text-xs">طلب كضيف</span>}
                   </h3>
-                  <div className="flex flex-wrap gap-6">
-                    <div>
-                      <p className="text-sm text-gray-600">الاسم</p>
-                      <p className="font-medium">{order.user.name}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600">البريد الإلكتروني</p>
-                      <p className="font-medium">{order.user.email}</p>
-                    </div>
-                  </div>
+                  <CustomerBlock order={order} />
                 </div>
 
                 {/* Order Summary */}
@@ -335,6 +461,14 @@ const Page = () => {
                         {order.totalAmount.toFixed(2)} ج.م
                       </p>
                     </div>
+                    {order.totalAmount > order.finalAmount && (
+                      <div>
+                        <p className="text-sm text-gray-600">خصم العرض (قطع مجانية)</p>
+                        <p className="font-medium text-lg text-[#9b2c1f]">
+                          -{(order.totalAmount - order.finalAmount).toFixed(2)} ج.م
+                        </p>
+                      </div>
+                    )}
                     <div>
                       <p className="text-sm text-gray-600">المبلغ النهائي</p>
                       <p className="font-medium text-lg text-green-600">
@@ -401,6 +535,13 @@ const Page = () => {
               </div>
             );
           })}
+          {visibleOrders.length > shown && (
+            <div className="text-center">
+              <button onClick={() => setShown((n) => n + PAGE)} className="fl-btn-oval">
+                عرض المزيد ({visibleOrders.length - shown})
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -416,9 +557,7 @@ const Page = () => {
                 </h2>
                 <p className="text-gray-600 mt-1">
                   تاريخ الطلب:{" "}
-                  {new Date(selectedOrder.createdAt).toLocaleDateString(
-                    "ar-SA"
-                  )}
+                  {fmtDate(selectedOrder.createdAt)}
                 </p>
               </div>
               <button
@@ -434,32 +573,8 @@ const Page = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold text-lg mb-2">حالة الطلب</h3>
-                  <span
-                    className={`px-4 py-2 rounded-lg text-white font-medium ${
-                      selectedOrder.status === "PENDING"
-                        ? "bg-yellow-500"
-                        : selectedOrder.status === "CONFIRMED"
-                        ? "bg-blue-500"
-                        : selectedOrder.status === "PROCESSING"
-                        ? "bg-indigo-500"
-                        : selectedOrder.status === "SHIPPED"
-                        ? "bg-purple-500"
-                        : selectedOrder.status === "DELIVERED"
-                        ? "bg-green-500"
-                        : "bg-red-500"
-                    }`}
-                  >
-                    {selectedOrder.status === "PENDING"
-                      ? "قيد الانتظار"
-                      : selectedOrder.status === "CONFIRMED"
-                      ? "مؤكد"
-                      : selectedOrder.status === "PROCESSING"
-                      ? "قيد المعالجة"
-                      : selectedOrder.status === "SHIPPED"
-                      ? "تم الشحن"
-                      : selectedOrder.status === "DELIVERED"
-                      ? "تم التوصيل"
-                      : "ملغي"}
+                  <span className={`px-4 py-2 rounded-lg text-white font-medium ${STATUS[selectedOrder.status]?.solid ?? "bg-gray-600"}`}>
+                    {statusAr(selectedOrder.status)}
                   </span>
                 </div>
                 <div className="text-right">
@@ -473,23 +588,10 @@ const Page = () => {
 
             {/* Customer Info */}
             <div className="p-6 border-b">
-              <h3 className="font-semibold text-lg mb-4">معلومات العميل</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-600 mb-1">الاسم</p>
-                  <p className="font-medium text-lg">
-                    {selectedOrder.user.name}
-                  </p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-600 mb-1">
-                    البريد الإلكتروني
-                  </p>
-                  <p className="font-medium text-lg">
-                    {selectedOrder.user.email}
-                  </p>
-                </div>
-              </div>
+              <h3 className="font-semibold text-lg mb-4">
+                معلومات العميل والتوصيل {isGuest(selectedOrder) && <span className="ms-2 rounded-full bg-gold/25 px-2 py-0.5 text-xs">طلب كضيف</span>}
+              </h3>
+              <CustomerBlock order={selectedOrder} />
             </div>
 
             {/* Order Items Details */}
@@ -546,10 +648,10 @@ const Page = () => {
                             <Tag className="w-5 h-5 text-green-500" />
                             <div>
                               <p className="text-sm text-gray-600">
-                                قيمة الخصم
+                                خصم السعر على هذا المنتج
                               </p>
                               <p className="font-medium text-green-600">
-                                -{item.discountAmount.toFixed(2)} ج.م
+                                -{(item.discountAmount * item.quantity).toFixed(2)} ج.م
                               </p>
                             </div>
                           </div>
@@ -573,19 +675,8 @@ const Page = () => {
                             <div>
                               <p className="text-sm text-gray-600">الفئة</p>
                               <p className="font-medium">
-                                {item.product.category}
+                                {CATEGORY_AR[item.product.category] ?? item.product.category}
                               </p>
-                            </div>
-                          </div>
-                        )}
-                        {item.product?.category && (
-                          <div className="flex items-center gap-3">
-                            <Tag className="w-5 h-5 text-gray-500" />
-                            <div>
-                              <p className="text-sm text-gray-600">
-                                كود المنتج
-                              </p>
-                              <p className="font-medium">{item.product.id}</p>
                             </div>
                           </div>
                         )}
@@ -612,28 +703,6 @@ const Page = () => {
                             </div>
                           </div>
 
-                          {item.variant.sizes &&
-                            item.variant.sizes.length > 0 && (
-                              <div className="flex items-center gap-3">
-                                <Ruler className="w-5 h-5 text-gray-500" />
-                                <div>
-                                  <p className="text-sm text-gray-600">
-                                    المقاسات
-                                  </p>
-                                  <div className="flex flex-wrap gap-2 mt-1">
-                                    {item.variant.sizes.map((size) => (
-                                      <span
-                                        key={size}
-                                        className="px-3 py-1 bg-gray-100 rounded-lg text-sm"
-                                      >
-                                        {size}
-                                      </span>
-                                    ))}
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-
                           {item.variant.stock !== undefined && (
                             <div className="flex items-center gap-3">
                               <Package className="w-5 h-5 text-gray-500" />
@@ -659,7 +728,7 @@ const Page = () => {
                           {item.variantDetails && (
                             <div className="mt-4 p-3 bg-gray-50 rounded-lg">
                               <p className="text-sm text-gray-600 mb-1">
-                                تفاصيل إضافية
+                                المطلوب (اللون / المقاس)
                               </p>
                               <p className="text-gray-800">
                                 {item.variantDetails}
@@ -709,16 +778,19 @@ const Page = () => {
                   </div>
 
                   <div className="bg-yellow-50 p-4 rounded-lg">
-                    <p className="text-sm text-gray-600">قيمة الخصم الإجمالي</p>
+                    <p className="text-sm text-gray-600">إجمالي الخصم</p>
                     <p className="text-2xl font-bold text-red-600">
-                      {selectedOrder.orderItems
-                        .reduce(
-                          (sum, item) => sum + (item.discountAmount || 0),
-                          0
-                        )
-                        .toFixed(2)}{" "}
+                      {(
+                        selectedOrder.orderItems.reduce((sum, item) => sum + (item.discountAmount || 0) * item.quantity, 0) +
+                        (selectedOrder.totalAmount - selectedOrder.finalAmount)
+                      ).toFixed(2)}{" "}
                       ج.م
                     </p>
+                    {selectedOrder.totalAmount > selectedOrder.finalAmount && (
+                      <p className="mt-1 text-xs text-primary/75">
+                        منه {(selectedOrder.totalAmount - selectedOrder.finalAmount).toFixed(2)} ج.م خصم عرض (قطع مجانية)
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>

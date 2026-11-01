@@ -10,6 +10,7 @@ import {
 import { saveProductImage } from "@/lib/saveProductImage";
 import { calculateFinalPrice } from "@/lib/pricing";
 import { subtypesOf } from "@/types/product";
+import { withLivePrice } from "@/lib/effective-price";
 
 // ==============================
 // 📌 POST إنشاء منتج
@@ -154,7 +155,8 @@ export async function GET(request: Request) {
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json(products);
+    // prices are worked out now (offer on/off, its dates), not read from the stored finalPrice
+    return NextResponse.json(products.map((p) => withLivePrice(p)));
   } catch {
     return NextResponse.json({ error: "فشل في جلب المنتجات" }, { status: 500 });
   }

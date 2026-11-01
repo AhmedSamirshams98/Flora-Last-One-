@@ -22,22 +22,11 @@ export function useProductLogic(product: Product) {
   }, [selectedVariant]);
 
   const discountPercentage = useMemo(() => {
-    if (product.pricingType === PricingType.SALE_PRICE && product.salePrice) {
-      return Math.round(
-        ((product.basePrice - product.salePrice) / product.basePrice) * 100
-      );
-    }
-
-    if (product.pricingType === PricingType.WITH_OFFER && product.offer) {
-      if (product.offer.discountPercentage)
-        return product.offer.discountPercentage;
-      if (product.offer.discountAmount) {
-        return Math.round(
-          (product.offer.discountAmount / product.basePrice) * 100
-        );
-      }
-    }
-    return 0;
+    // from the two prices the customer actually sees (the API sends the live ones), so the label can
+    // never disagree with them: an offer that ended, or is switched off, shows no discount at all
+    return product.basePrice > product.finalPrice && product.basePrice > 0
+      ? Math.round(((product.basePrice - product.finalPrice) / product.basePrice) * 100)
+      : 0;
   }, [product]);
 
   const nextImage = useCallback(() => {

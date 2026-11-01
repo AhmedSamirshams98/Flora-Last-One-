@@ -4,6 +4,7 @@
    boxes. The gallery has no auto-sliding; on a phone the price and the add-to-cart button
    stay in a bar at the bottom. All words are in the page's language. */
 
+import { buyXGetYOffer } from "@/lib/effective-price";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -115,19 +116,13 @@ export default function ProductDetail({ id }: { id: string }) {
 
   const discount = () => {
     if (!currentProduct) return 0;
-    if (currentProduct.pricingType === PricingType.SALE_PRICE && currentProduct.salePrice) {
-      return Math.round(
-        ((currentProduct.basePrice - currentProduct.salePrice) / currentProduct.basePrice) * 100
-      );
-    }
-    return 0;
+    // from the two prices the customer actually sees, so the label can never disagree with them
+    const { basePrice, finalPrice } = currentProduct;
+    return basePrice > finalPrice && basePrice > 0 ? Math.round(((basePrice - finalPrice) / basePrice) * 100) : 0;
   };
 
   const handleAddToCart = () => {
-    if (!session) {
-      setShowAuthPopup(true);
-      return;
-    }
+    // anyone can fill the cart; signing in is optional (checkout also works as a guest)
     if (!currentProduct || !selectedVariant) return;
 
     const cartItem = {
@@ -197,6 +192,7 @@ export default function ProductDetail({ id }: { id: string }) {
   const isOut = selectedVariant.stock === 0;
   const isLow = selectedVariant.stock > 0 && selectedVariant.stock < 10;
   const pct = discount();
+  const xy = buyXGetYOffer(currentProduct.offer as never);
   const now =
     currentProduct.pricingType === PricingType.SALE_PRICE
       ? currentProduct.salePrice ?? currentProduct.finalPrice
@@ -319,6 +315,13 @@ export default function ProductDetail({ id }: { id: string }) {
                 {currentProduct.name}
               </h1>
               <div className="mt-5">{price}</div>
+              {xy && (
+                <p className={`mt-3 inline-flex rounded-full bg-gold/25 px-4 py-1.5 text-sm text-primary ${isAr ? "font-gess" : ""}`}>
+                  {isAr
+                    ? `عرض: اشترِ ${xy.buy} واحصل على ${xy.get} مجانًا (من نفس المنتج)`
+                    : `Offer: buy ${xy.buy}, get ${xy.get} free (same product)`}
+                </p>
+              )}
 
               {selectedVariant.description && (
                 <div className="mt-7">

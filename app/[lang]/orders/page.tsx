@@ -23,6 +23,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { toast } from "sonner";
+import AuthPopup from "@/app/components/AuthPopup";
 import Image from "next/image";
 
 // استيراد ملفات الترجمة
@@ -100,6 +101,7 @@ const OrdersPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   console.log(orders);
   const [loading, setLoading] = useState(true);
+  const [showAuthPopup, setShowAuthPopup] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // حالة لعرض popup
@@ -238,28 +240,30 @@ const OrdersPage = () => {
     setShowOrderDetails(false);
   };
 
-  if (sessionStatus === "loading" || loading) {
+  if (sessionStatus === "unauthenticated") {
+    return (
+      <div className={`flex min-h-[60vh] items-center justify-center px-4 ${isRTL ? "font-gess" : ""}`} dir={isRTL ? "rtl" : "ltr"}>
+        <div className="p-8 text-center">
+          <AlertCircle className="mx-auto mb-4 h-16 w-16 text-gold" aria-hidden="true" />
+          <h1 lang={lang} className="fl-display mb-2 text-3xl text-primary">
+            {t.loginRequired || "Login Required"}
+          </h1>
+          <p className="mb-6 text-primary/75">{t.loginMessage || "Please login to view your orders"}</p>
+          <button onClick={() => setShowAuthPopup(true)} className="fl-cta">
+            {isRTL ? "تسجيل الدخول" : "Sign In"}
+          </button>
+        </div>
+        <AuthPopup lang={lang} isOpen={showAuthPopup} onClose={() => setShowAuthPopup(false)} />
+      </div>
+    );
+  }
+
+  if (sessionStatus === "loading" || (sessionStatus === "authenticated" && loading)) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold mx-auto mb-4"></div>
           <p className="text-primary/75">{t.loading || "Loading..."}</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (sessionStatus === "unauthenticated") {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="text-center p-8">
-          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h1 className="fl-display mb-2 text-3xl text-primary">
-            {t.loginRequired || "Login Required"}
-          </h1>
-          <p className="text-primary/75 mb-6">
-            {t.loginMessage || "Please login to view your orders"}
-          </p>
         </div>
       </div>
     );

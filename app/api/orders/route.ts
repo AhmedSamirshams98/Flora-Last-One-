@@ -1,4 +1,5 @@
 import { requireAdmin, requireUser } from "@/lib/require-session";
+import { OrderError, placeOrder } from "@/lib/create-order";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -7,7 +8,8 @@ interface CreateOrderItem {
   productId: string;
   variantId?: string;
   quantity: number;
-  price: number;
+  size?: string | null;
+  price?: number; // ignored: the price is always worked out on the server
   originalPrice?: number;
   productName: string;
   variantDetails?: string;
@@ -29,214 +31,37 @@ export async function POST(req: Request) {
   try {
     const data: CreateOrderInput = await req.json();
 
-    // the order is always the signed-in customer's own
-    if (data.userId !== gate.user.id) {
-      return NextResponse.json({ error: "لا تملك صلاحية لهذا الإجراء" }, { status: 403 });
+    if (!data.shippingAddressId || !Array.isArray(data.items) || data.items.length === 0) {
+      return NextResponse.json({ error: "بيانات الطلب غير مكتملة" }, { status: 400 });
     }
 
-    // التحقق من البيانات الأساسية
-    if (
-      !data.userId ||
-      !data.shippingAddressId ||
-      !data.items ||
-      data.items.length === 0
-    ) {
-      return NextResponse.json(
-        { error: "بيانات الطلب غير مكتملة" },
-        { status: 400 }
-      );
-    }
-
-    // جلب عنوان الشحن والعميل
-    const address = await prisma.address.findUnique({
-      where: { id: data.shippingAddressId },
-      include: {
-        user: {
-          select: {
-            email: true,
-            name: true,
-          },
-        },
-      },
-    });
-
-    if (address && address.userId !== gate.user.id) {
+    // the address must be the signed-in customer's own
+    const address = await prisma.address.findUnique({ where: { id: data.shippingAddressId } });
+    if (!address || address.userId !== gate.user.id) {
       return NextResponse.json({ error: "عنوان الشحن غير موجود" }, { status: 404 });
     }
 
-    if (!address) {
-      return NextResponse.json(
-        { error: "عنوان الشحن غير موجود" },
-        { status: 404 }
-      );
-    }
-
-    // التحقق من المخزون وجمع معلومات المنتجات
-    const itemDetails = [];
-
-    for (const item of data.items) {
-      let variant = null;
-      let product = null;
-
-      if (item.variantId) {
-        variant = await prisma.productVariant.findUnique({
-          where: { id: item.variantId },
-          include: {
-            product: true,
-          },
-        });
-
-        if (!variant) {
-          return NextResponse.json(
-            { error: `المتغير غير موجود` },
-            { status: 400 }
-          );
-        }
-
-        product = variant.product;
-
-        // التحقق من المخزون
-        if (variant.stock < item.quantity) {
-          return NextResponse.json(
-            { error: `المخزون غير كافي للمنتج ${product.name}` },
-            { status: 400 }
-          );
-        }
-      } else {
-        // إذا لم يكن هناك variant، جلب المنتج مباشرة
-        product = await prisma.product.findUnique({
-          where: { id: item.productId },
-        });
-      }
-
-      if (!product) {
-        return NextResponse.json(
-          { error: `المنتج غير موجود` },
-          { status: 400 }
-        );
-      }
-
-      itemDetails.push({
-        ...item,
-        variant,
-        product,
-      });
-    }
-
-    // حساب المبلغ الإجمالي
-    const totalAmount = data.items.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
+    // prices, stock and offers are read from the database: only colour, size and quantity come from the browser
+    const order = await placeOrder(
+      {
+        userId: gate.user.id,
+        name: address.fullName,
+        phone: address.phone,
+        address: address.address,
+        city: address.city,
+        shippingAddressId: address.id,
+        notes: typeof data.notes === "string" ? data.notes.slice(0, 300) : null,
+      },
+      data.items.map((i) => ({ productId: i.productId, variantId: i.variantId, quantity: i.quantity, size: i.size ?? null }))
     );
 
-    // رقم الطلب الفريد
-    const orderNumber = Math.random()
-      .toString(36)
-      .substring(2, 9)
-      .toUpperCase();
+    await prisma.cartItem.deleteMany({ where: { userId: gate.user.id } });
 
-    // إنشاء الطلب مع جميع البيانات
-    const order = await prisma.order.create({
-      data: {
-        orderNumber,
-        userId: data.userId,
-        totalAmount,
-        finalAmount: totalAmount,
-
-        // معلومات الشحن
-        shippingAddressId: data.shippingAddressId,
-        customerName: address.fullName,
-        customerPhone: address.phone,
-        shippingAddress: address.address,
-        shippingCity: address.city,
-        notes: data.notes,
-
-        // حالة الطلب
-        statusHistory: ["PENDING"],
-
-        // عناصر الطلب
-        orderItems: {
-          create: itemDetails.map((item) => ({
-            quantity: item.quantity,
-            price: item.price,
-            originalPrice: item.originalPrice || item.price,
-            discountAmount: item.originalPrice
-              ? item.originalPrice - item.price
-              : 0,
-            productId: item.productId,
-            variantId: item.variantId,
-            productName: item.productName,
-            variantDetails: item.variantDetails,
-          })),
-        },
-      },
-      include: {
-        orderItems: {
-          include: {
-            product: true, // ✅ سيحصل على جميع حقول المنتج
-            variant: true, // ✅ سيحصل على جميع حقول المتغير
-          },
-        },
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-        shippingAddressRef: true,
-      },
-    });
-
-    for (const item of itemDetails) {
-      if (item.variant) {
-        await prisma.productVariant.update({
-          where: { id: item.variant.id },
-          data: { stock: { decrement: item.quantity } },
-        });
-
-        // تحديث حالة المنتج الرئيسي إذا انتهى المخزون
-        const totalStock = await prisma.productVariant.aggregate({
-          where: { productId: item.productId },
-          _sum: { stock: true },
-        });
-
-        if (totalStock._sum.stock! <= 0) {
-          await prisma.product.update({
-            where: { id: item.productId },
-            data: { inStock: false },
-          });
-        }
-      } else {
-        // المنتج ليس له متغير → تحديث المنتج مباشرة
-        await prisma.product.update({
-          where: { id: item.productId },
-          data: { inStock: false }, // أو stock إذا أضفت حقل
-        });
-      }
-    }
-
-    // حذف عناصر السلة بعد إنشاء الطلب
-    await prisma.cartItem.deleteMany({
-      where: { userId: data.userId },
-    });
-
-    return NextResponse.json({
-      success: true,
-      order,
-      message: "تم إنشاء الطلب بنجاح",
-    });
+    return NextResponse.json({ success: true, order, message: "تم إنشاء الطلب بنجاح" });
   } catch (error) {
+    if (error instanceof OrderError) return NextResponse.json({ error: error.message }, { status: error.status });
     console.error("Error creating order:", error);
-
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
-    return NextResponse.json(
-      { error: "فشل في إنشاء الطلب حيث ان الكميه غير متاحة" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "فشل في إنشاء الطلب" }, { status: 500 });
   }
 }
 

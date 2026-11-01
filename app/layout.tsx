@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     "Flora Store Egypt |  فلورا لأفضل صيحات الموضة في الشنط والأحذية  النسائية في مصر ",
   applicationName: "Flora Store Egypt",
   description:
-    "Flora Egypt Your Premier destination for Luxurious Shoes and Bags . فلورا لأفضل صيحات الموضة في الشنط والأحذية ",
+    "Welcome to Flora Egypt, your premier destination for luxurious shoes and bags. Elevate your elegance with Flora. | مرحبًا بكم في فلورا مصر، وجهتكم المتميزة للأحذية والحقائب الفاخرة. ارتق بأناقتك مع فلورا.",
   keywords: [
     "شنط نسائية",
     "أحذية نسائية",

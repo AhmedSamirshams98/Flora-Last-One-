@@ -3,6 +3,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ProductType, ProductSubtype } from "@prisma/client";
 import { saveCategoryImage } from "@/lib/saveCategoryImage";
+import { categoryProblem } from "@/lib/home-category-rules";
 
 // ========================= PUT – تعديل قسم ========================
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -14,6 +15,17 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const file = formData.get("image") as File | null;
     const categoryStr = formData.get("category") as string;
     const subcategoryStr = formData.get("subcategory") as string | null;
+
+    const problem = categoryProblem(categoryStr, subcategoryStr);
+    if (problem) return NextResponse.json({ error: problem }, { status: 400 });
+    const twin = await prisma.homeCategory.findFirst({
+      where: {
+        id: { not: id },
+        category: categoryStr as ProductType,
+        subcategory: subcategoryStr ? (subcategoryStr as ProductSubtype) : null,
+      },
+    });
+    if (twin) return NextResponse.json({ error: "هذا القسم موجود بالفعل" }, { status: 409 });
 
     let imagePath: string | undefined;
     if (file && file.size > 0) {
