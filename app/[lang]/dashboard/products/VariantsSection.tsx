@@ -198,24 +198,24 @@ export default function VariantsSection({
         <button
           type="button"
           onClick={handleAddVariant}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg flex items-center gap-2"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground px-3 py-2 rounded-lg flex items-center gap-2"
         >
           + إضافة لون
         </button>
       </div>
 
       {variants.length === 0 ? (
-        <p className="text-gray-500 text-center py-4">
+        <p className="text-primary/70 text-center py-4">
           لم يتم إضافة أي متغيرات بعد.
         </p>
       ) : (
         variants.map((variant, index) => (
-          <div key={index} className="border rounded-lg p-4 mb-4 bg-gray-50">
+          <div key={index} className="border rounded-lg p-4 mb-4 bg-secondary/40">
             <div className="flex justify-between items-center mb-4">
               <h4 className="font-medium text-lg">
                 المتغير {index + 1}
                 {variant.imageFiles && variant.imageFiles.length > 0 && (
-                  <span className="text-sm text-green-600 mr-2">
+                  <span className="text-sm text-primary mr-2">
                     ({variant.imageFiles.length} صورة جديدة)
                   </span>
                 )}
@@ -224,7 +224,7 @@ export default function VariantsSection({
                 <button
                   type="button"
                   onClick={() => handleRemoveVariant(index)}
-                  className="text-red-600 hover:text-red-800"
+                  className="text-[#9b2c1f] hover:opacity-80"
                 >
                   <Trash2 size={20} />
                 </button>
@@ -327,7 +327,7 @@ export default function VariantsSection({
                 <button
                   type="button"
                   onClick={() => handleAddSize(index)}
-                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg"
                 >
                   إضافة
                 </button>
@@ -337,7 +337,7 @@ export default function VariantsSection({
                 {variant.sizes.map((size, sizeIndex) => (
                   <div
                     key={sizeIndex}
-                    className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center gap-2"
+                    className="bg-gold/25 text-primary px-3 py-1 rounded-full flex items-center gap-2"
                   >
                     {size}
                     <button
@@ -396,10 +396,10 @@ export default function VariantsSection({
                       <div
                         key={imgIndex}
                         className={`relative rounded-lg overflow-hidden border-2 ${
-                          isNewImage ? "border-blue-500" : "border-gray-200"
+                          isNewImage ? "border-gold" : "border-gold/40"
                         }`}
                       >
-                        <div className="aspect-square relative bg-gray-100">
+                        <div className="aspect-square relative bg-secondary/60">
                           <Image
                             src={image}
                             alt={`صورة ${imgIndex + 1}`}
@@ -408,7 +408,7 @@ export default function VariantsSection({
                             sizes="(max-width:200px) 100vw, 200px"
                           />
                           {isNewImage && (
-                            <div className="absolute top-1 left-1 bg-blue-500 text-white text-xs px-2 py-1 rounded">
+                            <div className="absolute top-1 left-1 bg-primary text-primary-foreground text-xs px-2 py-1 rounded">
                               جديد
                             </div>
                           )}
@@ -416,7 +416,7 @@ export default function VariantsSection({
                         <button
                           type="button"
                           onClick={() => handleRemoveImage(index, imgIndex)}
-                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                          className="absolute top-1 right-1 bg-[#9b2c1f] text-white rounded-full p-1 hover:opacity-90"
                         >
                           <X size={14} />
                         </button>

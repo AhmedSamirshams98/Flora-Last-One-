@@ -350,7 +350,7 @@ export default function ProductForm({
               type="button"
               onClick={onCancel}
               disabled={uploading}
-              className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-6 py-3 border border-gold/60 text-primary rounded-lg hover:bg-secondary/50 font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               إلغاء
             </button>

@@ -1730,3 +1730,12 @@ body:has(.fl-pdp-bar) .fl-fab {
     white-space: nowrap;
   }
 }
+
+/* destructive button in the dashboard: a muted brick red outline that fills on hover */
+.fl-danger {
+  border: 1px solid #9b2c1f;
+  color: #9b2c1f;
+  background: transparent;
+  transition: background-color 0.2s, color 0.2s;
+}
+.fl-danger:hover { background: #9b2c1f; color: #fff; }
