@@ -39,6 +39,12 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Admin sign-in with a password and an authenticator-app code (customers use Google).
+  // The password is a bcrypt hash; the TOTP secret is stored encrypted (lib/secret-box.mjs).
+  passwordHash String?
+  totpSecret   String?
+  totpEnabled  Boolean @default(false)
+
   orders         Order[]
   assignedOrders Order[]    @relation("AssignedOrders")
   addresses      Address[]
