@@ -78,7 +78,7 @@ export default function Footer() {
               <p className="mx-auto mt-6 max-w-sm text-base leading-relaxed text-primary-foreground/75 md:mx-0">
                 {isAr
                   ? "مرحبًا بكم في فلورا مصر، وجهتكم المتميزة للأحذية والحقائب الفاخرة."
-                  : "Welcome to Flora Egypt, your premium destination for luxurious shoes and bags."}
+                  : "Welcome to Flora Egypt, your premier destination for luxurious shoes and bags."}
               </p>
             </div>
             <ul className="fl-fchecks">

@@ -10,7 +10,6 @@ export const ROUTES = {
     PRODUCTS: "/dashboard/products",
     ORDERS: "/dashboard/orders",
     OFFERS: "/dashboard/offers",
-    ANALYTICS: "/dashboard/analytics",
   },
   AUTH: {
     SIGN_IN: "/auth/signin",

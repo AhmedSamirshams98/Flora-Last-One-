@@ -13,6 +13,9 @@ import {
   ArrowRight,
 } from "lucide-react";
 import axios from "axios";
+import AuthPopup from "@/app/components/AuthPopup";
+import GuestCheckout from "@/app/components/GuestCheckout";
+import { useLivePrices } from "@/app/components/useLivePrices";
 import { Address, CartItem } from "@/types/cart";
 import ar from "@/messages/ar.json";
 import en from "@/messages/en.json";
@@ -30,7 +33,9 @@ export default function CheckoutPage() {
   const isRTL = lang === "ar";
 
   const { data: session, status } = useSession();
-  const { items: cart, getTotalPrice, clearCart } = useCartStore();
+  const { items: cart, clearCart } = useCartStore();
+  const { total: liveTotal } = useLivePrices();
+  const getTotalPrice = () => liveTotal(cart);
 
   const [isLoading, setIsLoading] = useState(false);
   const [addresses, setAddresses] = useState<Address[]>([]);
@@ -46,12 +51,9 @@ export default function CheckoutPage() {
     isDefault: false,
   });
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      toast.error(t.loginRequired);
-      router.push(`/${lang}/auth/signin?callbackUrl=${lang}/checkout`);
-    }
-  }, [status, router, lang, t.loginRequired]);
+  // a visitor who is not signed in used to be sent to /auth/signin, a page that does not exist (404);
+  // now the page itself asks them to sign in, in the shop's pop-up, and they come back here afterwards
+  const [showAuthPopup, setShowAuthPopup] = useState(false);
 
   const fetchAddresses = useCallback(async () => {
     try {
@@ -147,6 +149,7 @@ export default function CheckoutPage() {
           productId: item.productId,
           variantId: item.variantId,
           quantity: item.quantity,
+          size: item.size,
           price: item.price,
           originalPrice: item.originalPrice,
           productName: item.name,
@@ -196,8 +199,14 @@ export default function CheckoutPage() {
     );
   }
 
+  // not signed in: an order as a guest (name, phone, address; paid on delivery) or sign in with Google
   if (status === "unauthenticated") {
-    return null;
+    return (
+      <>
+        <GuestCheckout lang={lang} onSignIn={() => setShowAuthPopup(true)} />
+        <AuthPopup lang={lang} isOpen={showAuthPopup} onClose={() => setShowAuthPopup(false)} />
+      </>
+    );
   }
 
   if (cart.length === 0) {

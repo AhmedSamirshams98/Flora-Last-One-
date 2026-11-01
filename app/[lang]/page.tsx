@@ -6,6 +6,7 @@ import CategoryCards from "../components/HomeComponents/CategoryCards";
 import HomeProducts from "../components/HomeComponents/HomeProducts";
 import AboutSection from "../components/HomeComponents/AboutSection";
 import { prisma } from "@/lib/prisma";
+import { withLivePrice } from "@/lib/effective-price";
 import "../components/HomeComponents/bento.css";
 
 interface PageProps {
@@ -15,7 +16,7 @@ interface PageProps {
 const Page = async ({ params }: PageProps) => {
   const { lang } = await params;
 
-  const categories = await prisma.homeCategory.findMany();
+  const categories = await prisma.homeCategory.findMany({ orderBy: { id: "asc" } });
 
   // Active offers (same rule as the old client filter), fetched on the server so
   // the hero never pops in after load.
@@ -49,11 +50,14 @@ const Page = async ({ params }: PageProps) => {
   // only active products that have a photo.
   const rows = await prisma.product.findMany({
     where: { isActive: true, variants: { some: {} } },
-    include: { variants: { select: { images: true } } },
-    orderBy: [{ inStock: "desc" }, { isFeatured: "desc" }, { createdAt: "desc" }],
-    take: 16,
+    include: { variants: { select: { images: true, stock: true } }, offer: true },
+    orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
   });
-  const all = rows
+  // prices worked out now (offer on/off, its dates) and "in stock" only if a colour really has stock;
+  // then the ones in stock come first, the featured / newest order is kept inside each group
+  const live = rows.map((p) => withLivePrice(p)).sort((a, b) => Number(b.inStock) - Number(a.inStock));
+  const all = live
+    .slice(0, 16)
     .map((p) => ({
       id: p.id,
       name: p.name,
@@ -96,7 +100,6 @@ const Page = async ({ params }: PageProps) => {
       <HomeProducts lang={lang} products={gridProducts} kind={gridKind} />
       <span className="fl-hair" aria-hidden="true" />
       <AboutSection lang={lang} />
-      {/* the Facebook reels section is off for now: the embeds load slowly (FacebookReelEmbed.tsx and the dashboard page are kept) */}
     </div>
   );
 };

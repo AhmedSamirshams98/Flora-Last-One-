@@ -3,11 +3,13 @@ import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ProductType, ProductSubtype } from "@prisma/client";
 import { saveCategoryImage } from "@/lib/saveCategoryImage";
+import { categoryProblem } from "@/lib/home-category-rules";
 
 // ========================= GET – جلب جميع الأقسام ========================
 export async function GET() {
   try {
-    const categories = await prisma.homeCategory.findMany();
+    // the order they were added in (an id starts with a timestamp): the home carousel keeps the same order every time
+    const categories = await prisma.homeCategory.findMany({ orderBy: { id: "asc" } });
     return NextResponse.json(categories);
   } catch (error) {
     console.error(error);
@@ -29,10 +31,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Image and category are required" }, { status: 400 });
     }
 
-    // تحقق من صحة النوع
-    if (categoryStr !== "SHOE" && categoryStr !== "BAG") {
-      return NextResponse.json({ error: "Invalid category" }, { status: 400 });
-    }
+    const problem = categoryProblem(categoryStr, subcategoryStr);
+    if (problem) return NextResponse.json({ error: problem }, { status: 400 });
+
+    // the same section + type twice would show the same card twice on the home page
+    const twin = await prisma.homeCategory.findFirst({
+      where: { category: categoryStr as ProductType, subcategory: subcategoryStr ? (subcategoryStr as ProductSubtype) : null },
+    });
+    if (twin) return NextResponse.json({ error: "هذا القسم موجود بالفعل" }, { status: 409 });
 
     const imageUrl = await saveCategoryImage(file);
 

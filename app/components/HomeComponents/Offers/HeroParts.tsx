@@ -9,7 +9,7 @@ export const HEADLINE = {
 };
 export const SUBCOPY = {
   ar: "مرحبًا بكم في فلورا مصر، وجهتكم المتميزة للأحذية والحقائب الفاخرة",
-  en: "Welcome to Flora Egypt, your premium destination for luxurious shoes and bags.",
+  en: "Welcome to Flora Egypt, your premier destination for luxurious shoes and bags.",
 };
 
 /** The slogan, one rising word at a time. */

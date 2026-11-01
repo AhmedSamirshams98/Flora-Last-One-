@@ -333,6 +333,8 @@
 // }
 
 import { isAdminRole, requireAdmin, requireUser } from "@/lib/require-session";
+import { OrderError } from "@/lib/create-order";
+import { isClosedStatus, returnStock, takeStock } from "@/lib/order-stock";
 import { prisma } from "@/lib/prisma";
 import { UpdateOrderInput } from "@/types/order";
 import { NextResponse, NextRequest } from "next/server";
@@ -398,7 +400,7 @@ export async function PUT(
     const data: UpdateOrderInput = await req.json();
     const adminId = gate.user.id; // from the signed session, not from a header the browser could fake
 
-    const order = await prisma.order.findUnique({ where: { id } });
+    const order = await prisma.order.findUnique({ where: { id }, include: { orderItems: true } });
 
     if (!order) {
       return NextResponse.json({ error: "الطلب غير موجود" }, { status: 404 });
@@ -431,24 +433,33 @@ export async function PUT(
       statusHistory.push(order.status);
     }
 
-    const updatedOrder = await prisma.order.update({
-      where: { id },
-      data: {
-        status: data.status,
-        notes: data.notes,
-        lastUpdatedBy: adminId,
-        assignedAdminId: assignedAdminIdToSet,
-        statusHistory,
-      },
-      include: {
-        orderItems: { include: { product: true, variant: true } },
-        assignedAdmin: true,
-        user: true,
-      },
+    // the status change and the stock movement happen together or not at all:
+    // cancelling / refunding returns the pieces, re-opening a cancelled order takes them again
+    const wasClosed = isClosedStatus(order.status);
+    const nowClosed = data.status ? isClosedStatus(data.status) : wasClosed;
+    const updatedOrder = await prisma.$transaction(async (tx) => {
+      if (!wasClosed && nowClosed) await returnStock(tx, order.orderItems);
+      if (wasClosed && !nowClosed) await takeStock(tx, order.orderItems);
+      return tx.order.update({
+        where: { id },
+        data: {
+          status: data.status,
+          notes: data.notes,
+          lastUpdatedBy: adminId,
+          assignedAdminId: assignedAdminIdToSet,
+          statusHistory,
+        },
+        include: {
+          orderItems: { include: { product: true, variant: true } },
+          assignedAdmin: true,
+          user: true,
+        },
+      });
     });
 
     return NextResponse.json(updatedOrder);
   } catch (error) {
+    if (error instanceof OrderError) return NextResponse.json({ error: error.message }, { status: error.status });
     console.error("Error updating order:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "فشل في تحديث الطلب" },
@@ -478,17 +489,12 @@ export async function DELETE(
       return NextResponse.json({ error: "الطلب غير موجود" }, { status: 404 });
     }
 
-    for (const item of order.orderItems) {
-      if (item.variantId) {
-        await prisma.productVariant.update({
-          where: { id: item.variantId },
-          data: { stock: { increment: item.quantity } },
-        });
-      }
-    }
-
-    await prisma.orderItem.deleteMany({ where: { orderId: id } });
-    await prisma.order.delete({ where: { id } });
+    // an order that was already cancelled / refunded has given its stock back: do not give it twice
+    await prisma.$transaction(async (tx) => {
+      if (!isClosedStatus(order.status)) await returnStock(tx, order.orderItems);
+      await tx.orderItem.deleteMany({ where: { orderId: id } });
+      await tx.order.delete({ where: { id } });
+    });
 
     return NextResponse.json({
       success: true,

@@ -20,7 +20,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, lang }) => {
   const handleGoogleSignIn = async () => {
     try {
       await signIn("google", {
-        callbackUrl: "/",
+        callbackUrl: window.location.pathname, // back to the page the visitor was on (checkout, orders, ...)
         redirect: true,
         prompt: "select_account",
       });

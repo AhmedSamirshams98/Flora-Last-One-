@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { saveProductImage } from "@/lib/saveProductImage";
 import { calculateFinalPrice } from "@/lib/pricing";
+import { withLivePrice } from "@/lib/effective-price";
 
 // ==============================
 // 📌 GET منتج واحد
@@ -22,7 +23,7 @@ export async function GET(
     return NextResponse.json({ error: "غير موجود" }, { status: 404 });
   }
 
-  return NextResponse.json(product);
+  return NextResponse.json(withLivePrice(product));
 }
 
 // ==============================

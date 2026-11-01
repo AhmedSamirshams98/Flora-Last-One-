@@ -10,6 +10,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useCartStore } from "@/store/cart-store";
+import { useLivePrices } from "@/app/components/useLivePrices";
 import arTranslations from "@/messages/ar.json";
 import enTranslations from "@/messages/en.json";
 import "@/app/components/HomeComponents/home.css";
@@ -26,7 +27,10 @@ export default function CartPage() {
   const t = (isAr ? arTranslations : enTranslations).cart;
   const Back = isAr ? ArrowRight : ArrowLeft;
 
-  const { items: cart, removeFromCart, updateQuantity, getTotalPrice, clearCart, getTotalItems } = useCartStore();
+  const { items: cart, removeFromCart, updateQuantity, clearCart, getTotalItems } = useCartStore();
+  const { unit, total: liveTotal, subtotal: liveSubtotal, discount: liveDiscount, freeFor, rules } = useLivePrices();
+  const getTotalPrice = () => liveTotal(cart);
+  const offerDiscount = liveDiscount(cart);
 
   // the cart lives in the browser's storage, so draw it only once we are in the browser
   const [isClient, setIsClient] = useState(false);
@@ -96,7 +100,7 @@ export default function CartPage() {
       <div className="grid items-start gap-6 lg:grid-cols-[1fr_22rem] lg:gap-8">
         <ul className="space-y-4">
           {cart.map((item) => {
-            const discounted = item.originalPrice && item.originalPrice > item.price;
+            const discounted = item.originalPrice && item.originalPrice > unit(item);
             return (
               <li key={item.id} className="fl-pcard flex gap-4 !p-3 sm:gap-5 sm:!p-4">
                 <Link
@@ -156,8 +160,20 @@ export default function CartPage() {
                       </button>
                     </div>
 
+                    {rules[item.productId] && (
+                      <p className="basis-full text-sm text-primary">
+                        {isAr
+                          ? `عرض: اشترِ ${rules[item.productId].buy} واحصل على ${rules[item.productId].get} مجانًا`
+                          : `Offer: buy ${rules[item.productId].buy}, get ${rules[item.productId].get} free`}
+                        {freeFor(item.productId, cart) > 0 && (
+                          <span className="ms-2 rounded-full bg-gold/30 px-2 py-0.5 text-xs">
+                            {isAr ? `${freeFor(item.productId, cart)} مجانًا` : `${freeFor(item.productId, cart)} free`}
+                          </span>
+                        )}
+                      </p>
+                    )}
                     <p dir="ltr" className="flex items-baseline gap-2">
-                      <span className="text-lg font-medium text-primary">{money(item.price * item.quantity)}</span>
+                      <span className="text-lg font-medium text-primary">{money(unit(item) * item.quantity)}</span>
                       {discounted && (
                         <span className="text-sm text-primary/60 line-through">
                           {money((item.originalPrice as number) * item.quantity)}
@@ -179,8 +195,14 @@ export default function CartPage() {
             <span>
               {t.items} ({count})
             </span>
-            <span dir="ltr">{money(getTotalPrice())}</span>
+            <span dir="ltr">{money(liveSubtotal(cart))}</span>
           </div>
+          {offerDiscount > 0 && (
+            <div className="mt-2 flex items-center justify-between text-primary">
+              <span>{isAr ? "خصم العرض" : "Offer discount"}</span>
+              <span dir="ltr">-{money(offerDiscount)}</span>
+            </div>
+          )}
           <div className="mt-4 flex items-center justify-between border-t border-gold/40 pt-4">
             <span className="text-lg text-primary">{t.total}</span>
             <span dir="ltr" className="fl-display text-3xl text-primary" lang="en">

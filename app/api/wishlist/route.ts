@@ -1,4 +1,5 @@
 // app/api/wishlist/route.ts
+import { effectivePrice } from "@/lib/effective-price";
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
@@ -59,9 +60,9 @@ export async function GET(request: NextRequest) {
           id: product.id,
           name: product.name,
           category: product.category,
-          finalPrice: product.finalPrice,
+          finalPrice: effectivePrice(product).finalPrice,
           basePrice: product.basePrice,
-          pricingType: product.pricingType,
+          pricingType: effectivePrice(product).pricingType,
           isNew: product.isNew,
           isFeatured: product.isFeatured,
           variants: product.variants.map((v) => ({
@@ -196,9 +197,9 @@ export async function POST(request: NextRequest) {
         id: productWithDetails.id,
         name: productWithDetails.name,
         category: productWithDetails.category,
-        finalPrice: productWithDetails.finalPrice,
+        finalPrice: effectivePrice(productWithDetails).finalPrice,
         basePrice: productWithDetails.basePrice,
-        pricingType: productWithDetails.pricingType,
+        pricingType: effectivePrice(productWithDetails).pricingType,
         isNew: productWithDetails.isNew,
         isFeatured: productWithDetails.isFeatured,
         variants: productWithDetails.variants.map((v) => ({

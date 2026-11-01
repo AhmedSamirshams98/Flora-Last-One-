@@ -1,6 +1,6 @@
 "use client";
 
-import { Clapperboard, LayoutGrid, Package, ScrollText, ShoppingBag, Tag, TrendingUp } from "lucide-react";
+import { LayoutGrid, Package, ShoppingBag, Tag } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -9,9 +9,6 @@ const ITEMS = [
   { title: "المنتجات", description: "إضافة المنتجات وتعديلها والمخزون", icon: Package, href: "products" },
   { title: "العروض", description: "العروض والتخفيضات", icon: Tag, href: "offers" },
   { title: "الأقسام", description: "أقسام الصفحة الرئيسية", icon: LayoutGrid, href: "categories" },
-  { title: "الشريط المتحرك", description: "النص الذي يظهر أعلى الموقع", icon: ScrollText, href: "marquee" },
-  { title: "الريلز", description: "روابط الفيديوهات في الصفحة الرئيسية", icon: Clapperboard, href: "reels" },
-  { title: "التقارير", description: "المبيعات والتحليلات", icon: TrendingUp, href: "analytics" },
 ];
 
 export default function DashboardPage() {

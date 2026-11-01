@@ -1,4 +1,5 @@
 "use client";
+import { buyXGetYOffer } from "@/lib/effective-price";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -80,13 +81,9 @@ export default function ProductCard({ product, lang }: ProductCardProps) {
   const handleAddToCartClick = (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    if (!session) {
-      setShowAuthPopup(true);
-      return;
-    }
-
+    // anyone can fill the cart; signing in is optional (checkout also works as a guest)
     if (!selectedVariant) {
-      toast.error("Product not available");
+      toast.error(lang === "ar" ? "المنتج غير متاح" : "Product not available");
       return;
     }
 
@@ -99,7 +96,7 @@ export default function ProductCard({ product, lang }: ProductCardProps) {
   };
 
   const addProductToCart = () => {
-    if (!selectedVariant || !session) return;
+    if (!selectedVariant) return;
 
     const cartItem = {
       id: `${selectedVariant.id}-${selectedSize || "nosize"}`,
@@ -120,8 +117,7 @@ export default function ProductCard({ product, lang }: ProductCardProps) {
       discountPercentage,
     };
 
-    addToCart(cartItem);
-    toast.success(`${product.name} added to cart!`);
+    addToCart(cartItem); // the cart store shows the "added" message
     setShowSizePopup(false);
   };
 
@@ -167,6 +163,13 @@ export default function ProductCard({ product, lang }: ProductCardProps) {
             discountPercentage={discountPercentage}
             isNew={product.isNew}
             isFeatured={product.isFeatured}
+            offerText={
+              buyXGetYOffer(product.offer as never)
+                ? lang === "ar"
+                  ? `اشترِ ${product.offer!.buyQuantity} واحصل على ${product.offer!.getQuantity} مجانًا`
+                  : `Buy ${product.offer!.buyQuantity}, get ${product.offer!.getQuantity} free`
+                : undefined
+            }
             lang={lang}
           />
 
