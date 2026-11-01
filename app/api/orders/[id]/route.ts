@@ -332,6 +332,7 @@
 //   }
 // }
 
+import { isAdminRole, requireAdmin, requireUser } from "@/lib/require-session";
 import { prisma } from "@/lib/prisma";
 import { UpdateOrderInput } from "@/types/order";
 import { NextResponse, NextRequest } from "next/server";
@@ -343,6 +344,8 @@ export async function GET(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
+  const gate = await requireUser();
+  if (gate.error) return gate.error;
   const { id } = await context.params;
 
   try {
@@ -368,6 +371,10 @@ export async function GET(
     if (!order) {
       return NextResponse.json({ error: "الطلب غير موجود" }, { status: 404 });
     }
+    // a customer may read only their own order; the admins read any
+    if (!isAdminRole(gate.user.role) && order.userId !== gate.user.id) {
+      return NextResponse.json({ error: "لا تملك صلاحية لهذا الإجراء" }, { status: 403 });
+    }
 
     return NextResponse.json(order);
   } catch (error) {
@@ -383,18 +390,13 @@ export async function PUT(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
+  const gate = await requireAdmin();
+  if (gate.error) return gate.error;
   const { id } = await context.params;
 
   try {
     const data: UpdateOrderInput = await req.json();
-    const adminId = req.headers.get("x-admin-id");
-
-    if (!adminId) {
-      return NextResponse.json(
-        { error: "يجب إرسال معرف الأدمن x-admin-id في الهيدر" },
-        { status: 400 }
-      );
-    }
+    const adminId = gate.user.id; // from the signed session, not from a header the browser could fake
 
     const order = await prisma.order.findUnique({ where: { id } });
 
@@ -462,6 +464,8 @@ export async function DELETE(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
+  const gate = await requireAdmin();
+  if (gate.error) return gate.error;
   const { id } = await context.params;
 
   try {

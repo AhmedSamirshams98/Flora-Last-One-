@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/require-session";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import {
@@ -13,6 +14,8 @@ import { calculateFinalPrice } from "@/lib/pricing";
 // 📌 POST إنشاء منتج
 // ==============================
 export async function POST(request: NextRequest) {
+  const gate = await requireAdmin();
+  if (gate.error) return gate.error;
   try {
     const formData = await request.formData();
     const dataString = formData.get("data") as string;

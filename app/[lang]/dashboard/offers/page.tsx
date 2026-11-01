@@ -1,5 +1,7 @@
 "use client";
 
+import { toast } from "sonner";
+import AdminModal from "@/app/components/AdminModal";
 import { useState, useEffect, useCallback } from "react";
 import { useOffersStore } from "@/store/offers-store";
 import { CreateOfferInput, Offer } from "@/types/offers";
@@ -49,10 +51,10 @@ export default function OffersDashboard() {
       handleCloseForm(); // إغلاق الفورم بعد الإضافة أو التعديل
 
       // عرض رسالة نجاح
-      alert(result.message || "تم حفظ العرض بنجاح");
+      toast.success(result.message || "تم حفظ العرض بنجاح");
     } catch (error) {
       console.error("Error saving offer:", error);
-      alert(error instanceof Error ? error.message : "حدث خطأ أثناء حفظ العرض");
+      toast.error(error instanceof Error ? error.message : "حدث خطأ أثناء حفظ العرض");
     }
   };
   const handleEdit = useCallback((offer: Offer) => {
@@ -78,21 +80,13 @@ export default function OffersDashboard() {
       </div>
 
       {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto relative">
-            <button
-              onClick={handleCloseForm}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-            >
-              ✕
-            </button>
-            <OfferForm
-              offer={editingOffer || undefined}
-              onClose={handleCloseForm}
-              onSubmit={handleOfferSubmit}
-            />
-          </div>
-        </div>
+        <AdminModal onClose={handleCloseForm} label={editingOffer ? "تعديل العرض" : "إضافة عرض"}>
+          <OfferForm
+            offer={editingOffer || undefined}
+            onClose={handleCloseForm}
+            onSubmit={handleOfferSubmit}
+          />
+        </AdminModal>
       )}
 
       {!loading ? (

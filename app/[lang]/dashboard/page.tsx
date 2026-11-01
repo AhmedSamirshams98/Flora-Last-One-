@@ -1,86 +1,36 @@
 "use client";
 
-import { ShoppingBag, Package, BarChart3, Tag } from "lucide-react";
+import { Clapperboard, LayoutGrid, Package, ScrollText, ShoppingBag, Tag, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+
+const ITEMS = [
+  { title: "الطلبات", description: "متابعة طلبات العملاء وتحديث حالتها", icon: ShoppingBag, href: "orders" },
+  { title: "المنتجات", description: "إضافة المنتجات وتعديلها والمخزون", icon: Package, href: "products" },
+  { title: "العروض", description: "العروض والتخفيضات", icon: Tag, href: "offers" },
+  { title: "الأقسام", description: "أقسام الصفحة الرئيسية", icon: LayoutGrid, href: "categories" },
+  { title: "الشريط المتحرك", description: "النص الذي يظهر أعلى الموقع", icon: ScrollText, href: "marquee" },
+  { title: "الريلز", description: "روابط الفيديوهات في الصفحة الرئيسية", icon: Clapperboard, href: "reels" },
+  { title: "التقارير", description: "المبيعات والتحليلات", icon: TrendingUp, href: "analytics" },
+];
 
 export default function DashboardPage() {
-  const menuItems = [
-    {
-      title: "الطلبات",
-      description: "إدارة طلبات العملاء",
-      icon: ShoppingBag,
-      href: "/dashboard/orders",
-      color: "bg-blue-500",
-    },
-       {
-      title: "الريلز",
-      description: "إدارة طلبات الريلز",
-      icon: ShoppingBag,
-      href: "/dashboard/reels",
-      color: "bg-blue-200",
-    },
-    {
-      title: "المنتجات",
-      description: "إدارة المنتجات والمخزون",
-      icon: Package,
-      href: "/dashboard/products",
-      color: "bg-green-500",
-    },
-
-    {
-      title: "العروض",
-      description: "إدارة العروض والتخفيضات",
-      icon: Tag,
-      href: "/dashboard/offers",
-      color: "bg-orange-500",
-    },
-    {
-      title: "التقارير",
-      description: "تقارير وتحليلات المبيعات",
-      icon: BarChart3,
-      href: "/dashboard/analytics",
-      color: "bg-red-500",
-    },
-    {
-      title: "الشريط  المتحرك ",
-      description: "ادارة الشريط المتحرك    ",
-      icon: BarChart3,
-      href: "/dashboard/marquee",
-      color: "bg-yellow-500",
-    },
-      {
-      title: "الاقسام   ",
-      description: "ادارة الاقسام     ",
-      icon: BarChart3,
-      href: "/dashboard/categories",
-      color: "bg-yellow-500",
-    },
-  ];
+  const { lang } = useParams<{ lang: string }>();
 
   return (
-    <div className="min-h-screen bg-gray-50 " style={{ direction: "rtl" }}>
-      <div className="container mx-auto px-4 py-8">
-        {/* Menu Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 font-gess">
-          {menuItems.map((item, index) => (
-            <Link
-              key={index}
-              href={item.href}
-              className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition-all duration-200 hover:border-blue-300"
-            >
-              <div className="flex items-center gap-4">
-                <div className={`${item.color} p-3 rounded-lg`}>
-                  <item.icon className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-800 text-lg">
-                    {item.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm mt-1">
-                    {item.description}
-                  </p>
-                </div>
-              </div>
+    <div className="fl-admin-page">
+      <div className="container mx-auto px-4 py-10 md:py-14" dir="rtl">
+        <h1 className="mb-8 text-3xl md:text-5xl">لوحة التحكم</h1>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
+          {ITEMS.map(({ title, description, icon: Icon, href }) => (
+            <Link key={href} href={`/${lang}/dashboard/${href}`} className="fl-admin-tile">
+              <span className="fl-admin-tile-icon">
+                <Icon className="h-6 w-6" aria-hidden="true" />
+              </span>
+              <span>
+                <span className="block text-lg font-semibold text-primary">{title}</span>
+                <span className="mt-1 block text-sm text-primary/70">{description}</span>
+              </span>
             </Link>
           ))}
         </div>

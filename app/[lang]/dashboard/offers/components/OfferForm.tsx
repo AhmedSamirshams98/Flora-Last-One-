@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from "sonner";
 import { useState } from "react";
 import { Plus, X } from "lucide-react";
 import Image from "next/image";
@@ -56,13 +57,13 @@ export default function OfferForm({
 
     // التحقق من نوع الملف
     if (!file.type.startsWith("image/")) {
-      alert("الرجاء اختيار ملف صورة");
+      toast.error("الرجاء اختيار ملف صورة");
       return;
     }
 
     // التحقق من حجم الملف (5MB)
     if (file.size > 5 * 1024 * 1024) {
-      alert("حجم الملف يجب أن يكون أقل من 5MB");
+      toast.error("حجم الملف يجب أن يكون أقل من 5MB");
       return;
     }
 
@@ -131,7 +132,7 @@ export default function OfferForm({
     // التحقق من الصحة
     const errors = validateForm();
     if (errors.length > 0) {
-      alert(errors.join("\n"));
+      toast.error(errors.join(" · "));
       return;
     }
 
@@ -193,14 +194,14 @@ export default function OfferForm({
       await onSubmit(formDataToSend);
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("حدث خطأ أثناء حفظ العرض");
+      toast.error("حدث خطأ أثناء حفظ العرض");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="bg-white z-100 backdrop-blur-3xl p-6 rounded-lg w-full max-w-2xl mx-auto font-gess">
+    <div className="p-6 font-gess">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">
           {offer ? "تعديل العرض" : "إضافة عرض"}
@@ -218,8 +219,8 @@ export default function OfferForm({
         {/* العنوان والفرعي والوصف */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium mb-1">العنوان *</label>
-            <input
+            <label className="block text-sm font-medium mb-1" htmlFor="offersffer-1">العنوان *</label>
+            <input id="offersffer-1"
               type="text"
               value={formData.title}
               onChange={(e) => handleChange("title", e.target.value)}
@@ -230,10 +231,10 @@ export default function OfferForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1" htmlFor="offersffer-2">
               العنوان بالانجليزية *
             </label>
-            <input
+            <input id="offersffer-2"
               type="text"
               value={formData.titleEn}
               onChange={(e) => handleChange("titleEn", e.target.value)}
@@ -244,10 +245,10 @@ export default function OfferForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1" htmlFor="offersffer-3">
               العنوان الفرعي
             </label>
-            <input
+            <input id="offersffer-3"
               type="text"
               value={formData.subtitle}
               onChange={(e) => handleChange("subtitle", e.target.value)}
@@ -257,10 +258,10 @@ export default function OfferForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1" htmlFor="offersffer-4">
               العنوان الفرعي بالانجليزية
             </label>
-            <input
+            <input id="offersffer-4"
               type="text"
               value={formData.subtitleEn}
               onChange={(e) => handleChange("subtitleEn", e.target.value)}
@@ -270,8 +271,8 @@ export default function OfferForm({
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium mb-1">الوصف</label>
-            <textarea
+            <label className="block text-sm font-medium mb-1" htmlFor="offersffer-5">الوصف</label>
+            <textarea id="offersffer-5"
               value={formData.description}
               onChange={(e) => handleChange("description", e.target.value)}
               rows={3}
@@ -281,10 +282,10 @@ export default function OfferForm({
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1" htmlFor="offersffer-6">
               الوصف بالانجليزية
             </label>
-            <textarea
+            <textarea id="offersffer-6"
               value={formData.descriptionEn}
               onChange={(e) => handleChange("descriptionEn", e.target.value)}
               rows={3}
@@ -354,10 +355,10 @@ export default function OfferForm({
 
                 {formData.offerType === OfferType.FIXED_AMOUNT_DISCOUNT && (
                   <div>
-                    <label className="block text-sm font-medium mb-1">
+                    <label className="block text-sm font-medium mb-1" htmlFor="offersffer-8">
                       مبلغ الخصم *
                     </label>
-                    <input
+                    <input id="offersffer-8"
                       type="number"
                       min="0"
                       step="0.01"
@@ -373,10 +374,10 @@ export default function OfferForm({
 
                 {formData.offerType === OfferType.FIXED_PRICE && (
                   <div>
-                    <label className="block text-sm font-medium mb-1">
+                    <label className="block text-sm font-medium mb-1" htmlFor="offersffer-9">
                       السعر النهائي *
                     </label>
-                    <input
+                    <input id="offersffer-9"
                       type="number"
                       min="0"
                       step="0.01"
@@ -398,10 +399,10 @@ export default function OfferForm({
         {/* الفترة الزمنية */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1" htmlFor="offersffer-10">
               تاريخ البداية
             </label>
-            <input
+            <input id="offersffer-10"
               type="date"
               value={formData.startDate}
               onChange={(e) => handleChange("startDate", e.target.value)}
@@ -411,10 +412,10 @@ export default function OfferForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1" htmlFor="offersffer-11">
               تاريخ النهاية
             </label>
-            <input
+            <input id="offersffer-11"
               type="date"
               value={formData.endDate}
               onChange={(e) => handleChange("endDate", e.target.value)}

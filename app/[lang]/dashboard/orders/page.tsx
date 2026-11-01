@@ -1,4 +1,6 @@
 "use client";
+import { toast } from "sonner";
+import AdminModal from "@/app/components/AdminModal";
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import {
@@ -93,17 +95,14 @@ const Page = () => {
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     if (!session?.user?.id) {
-      alert("يجب تسجيل الدخول كأدمن أولاً");
+      toast.error("يجب تسجيل الدخول كأدمن أولاً");
       return;
     }
 
     try {
       const res = await fetch(`/api/orders/${orderId}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "x-admin-id": session.user.id,
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
       });
 
@@ -117,9 +116,9 @@ const Page = () => {
         prev.map((o) => (o.id === orderId ? updatedOrder : o))
       );
 
-      alert("تم تحديث حالة الطلب بنجاح");
-    } catch {
-      alert("error ");
+      toast.success("تم تحديث حالة الطلب");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "فشل في تحديث الحالة");
     }
   };
 
@@ -407,11 +406,8 @@ const Page = () => {
 
       {/* Order Details Popup */}
       {showOrderDetails && selectedOrder && (
-        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-          <div
-            className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <AdminModal onClose={closeOrderDetails} label="تفاصيل الطلب" wide>
+          <div>
             {/* Header */}
             <div className="sticky top-0 bg-white border-b p-6 flex items-center justify-between z-10">
               <div>
@@ -738,7 +734,7 @@ const Page = () => {
               </button>
             </div>
           </div>
-        </div>
+        </AdminModal>
       )}
     </div>
   );

@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/require-session";
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ProductType, ProductSubtype } from "@prisma/client";
@@ -5,6 +6,8 @@ import { saveCategoryImage } from "@/lib/saveCategoryImage";
 
 // ========================= PUT – تعديل قسم ========================
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const gate = await requireAdmin();
+  if (gate.error) return gate.error;
   try {
     const { id } = await params;
     const formData = await req.formData();
@@ -35,6 +38,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
 // ========================= DELETE – حذف قسم ========================
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const gate = await requireAdmin();
+  if (gate.error) return gate.error;
   try {
     const { id } = await params;
     await prisma.homeCategory.delete({ where: { id } });

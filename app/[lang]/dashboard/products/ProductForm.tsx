@@ -1,5 +1,6 @@
 "use client";
 
+import AdminModal from "@/app/components/AdminModal";
 import { useState, useEffect } from "react";
 import {
   ProductType,
@@ -72,19 +73,19 @@ export default function ProductForm({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 overflow-y-auto">
-      <div className="bg-white rounded-lg p-6 max-w-4xl w-full m-4 max-h-[90vh] overflow-y-auto">
+    <AdminModal onClose={onCancel} label={isEditing ? "تعديل المنتج" : "إضافة منتج جديد"} wide>
+      <div className="p-6">
         <h2 className="text-2xl font-bold mb-6">
-          {isEditing ? "✏️ تعديل المنتج" : "➕ إضافة منتج جديد"}
+          {isEditing ? "تعديل المنتج" : "إضافة منتج جديد"}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* معلومات أساسية */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-2">
+              <label className="block text-sm font-medium mb-2" htmlFor="productsro-1">
                 اسم المنتج *
               </label>
-              <input
+              <input id="productsro-1"
                 type="text"
                 value={formData.name}
                 onChange={(e) =>
@@ -97,10 +98,10 @@ export default function ProductForm({
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">
+              <label className="block text-sm font-medium mb-2" htmlFor="productsro-2">
                 النوع الرئيسي *
               </label>
-              <select
+              <select id="productsro-2"
                 value={formData.category}
                 onChange={(e) =>
                   setFormData((prev) => ({
@@ -121,10 +122,10 @@ export default function ProductForm({
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">
+              <label className="block text-sm font-medium mb-2" htmlFor="productsro-3">
                 النوع الفرعي
               </label>
-              <select
+              <select id="productsro-3"
                 value={formData.subcategory || ""}
                 onChange={(e) =>
                   setFormData((prev) => ({
@@ -148,7 +149,7 @@ export default function ProductForm({
 
           {/* التسعير */}
           <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold mb-4">💰 التسعير</h3>
+            <h3 className="text-lg font-semibold mb-4">التسعير</h3>
 
             <div className="flex flex-wrap gap-4 mb-4">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -206,7 +207,7 @@ export default function ProductForm({
 
             <div className="mb-4">
               <label className="block text-sm font-medium mb-2">
-                السعر الأساسي * (دينار)
+                السعر الأساسي * (جنيه)
               </label>
               <input
                 type="number"
@@ -226,10 +227,10 @@ export default function ProductForm({
 
             {formData.pricingType === PricingType.SALE_PRICE && (
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">
-                  السعر بعد الخصم * (دينار)
+                <label className="block text-sm font-medium mb-2" htmlFor="productsro-5">
+                  السعر بعد الخصم * (جنيه)
                 </label>
-                <input
+                <input id="productsro-5"
                   type="number"
                   value={formData.salePrice || ""}
                   onChange={(e) =>
@@ -249,10 +250,10 @@ export default function ProductForm({
             {formData.pricingType === PricingType.WITH_OFFER &&
               offers.length > 0 && (
                 <div className="mb-4">
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-sm font-medium mb-2" htmlFor="productsro-6">
                     اختر عرض
                   </label>
-                  <select
+                  <select id="productsro-6"
                     value={formData.offerId || ""}
                     onChange={(e) =>
                       setFormData((prev) => ({
@@ -285,7 +286,7 @@ export default function ProductForm({
 
           {/* خيارات إضافية */}
           <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold mb-4">⚙️ خيارات المنتج</h3>
+            <h3 className="text-lg font-semibold mb-4">خيارات المنتج</h3>
             <div className="flex flex-wrap gap-6">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -342,8 +343,8 @@ export default function ProductForm({
               {uploading
                 ? "جاري الحفظ..."
                 : isEditing
-                ? "💾 تحديث المنتج"
-                : "➕ إضافة المنتج"}
+                ? "تحديث المنتج"
+                : "إضافة المنتج"}
             </button>
             <button
               type="button"
@@ -356,7 +357,7 @@ export default function ProductForm({
           </div>
         </form>
       </div>
-    </div>
+    </AdminModal>
   );
 }
 

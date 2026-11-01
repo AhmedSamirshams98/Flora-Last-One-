@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/require-session";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { saveProductImage } from "@/lib/saveProductImage";
@@ -31,6 +32,8 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const gate = await requireAdmin();
+  if (gate.error) return gate.error;
   try {
     const { id } = await params;
     const formData = await request.formData();
@@ -212,6 +215,8 @@ export async function DELETE(
   _: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const gate = await requireAdmin();
+  if (gate.error) return gate.error;
   try {
     const { id } = await params;
 

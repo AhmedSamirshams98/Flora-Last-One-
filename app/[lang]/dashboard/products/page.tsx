@@ -1,5 +1,7 @@
 "use client";
 
+import { toast } from "sonner";
+import { confirmAction } from "@/app/components/AdminConfirm";
 import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 
@@ -96,7 +98,7 @@ export default function ProductsPage() {
 
   // التعامل مع الحذف
   const handleDelete = async (id: string) => {
-    if (!confirm("هل أنت متأكد من حذف هذا المنتج؟")) return;
+    if (!(await confirmAction("هل أنت متأكد من حذف هذا المنتج؟"))) return;
 
     try {
       const response = await fetch(`/api/products/${id}`, {
@@ -104,14 +106,14 @@ export default function ProductsPage() {
       });
 
       if (response.ok) {
-        alert("✅ تم حذف المنتج بنجاح");
+        toast.success("تم حذف المنتج بنجاح");
         fetchData();
       } else {
         throw new Error("فشل في الحذف");
       }
     } catch (error) {
       console.error("❌ فشل في حذف المنتج:", error);
-      alert("❌ حدث خطأ في حذف المنتج");
+      toast.error("حدث خطأ في حذف المنتج");
     }
   };
 
@@ -156,7 +158,7 @@ export default function ProductsPage() {
       const result = await response.json();
       console.log("✅ استجابة ناجحة:", result);
 
-      alert(result.message);
+      toast.success(result.message || "تم حفظ المنتج بنجاح");
 
       // إعادة تحميل البيانات وإغلاق النموذج
       await fetchData();
@@ -164,7 +166,7 @@ export default function ProductsPage() {
       setEditingProduct(null);
     } catch (error) {
       console.error("❌ فشل في حفظ المنتج:", error);
-      alert(error instanceof Error ? error.message : "حدث خطأ في حفظ المنتج");
+      toast.error(error instanceof Error ? error.message : "حدث خطأ في حفظ المنتج");
     } finally {
       setUploading(false);
     }
@@ -182,7 +184,7 @@ export default function ProductsPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">
-            🛍️ إدارة المنتجات
+            إدارة المنتجات
           </h1>
           <p className="text-gray-600 mt-1">
             إجمالي المنتجات:{" "}

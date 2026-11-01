@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/require-session";
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ProductType, ProductSubtype } from "@prisma/client";
@@ -16,6 +17,8 @@ export async function GET() {
 
 // ========================= POST – إضافة قسم جديد ========================
 export async function POST(req: NextRequest) {
+  const gate = await requireAdmin();
+  if (gate.error) return gate.error;
   try {
     const formData = await req.formData();
     const file = formData.get("image") as File;

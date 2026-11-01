@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/require-session";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { OfferType } from "@prisma/client";
@@ -37,6 +38,8 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: NextRequest) {
+  const gate = await requireAdmin();
+  if (gate.error) return gate.error;
   try {
     // استقبال FormData
     const formData = await request.formData();
