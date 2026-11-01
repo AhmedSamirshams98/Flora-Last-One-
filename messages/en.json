@@ -69,10 +69,8 @@
         "WINTER_BOOTS": "Winter Boots",
         "SNEAKERS": "Sneakers",
         "PUMPS": "Pumps",
-        "BALLERINAS": "Ballerinas",
-        "LOAFERS": "Loafers",
-        "SLIPPERS": "Slippers",
-        "SANDALS": "Sandals"
+        "BALLERINAS": "Ballerinas & Loafers",
+        "SLIPPERS": "Slippers & Sandals"
       },
       "bag": {
         "ALL_BAGS": "All Bags",

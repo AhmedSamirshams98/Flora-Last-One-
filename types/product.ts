@@ -139,14 +139,41 @@ export function translateSubcategory(
   if (!subcategory) return lang === "ar" ? "النوع" : "Type";
 
   if (subcategory === ProductFilter.ALL_SHOES) 
-    return lang === "ar" ? "جميع الأحذية" : "All Shoes";
+    return lang === "ar" ? "كل الأحذية" : "All Shoes";
     
   if (subcategory === ProductFilter.ALL_BAGS) 
-    return lang === "ar" ? "جميع الشنط" : "All Bags";
+    return lang === "ar" ? "كل الشنط" : "All Bags";
 
   return productTranslations.subcategory[subcategory as ProductSubtype][lang];
 }
 
+
+/* Ballerinas + loafers are one section, slippers + sandals are one section. The database keeps
+   all four values (old products), the shop shows two names and filters both values together. */
+const MERGED: Record<string, ProductSubtype[]> = {
+  [ProductSubtype.BALLERINAS]: [ProductSubtype.BALLERINAS, ProductSubtype.LOAFERS],
+  [ProductSubtype.LOAFERS]: [ProductSubtype.BALLERINAS, ProductSubtype.LOAFERS],
+  [ProductSubtype.SLIPPERS]: [ProductSubtype.SLIPPERS, ProductSubtype.SANDALS],
+  [ProductSubtype.SANDALS]: [ProductSubtype.SLIPPERS, ProductSubtype.SANDALS],
+};
+
+/** the one value the shop and the forms use for a section (LOAFERS -> BALLERINAS, SANDALS -> SLIPPERS) */
+export function canonicalSubtype<T extends string | null | undefined>(s: T): T | ProductSubtype {
+  if (s === ProductSubtype.LOAFERS) return ProductSubtype.BALLERINAS;
+  if (s === ProductSubtype.SANDALS) return ProductSubtype.SLIPPERS;
+  return s;
+}
+
+/** every stored value that belongs to a section */
+export function subtypesOf(s: string): string[] {
+  return MERGED[s] ?? [s];
+}
+
+/** does a product with this subtype belong to the chosen section? (no section, or "all", matches everything) */
+export function matchesSubcategory(productSub: string | null | undefined, filter: string | null | undefined): boolean {
+  if (!filter || filter === ProductFilter.ALL_SHOES || filter === ProductFilter.ALL_BAGS) return true;
+  return !!productSub && subtypesOf(filter).includes(productSub);
+}
 
 export enum PricingType {
   SINGLE_PRICE = "SINGLE_PRICE",
@@ -164,10 +191,8 @@ export const SHOE_SUBTYPES = [
   { value: ProductSubtype.WINTER_BOOTS, label: "أحذية شتوية" },
   { value: ProductSubtype.SNEAKERS, label: "أحذية رياضية" },
   { value: ProductSubtype.PUMPS, label: "كعب عالي" },
-  { value: ProductSubtype.BALLERINAS, label: "باليرينا" },
-  { value: ProductSubtype.LOAFERS, label: "لوفرس" },
-  { value: ProductSubtype.SLIPPERS, label: "شباشب" },
-  { value: ProductSubtype.SANDALS, label: "صنادل" },
+  { value: ProductSubtype.BALLERINAS, label: "باليرينا ولوفرس" },
+  { value: ProductSubtype.SLIPPERS, label: "شباشب وصنادل" },
 ];
 
 export const BAG_SUBTYPES = [

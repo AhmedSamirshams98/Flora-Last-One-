@@ -9,6 +9,7 @@ import {
 } from "@prisma/client";
 import { saveProductImage } from "@/lib/saveProductImage";
 import { calculateFinalPrice } from "@/lib/pricing";
+import { subtypesOf } from "@/types/product";
 
 // ==============================
 // 📌 POST إنشاء منتج
@@ -139,8 +140,9 @@ export async function GET(request: Request) {
     const where: Prisma.ProductWhereInput = {};
 
     if (category) where.category = { equals: category as ProductType };
-    if (subcategory)
-      where.subcategory = { equals: subcategory as ProductSubtype };
+    // "all shoes" / "all bags" is just the category; a merged section matches both of its values
+    if (subcategory && subcategory !== "ALL_SHOES" && subcategory !== "ALL_BAGS")
+      where.subcategory = { in: subtypesOf(subcategory) as ProductSubtype[] };
 
     if (exclude) {
       where.id = { not: exclude }; // ✅ جديد

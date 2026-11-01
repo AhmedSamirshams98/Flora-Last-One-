@@ -54,6 +54,10 @@ const MobileNavContainer = ({
             selectedCategory={selectedCategory}
             onSubcategorySelected={onClose}
             onClose={onClose}
+            onBack={() => {
+              setShowCategories(false);
+              setSelectedCategory(null);
+            }}
           />
         ) : (
           <>

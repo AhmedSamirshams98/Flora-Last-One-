@@ -7,7 +7,7 @@ import Filters from "../../components/HomeComponents/products/filters";
 import { useProductsStore } from "@/store/products-store";
 import { useFiltersStore, Category } from "@/store/filters-store";
 import { useShallow } from "zustand/shallow";
-import { Subcategory } from "@/types/product";
+import { Subcategory, canonicalSubtype, matchesSubcategory } from "@/types/product";
 import "../../components/HomeComponents/home.css";
 
 export default function ProductsPage() {
@@ -46,7 +46,7 @@ export default function ProductsPage() {
 
     // 🔹 Convert URL string to Subcategory | null
     const normalizedSubcat: Subcategory | undefined = subcatFromQuery
-      ? (subcatFromQuery as Subcategory)
+      ? (canonicalSubtype(subcatFromQuery) as Subcategory)
       : undefined;
 
     if (catFromQuery) {
@@ -85,7 +85,7 @@ export default function ProductsPage() {
     }
 
     if (subcategory) {
-      filtered = filtered.filter((p) => p.subcategory === subcategory);
+      filtered = filtered.filter((p) => matchesSubcategory(p.subcategory, subcategory));
       console.log(
         `📊 After subcategory filter (${subcategory}):`,
         filtered.length

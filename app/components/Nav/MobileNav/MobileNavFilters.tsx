@@ -12,6 +12,8 @@ interface MobileNavFiltersProps {
   onClose?: () => void;
   selectedCategory: "SHOE" | "BAG" | null;
   onSubcategorySelected?: () => void;
+  /** back to the side menu's main list (the container owns that state) */
+  onBack: () => void;
 }
 
 export default function MobileNavFilters({
@@ -19,6 +21,7 @@ export default function MobileNavFilters({
   onClose,
   selectedCategory,
   onSubcategorySelected,
+  onBack,
 }: MobileNavFiltersProps) {
   const router = useRouter();
 
@@ -38,6 +41,7 @@ export default function MobileNavFilters({
       title: productTranslations.category.SHOE[lang],
       icon: "👟",
       subcategories: [
+        { id: "ALL", label: lang === "ar" ? "كل الأحذية" : "All Shoes" },
         {
           id: "WINTER_BOOTS",
           label: productTranslations.subcategory.WINTER_BOOTS[lang],
@@ -51,18 +55,17 @@ export default function MobileNavFilters({
           id: "BALLERINAS",
           label: productTranslations.subcategory.BALLERINAS[lang],
         },
-        { id: "LOAFERS", label: productTranslations.subcategory.LOAFERS[lang] },
         {
           id: "SLIPPERS",
           label: productTranslations.subcategory.SLIPPERS[lang],
         },
-        { id: "SANDALS", label: productTranslations.subcategory.SANDALS[lang] },
       ],
     },
     {
       id: "BAG",
       title: productTranslations.category.BAG[lang],
       subcategories: [
+        { id: "ALL", label: lang === "ar" ? "كل الشنط" : "All Bags" },
         {
           id: "HAND_BAGS",
           label: productTranslations.subcategory.HAND_BAGS[lang],
@@ -92,7 +95,7 @@ export default function MobileNavFilters({
     setActiveView(categoryId === "SHOE" ? "shoes" : "bags");
   };
 
-  const handleSubcategoryClick = (subcategoryId: Subcategory) => {
+  const handleSubcategoryClick = (subcategoryId: Subcategory | "ALL") => {
     if (!subcategoryId) return;
 
     const category = activeView === "shoes" ? "SHOE" : "BAG";
@@ -101,7 +104,8 @@ export default function MobileNavFilters({
     const params = new URLSearchParams();
 
     params.set("category", category);
-    params.set("subcategory", subcategoryId);
+    // "all shoes" / "all bags" is the category alone, with no type in the address
+    if (subcategoryId !== "ALL") params.set("subcategory", subcategoryId);
 
     router.push(`${basePath}?${params.toString()}`);
 
@@ -114,9 +118,9 @@ export default function MobileNavFilters({
     }
   };
 
-  const handleBack = () => {
-    setActiveView("main");
-  };
+  // the old version set the view to "main", and "main" fell through to the bags list: from shoes the
+  // arrow showed bags, from bags nothing changed. Going back is the container's job now.
+  const handleBack = onBack;
 
   const currentCategory = mainCategories.find(
     (cat) => cat.id === (activeView === "shoes" ? "SHOE" : "BAG")
@@ -180,7 +184,7 @@ export default function MobileNavFilters({
         {currentCategory.subcategories.map((sub) => (
           <button
             key={sub.id}
-            onClick={() => handleSubcategoryClick(sub.id as Subcategory)}
+            onClick={() => handleSubcategoryClick(sub.id as Subcategory | "ALL")}
             className="w-full px-4 py-4 text-white hover:bg-white/10 text-left font-gess text-lg rounded-lg border border-white/10 flex items-center justify-between"
           >
             <span>{sub.label}</span>
