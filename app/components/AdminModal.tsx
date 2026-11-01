@@ -14,12 +14,18 @@ export default function AdminModal({
   onClose,
   label,
   wide = false,
+  narrow = false,
+  dir = "rtl",
 }: {
   children: ReactNode;
   onClose: () => void;
   label: string;
   /** wider panel (product form, order details) */
   wide?: boolean;
+  /** small panel (the sign-in pop-up) */
+  narrow?: boolean;
+  /** reading direction of the content; the dashboard is Arabic, the shop follows the language */
+  dir?: "rtl" | "ltr";
 }) {
   const panel = useRef<HTMLDivElement>(null);
   const closeRef = useRef(onClose);
@@ -45,7 +51,7 @@ export default function AdminModal({
   return createPortal(
     <div
       className="fl-modal"
-      dir="rtl"
+      dir={dir}
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -56,7 +62,7 @@ export default function AdminModal({
         aria-modal="true"
         aria-label={label}
         tabIndex={-1}
-        className={`fl-modal-panel fl-admin ${wide ? "fl-modal-wide" : ""}`}
+        className={`fl-modal-panel fl-admin ${wide ? "fl-modal-wide" : ""} ${narrow ? "fl-modal-narrow" : ""}`}
       >
         {children}
       </div>

@@ -9,7 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import { ProductSubtype, ProductType } from "@prisma/client";
 
@@ -19,6 +19,7 @@ import { ProductVariant, PricingType } from "@/types/product";
 import AuthPopup from "@/app/components/AuthPopup";
 import ProductsList from "@/app/components/ProductsList";
 import { productTranslations } from "@/lib/translations/products";
+import { TRUST_ITEMS } from "../trustItems";
 import "../home.css";
 
 const TEXT = {
@@ -251,8 +252,9 @@ export default function ProductDetail({ id }: { id: string }) {
           <div className="fl-pdp mt-2 md:mt-4">
             {/* ---- pictures ---- */}
             <div className="fl-pdp-gallery">
+              <div className="fl-pcard !p-2">
               <div
-                className="fl-pdp-main relative aspect-square min-h-64 touch-pan-y overflow-hidden rounded-2xl bg-[#f3eee6] md:aspect-[4/5]"
+                className="fl-pdp-main relative aspect-square min-h-64 touch-pan-y overflow-hidden rounded-xl bg-[#f3eee6] md:aspect-[4/5]"
                 onTouchStart={(e) => (touch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY })}
                 onTouchEnd={onTouchEnd}
               >
@@ -285,6 +287,7 @@ export default function ProductDetail({ id }: { id: string }) {
                   </>
                 )}
               </div>
+              </div>
 
               {images.length > 1 && (
                 <div className="mt-3 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
@@ -306,8 +309,8 @@ export default function ProductDetail({ id }: { id: string }) {
             </div>
 
             {/* ---- words ---- */}
-            <div className="fl-pdp-info">
-              <p className={`text-sm text-muted-foreground ${isAr ? "font-gess" : "tracking-wide"}`}>
+            <div className="fl-pdp-info fl-pcard !p-6 md:!p-8">
+              <p className={`text-sm text-primary/70 ${isAr ? "font-gess" : "tracking-wide"}`}>
                 {[categoryLabel(currentProduct.category), subcategoryLabel(currentProduct.subcategory)]
                   .filter(Boolean)
                   .join("  ·  ")}
@@ -319,7 +322,7 @@ export default function ProductDetail({ id }: { id: string }) {
 
               {selectedVariant.description && (
                 <div className="mt-7">
-                  <h2 className={`mb-2 text-xs uppercase tracking-[0.18em] text-primary/50 ${isAr ? "font-gess" : ""}`}>
+                  <h2 className={`mb-2 text-xs uppercase tracking-[0.18em] text-primary/70 ${isAr ? "font-gess" : ""}`}>
                     {t.description}
                   </h2>
                   <p className={`leading-[1.9] text-primary/80 ${isAr ? "font-gess" : ""}`}>{selectedVariant.description}</p>
@@ -328,7 +331,7 @@ export default function ProductDetail({ id }: { id: string }) {
 
               {/* colours: round pictures, the picked one with a ring and its name */}
               <div className="mt-8">
-                <h2 className={`mb-3 text-xs uppercase tracking-[0.18em] text-primary/50 ${isAr ? "font-gess" : ""}`}>
+                <h2 className={`mb-3 text-xs uppercase tracking-[0.18em] text-primary/70 ${isAr ? "font-gess" : ""}`}>
                   {t.color}: <span className="text-sm normal-case tracking-normal text-primary">{selectedVariant.color}</span>
                 </h2>
                 <div className="flex flex-wrap gap-2">
@@ -359,7 +362,7 @@ export default function ProductDetail({ id }: { id: string }) {
 
               {selectedVariant.sizes && selectedVariant.sizes.length > 0 && (
                 <div className="mt-6">
-                  <h2 className={`mb-3 text-xs uppercase tracking-[0.18em] text-primary/50 ${isAr ? "font-gess" : ""}`}>{t.size}</h2>
+                  <h2 className={`mb-3 text-xs uppercase tracking-[0.18em] text-primary/70 ${isAr ? "font-gess" : ""}`}>{t.size}</h2>
                   <div className="flex flex-wrap gap-2">
                     {selectedVariant.sizes.map((size) => (
                       <button
@@ -380,11 +383,20 @@ export default function ProductDetail({ id }: { id: string }) {
               )}
 
               {/* stock: one quiet line */}
-              <p className={`mt-6 text-sm ${isOut ? "text-red-700" : isLow ? "text-[#9a5b12]" : "text-primary/60"} ${isAr ? "font-gess" : ""}`}>
+              <p className={`mt-6 text-sm ${isOut ? "text-red-700" : isLow ? "text-[#9a5b12]" : "text-primary/75"} ${isAr ? "font-gess" : ""}`}>
                 {isOut ? t.out : isLow ? `${t.low} · ${selectedVariant.stock} ${t.available}` : `${selectedVariant.stock} ${t.available}`}
               </p>
 
               {addButton("fl-pdp-cta-inline mt-6")}
+
+              <ul className={`mt-6 grid gap-2.5 border-t border-gold/40 pt-5 text-sm text-primary/80 sm:grid-cols-2 ${isAr ? "font-gess" : ""}`}>
+                {TRUST_ITEMS.map((item) => (
+                  <li key={item.en} className="flex items-center gap-2">
+                    <Check className="h-4 w-4 shrink-0 text-gold" aria-hidden="true" />
+                    {isAr ? item.ar : item.en}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>

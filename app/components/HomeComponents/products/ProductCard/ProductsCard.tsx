@@ -146,7 +146,7 @@ export default function ProductCard({ product, lang }: ProductCardProps) {
   return (
     <>
       <div
-        className="group relative flex h-full cursor-pointer flex-col"
+        className="group fl-pcard fl-glow relative flex h-full cursor-pointer flex-col"
         onClick={() =>
           navigate(`/product/${product.id}?color=${selectedVariant.color}`)
         }
@@ -186,7 +186,7 @@ export default function ProductCard({ product, lang }: ProductCardProps) {
         </div>
 
         {/* name, colour, price, colours */}
-        <div className="pt-3 text-start">
+        <div className="px-1 pt-3 text-start">
           <h3
             className={`text-base leading-snug text-primary ${
               lang === "ar" ? "font-gess" : ""

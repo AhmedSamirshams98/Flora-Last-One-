@@ -68,7 +68,9 @@ export default function OfferLine({ lang, offers }: { lang: "ar" | "en"; offers:
     if (!el || n === 0) return;
     const ro = new ResizeObserver(() => {
       const w = el.getBoundingClientRect().width;
-      setSize({ w, cw: Math.round(clamp(w * 0.46, 150, 250)) });
+      // phones: just under half the width; wide screens: the prints grow to 320 so the section is not a
+      // small picture lost in a wide page
+      setSize({ w, cw: Math.round(clamp(w * 0.46, 150, w >= 900 ? 320 : 250)) });
     });
     ro.observe(el);
     return () => ro.disconnect();
@@ -253,7 +255,7 @@ export default function OfferLine({ lang, offers }: { lang: "ar" | "en"; offers:
                     alt={isAr ? it.title : it.titleEn || it.title}
                     fill
                     draggable={false}
-                    sizes="(max-width: 600px) 46vw, 250px"
+                    sizes="(max-width: 600px) 46vw, 320px"
                     quality={85}
                     className="object-cover"
                   />
@@ -288,7 +290,7 @@ export default function OfferLine({ lang, offers }: { lang: "ar" | "en"; offers:
             </button>
           )}
           <Link href={`/${lang}/products`} dir={isAr ? "rtl" : "ltr"} className={`fl-btn-gold ${isAr ? "font-gess" : ""}`}>
-            {isAr ? "تسوّقي العرض" : "Shop the offer"}
+            {isAr ? "تسوق الآن" : "Shop Now"}
             <Arrow aria-hidden="true" className="h-4 w-4" />
           </Link>
           {n > 1 && (

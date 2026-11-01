@@ -22,7 +22,7 @@ export default function CategoryCards({ lang, items }: { lang: "ar" | "en"; item
     <section id="categories" className="container mx-auto scroll-mt-24 px-4 py-14 md:py-20" dir={isAr ? "rtl" : "ltr"}>
       <Reveal className="mb-8 flex items-center gap-6 md:mb-12">
         <h2 lang={lang} className={`fl-display shrink-0 text-3xl text-primary ${isAr ? "md:text-5xl" : "md:text-4xl"}`}>
-          {isAr ? "تسوّقي حسب القسم" : "Shop by category"}
+          {isAr ? "الأقسام" : "Categories"}
         </h2>
         <span className="fl-rule" aria-hidden="true" />
       </Reveal>

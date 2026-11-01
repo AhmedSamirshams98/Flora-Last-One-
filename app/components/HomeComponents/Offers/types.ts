@@ -19,6 +19,7 @@ export interface HomeProduct {
   basePrice: number;
   finalPrice: number;
   isNew: boolean;
+  isFeatured?: boolean;
   inStock: boolean;
   image: string;
   hoverImage?: string;

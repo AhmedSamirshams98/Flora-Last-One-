@@ -293,7 +293,7 @@
   inset-inline: 0.05em;
   bottom: 0.02em;
   height: 2px;
-  background: currentColor;
+  background: var(--fl-accent, var(--gold));
   transform: scaleX(0);
   transform-origin: left;
   animation: fl-draw 0.9s cubic-bezier(0.65, 0, 0.35, 1) 1.1s forwards;
@@ -306,7 +306,32 @@
     transform: scaleX(1);
   }
 }
+/* a thin band of light crosses the gold word every few seconds (after the word has risen in) */
+.fl-word.fl-accent {
+  background: linear-gradient(105deg, var(--fl-accent, var(--gold)) 0 42%, #fff6d6 50%, var(--fl-accent, var(--gold)) 58% 100%);
+  background-size: 250% 100%;
+  background-position: 120% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: fl-blurrise 1s cubic-bezier(0.16, 1, 0.3, 1) both, fl-shine 7s ease-in-out infinite;
+  animation-delay: calc(0.3s + var(--i, 0) * 110ms), 2.8s;
+}
+@keyframes fl-shine {
+  0%,
+  55% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -20% 0;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
+  .fl-word.fl-accent {
+    animation: none;
+    background-position: 0 0;
+  }
   .fl-word {
     opacity: 1;
     animation: none;
@@ -341,18 +366,24 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   column-gap: 0.75rem;
-  row-gap: 2.25rem;
+  row-gap: 0.75rem;
 }
 @media (min-width: 768px) {
   .fl-products-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     column-gap: 1.25rem;
-    row-gap: 3rem;
+    row-gap: 1.25rem;
   }
 }
 @media (min-width: 1280px) {
   .fl-products-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+/* very wide screens: a fifth column, so the cards stay a comfortable size instead of growing */
+@media (min-width: 1600px) {
+  .fl-products-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
 
@@ -697,8 +728,13 @@
   position: relative;
   isolation: isolate;
   border-radius: 1.25rem;
-  padding: 1.5rem 0.5rem;
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.75), rgb(250 245 235 / 0.6));
+  padding: 1.5rem 0.5rem 2.75rem;
+  /* two soft waves along the bottom edge, drifting slowly in opposite directions */
+  background:
+    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='34' viewBox='0 0 240 34'><path d='M0,34 L0.0,15.3 L6.0,16.2 L12.0,17.2 L18.0,18.0 L24.0,18.8 L30.0,19.5 L36.0,20.2 L42.0,20.6 L48.0,21.0 L54.0,21.2 L60.0,21.3 L66.0,21.2 L72.0,21.0 L78.0,20.6 L84.0,20.2 L90.0,19.5 L96.0,18.8 L102.0,18.0 L108.0,17.2 L114.0,16.2 L120.0,15.3 L126.0,14.4 L132.0,13.4 L138.0,12.6 L144.0,11.8 L150.0,11.1 L156.0,10.4 L162.0,10.0 L168.0,9.6 L174.0,9.4 L180.0,9.3 L186.0,9.4 L192.0,9.6 L198.0,10.0 L204.0,10.4 L210.0,11.1 L216.0,11.8 L222.0,12.6 L228.0,13.4 L234.0,14.4 L240.0,15.3 L240,34 Z' fill='%23c9a24a22'/><path d='M0.0,15.3 L6.0,16.2 L12.0,17.2 L18.0,18.0 L24.0,18.8 L30.0,19.5 L36.0,20.2 L42.0,20.6 L48.0,21.0 L54.0,21.2 L60.0,21.3 L66.0,21.2 L72.0,21.0 L78.0,20.6 L84.0,20.2 L90.0,19.5 L96.0,18.8 L102.0,18.0 L108.0,17.2 L114.0,16.2 L120.0,15.3 L126.0,14.4 L132.0,13.4 L138.0,12.6 L144.0,11.8 L150.0,11.1 L156.0,10.4 L162.0,10.0 L168.0,9.6 L174.0,9.4 L180.0,9.3 L186.0,9.4 L192.0,9.6 L198.0,10.0 L204.0,10.4 L210.0,11.1 L216.0,11.8 L222.0,12.6 L228.0,13.4 L234.0,14.4 L240.0,15.3' fill='none' stroke='%23c9a24a99' stroke-width='1.2'/></svg>") 0 100% / 240px 34px repeat-x,
+    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='40' viewBox='0 0 300 40'><path d='M0,40 L0.0,23.7 L7.5,22.9 L15.0,22.1 L22.5,21.2 L30.0,20.2 L37.5,19.1 L45.0,18.0 L52.5,16.9 L60.0,15.8 L67.5,14.8 L75.0,13.9 L82.5,13.0 L90.0,12.3 L97.5,11.8 L105.0,11.3 L112.5,11.1 L120.0,11.0 L127.5,11.1 L135.0,11.3 L142.5,11.8 L150.0,12.3 L157.5,13.1 L165.0,13.9 L172.5,14.8 L180.0,15.8 L187.5,16.9 L195.0,18.0 L202.5,19.1 L210.0,20.2 L217.5,21.2 L225.0,22.1 L232.5,23.0 L240.0,23.7 L247.5,24.2 L255.0,24.7 L262.5,24.9 L270.0,25.0 L277.5,24.9 L285.0,24.7 L292.5,24.2 L300.0,23.7 L300,40 Z' fill='%236b44230d'/><path d='M0.0,23.7 L7.5,22.9 L15.0,22.1 L22.5,21.2 L30.0,20.2 L37.5,19.1 L45.0,18.0 L52.5,16.9 L60.0,15.8 L67.5,14.8 L75.0,13.9 L82.5,13.0 L90.0,12.3 L97.5,11.8 L105.0,11.3 L112.5,11.1 L120.0,11.0 L127.5,11.1 L135.0,11.3 L142.5,11.8 L150.0,12.3 L157.5,13.1 L165.0,13.9 L172.5,14.8 L180.0,15.8 L187.5,16.9 L195.0,18.0 L202.5,19.1 L210.0,20.2 L217.5,21.2 L225.0,22.1 L232.5,23.0 L240.0,23.7 L247.5,24.2 L255.0,24.7 L262.5,24.9 L270.0,25.0 L277.5,24.9 L285.0,24.7 L292.5,24.2 L300.0,23.7' fill='none' stroke='%236b442338' stroke-width='1.2'/></svg>") 0 100% / 300px 40px repeat-x,
+    linear-gradient(180deg, rgb(255 255 255 / 0.75), rgb(250 245 235 / 0.6));
+  animation: fl-stat-wave 14s linear infinite;
   box-shadow: 0 10px 30px -18px rgb(107 68 35 / 0.45);
   transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
 }
@@ -746,6 +782,11 @@
   background-clip: text;
   color: transparent;
 }
+@keyframes fl-stat-wave {
+  to {
+    background-position: 240px 100%, -300px 100%, 0 0;
+  }
+}
 @keyframes fl-stat-turn {
   to {
     --fl-a: 360deg;
@@ -768,6 +809,7 @@
     animation: none;
   }
   .fl-stat {
+    animation: none;
     transition: none;
   }
   .fl-stat:hover {
@@ -887,5 +929,804 @@
   }
   .fl-admin-tile:hover {
     transform: none;
+  }
+}
+
+
+/* ---------- Home: quiet transitions between sections, and the golden lift on product cards ---------- */
+.fl-hero {
+  box-shadow: 0 26px 44px -30px rgb(201 162 74 / 0.55);
+}
+.fl-warm {
+  background: linear-gradient(180deg, transparent 0, #f5efe4 14%, #f5efe4 86%, transparent 100%);
+}
+.fl-hair {
+  display: block;
+  height: 1px;
+  width: min(34rem, 70%);
+  margin-inline: auto;
+  background: linear-gradient(90deg, transparent, #c9a24a, transparent);
+  opacity: 0.7;
+}
+.fl-glow {
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.5s ease;
+}
+@media (hover: hover) {
+  .fl-glow:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 34px -16px rgb(107 68 35 / 0.5), 0 0 28px -6px rgb(201 162 74 / 0.6);
+  }
+}
+.fl-glow:focus-visible {
+  box-shadow: 0 0 0 2px #c9a24a, 0 0 28px -6px rgb(201 162 74 / 0.6);
+}
+@media (prefers-reduced-motion: reduce) {
+  .fl-glow {
+    transition: none;
+  }
+  .fl-glow:hover {
+    transform: none;
+  }
+}
+
+/* A frame round each product, so one product ends where the next begins and the price is read
+   with its own picture and name (home grid and the shop's grid) */
+.fl-pcard {
+  border: 1px solid rgb(201 162 74 / 0.5);
+  border-radius: 1.25rem;
+  background: #fff;
+  box-shadow: 0 0 24px -12px rgb(201 162 74 / 0.5);
+  padding: 0.5rem 0.5rem 0.9rem;
+  transition-property: border-color, transform, box-shadow;
+  transition-duration: 0.3s;
+}
+.fl-pcard:hover,
+.fl-pcard:focus-visible {
+  border-color: #c9a24a;
+}
+
+/* The frame round the whole category carousel is the same frame as round a product: a thin gold line,
+   a very soft golden glow, a warm white ground. The window round the open category is gold too. */
+.fl-cat {
+  border: 1px solid rgb(201 162 74 / 0.5);
+  background: linear-gradient(180deg, #fffdf8, #f6f0e5);
+  box-shadow: 0 0 24px -12px rgb(201 162 74 / 0.5);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.fl-cat:hover {
+  border-color: #c9a24a;
+  box-shadow: 0 0 34px -10px rgb(201 162 74 / 0.6);
+}
+.fl-cat .vfc-frame {
+  border-color: #c9a24a;
+  box-shadow: 0 0 22px -4px rgb(201 162 74 / 0.6);
+}
+@media (prefers-reduced-motion: reduce) {
+  .fl-cat {
+    transition: none;
+  }
+}
+
+/* ---------- Buttons: one system ----------
+   primary   = .fl-cta / .fl-btn-gold : the gold pill (one main action per area)
+   secondary = .fl-btn-oval           : brown line on light grounds, fills brown on hover
+               .fl-btn-ghost          : the same, cream line, on the dark hero
+   Same height, padding, size, weight and gap everywhere; only the colours differ. */
+.fl-cta,
+.fl-btn-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  min-height: 3rem;
+  padding: 0 1.75rem;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, #ecd08a 0%, #c9a24a 55%, #ab8530 100%);
+  color: #2a1608;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  box-shadow: inset 0 1px 0 rgb(255 245 215 / 0.65), 0 8px 24px rgb(201 162 74 / 0.3);
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+.fl-cta:hover:not(:disabled),
+.fl-btn-gold:hover {
+  background: linear-gradient(180deg, #ecd08a 0%, #c9a24a 55%, #ab8530 100%);
+  box-shadow: inset 0 1px 0 rgb(255 245 215 / 0.8), 0 10px 32px rgb(201 162 74 / 0.45);
+}
+.fl-btn-oval,
+.fl-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  min-height: 3rem;
+  padding: 0 1.75rem;
+  border: 1px solid var(--primary);
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--primary);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+.fl-btn-oval:hover {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+.fl-btn-ghost {
+  border-color: rgb(255 247 238 / 0.45);
+  color: #fff7ee;
+}
+.fl-btn-ghost:hover {
+  border-color: #fff7ee;
+  color: #fff7ee;
+}
+/* dashboard buttons in the same colours */
+.fl-admin .bg-black {
+  background-color: var(--primary);
+}
+
+/* Form fields in the shop's look: tall enough to tap, gold ring on focus */
+.fl-input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgb(107 68 35 / 0.28);
+  border-radius: 0.75rem;
+  background: #fff;
+  color: var(--primary);
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.fl-input::placeholder {
+  color: rgb(107 68 35 / 0.5);
+}
+.fl-input:focus-visible {
+  outline: none;
+  border-color: #c9a24a;
+  box-shadow: 0 0 0 3px rgb(201 162 74 / 0.3);
+}
+
+.fl-modal-panel.fl-modal-narrow {
+  max-width: 24rem;
+  border: 1px solid rgb(201 162 74 / 0.5);
+  box-shadow: 0 0 34px -10px rgb(201 162 74 / 0.5), 0 30px 80px -20px rgb(0 0 0 / 0.5);
+}
+
+/* Contact: the two phone numbers side by side with a clear gap, so they never read as one long number */
+.fl-contact-phones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem 1.5rem;
+}
+
+/* Contact cards: equal height, the action button of each card sits at the bottom, so no card has an empty tail */
+.fl-contact-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1.25rem 1.25rem;
+  text-align: center;
+}
+.fl-contact-action {
+  margin-top: auto;
+  padding-top: 1.25rem;
+}
+
+/* ---------- Floating call / WhatsApp buttons ---------- */
+.fl-fab {
+  position: fixed;
+  left: 1rem; /* always the physical left edge, in Arabic and in English */
+  right: auto;
+  bottom: 1rem;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+/* a product page on a phone has its own bottom bar: stay above it */
+body:has(.fl-pdp-bar) .fl-fab {
+  bottom: 5.5rem;
+}
+@media (min-width: 1024px) {
+  body:has(.fl-pdp-bar) .fl-fab {
+    bottom: 1rem;
+  }
+}
+.fl-fab-btn {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  place-items: center;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, #ecd08a 0%, #c9a24a 55%, #ab8530 100%);
+  color: #2a1608;
+  box-shadow: inset 0 1px 0 rgb(255 245 215 / 0.65), 0 8px 24px rgb(201 162 74 / 0.35);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: fl-fab-glow 3.4s ease-in-out infinite;
+}
+.fl-fab-btn:nth-child(2) {
+  animation-delay: -1.7s;
+}
+.fl-fab-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+}
+@keyframes fl-fab-glow {
+  0%,
+  100% {
+    box-shadow: inset 0 1px 0 rgb(255 245 215 / 0.65), 0 8px 24px rgb(201 162 74 / 0.3), 0 0 0 0 rgb(201 162 74 / 0.35);
+  }
+  50% {
+    box-shadow: inset 0 1px 0 rgb(255 245 215 / 0.8), 0 10px 32px rgb(201 162 74 / 0.5), 0 0 0 9px rgb(201 162 74 / 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fl-fab-btn {
+    animation: none;
+    transition: none;
+  }
+  .fl-fab-btn:hover {
+    transform: none;
+  }
+}
+
+/* the floating buttons sit over the bottom corner: keep the copyright line clear of them */
+.fl-footer-bar {
+  padding-bottom: 6.5rem;
+}
+@media (min-width: 768px) {
+  .fl-footer-bar {
+    padding-inline: 5rem;
+    padding-bottom: 1.5rem;
+  }
+}
+
+/* Footer contact: a small gold-lined icon, then the details; the two numbers and the e-mail are
+   cream-lined pills (gold on hover) instead of loose lines of text */
+.fl-fcontact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.fl-fcontact li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+.fl-ficon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid rgb(201 162 74 / 0.5);
+  border-radius: 9999px;
+  background: rgb(201 162 74 / 0.08);
+  color: #e6cf8f;
+}
+.fl-faddr {
+  max-width: 17rem;
+  line-height: 1.8;
+  text-align: center;
+}
+.fl-fmap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  color: #e6cf8f;
+  font-size: 0.875rem;
+  text-decoration: underline;
+  text-decoration-color: rgb(201 162 74 / 0.5);
+  text-underline-offset: 4px;
+}
+.fl-fmap:hover {
+  text-decoration-color: #c9a24a;
+}
+.fl-fphones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.fl-fphone {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 0.9rem;
+  border: 1px solid rgb(255 247 238 / 0.3);
+  border-radius: 9999px;
+  color: #fff7ee;
+  font-size: 0.95rem;
+  transition: border-color 0.2s, color 0.2s, background-color 0.2s;
+}
+.fl-fphone:hover {
+  border-color: #c9a24a;
+  background: rgb(201 162 74 / 0.14);
+  color: #f3e2b0;
+}
+.fl-femail {
+  overflow-wrap: anywhere;
+  border-radius: 1.25rem;
+  padding-block: 0.4rem;
+}
+@media (min-width: 768px) {
+  .fl-fcontact {
+    align-items: flex-start;
+  }
+  .fl-fcontact li {
+    justify-content: flex-start;
+  }
+  .fl-faddr {
+    text-align: start;
+  }
+  .fl-fmap {
+    justify-content: flex-start;
+  }
+  .fl-fphones {
+    justify-content: flex-start;
+  }
+}
+
+/* Footer contact, on one grid: an icon column and a content column of the same width in every row,
+   so the icons, the left edges and the right edges all line up (the first rows were ragged) */
+.fl-fcontact {
+  width: 100%;
+  max-width: 19rem;
+  margin-inline: auto;
+  align-items: stretch;
+  gap: 0.875rem;
+}
+.fl-fcontact li {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  column-gap: 0.75rem;
+  align-items: start;
+  justify-content: initial;
+}
+.fl-ficon {
+  margin-top: 0.25rem;
+}
+.fl-faddr {
+  max-width: none;
+  padding-top: 0.2rem;
+  text-align: start;
+}
+.fl-fmap {
+  justify-content: flex-start;
+}
+.fl-fphones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+.fl-fphone {
+  width: 100%;
+  justify-content: center;
+  padding: 0 0.5rem;
+}
+@media (min-width: 768px) {
+  .fl-fcontact {
+    margin-inline: 0;
+    align-items: stretch;
+  }
+  .fl-fcontact li {
+    justify-content: initial;
+  }
+}
+
+/* the social icons are the last row of the contact column, on the same left edge as the rows above */
+.fl-fcontact li.fl-fsocial {
+  display: block;
+}
+
+/* ---------- Footer: contact band under the two top columns ---------- */
+.fl-fband {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.75rem;
+  max-width: 19rem;
+  margin-inline: auto;
+  padding-top: 2.25rem;
+  border-top: 1px solid rgb(201 162 74 / 0.25);
+}
+.fl-fitem {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  column-gap: 0.75rem;
+  align-items: start;
+  text-align: start;
+}
+.fl-fitem.fl-fsocial {
+  display: block;
+}
+.fl-fhead {
+  margin-bottom: 0.4rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  color: rgb(255 247 238 / 0.65);
+}
+.fl-fitem .fl-fphones {
+  grid-template-columns: 1fr 1fr;
+}
+.fl-fitem .fl-fphone {
+  padding: 0 0.4rem;
+  font-size: 0.85rem;
+}
+.fl-fitem .fl-femail {
+  width: 100%;
+  font-size: 0.85rem;
+}
+@media (min-width: 768px) {
+  .fl-fband {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem;
+    max-width: none;
+    margin-inline: 0;
+  }
+  .fl-fitem.fl-fsocial .fl-fsoc-body {
+    padding-inline-start: 0;
+  }
+}
+
+/* the "follow us" block has no icon, so it keeps the icon column's width empty: its heading and
+   icons start on the same line as the text of the other three blocks */
+.fl-fitem.fl-fsocial {
+  padding-inline-start: 3rem;
+}
+.fl-fitem.fl-fsocial .fl-fsoc-body > div {
+  justify-content: flex-start;
+  margin-inline-start: -0.75rem;
+}
+
+/* ---------- Footer: three columns, one height ---------- */
+.fl-fcols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
+}
+.fl-fcol {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+@media (min-width: 768px) {
+  .fl-fcols {
+    grid-template-columns: 1.1fr 1fr 1.25fr;
+    gap: 3.5rem;
+    align-items: stretch;
+  }
+  .fl-fcol {
+    justify-content: space-between;
+  }
+}
+.fl-fchecks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  align-items: center;
+  font-size: 0.95rem;
+  color: rgb(255 247 238 / 0.78);
+}
+.fl-fchecks li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+@media (min-width: 768px) {
+  .fl-fchecks {
+    align-items: flex-start;
+  }
+}
+.fl-faddrlink {
+  display: block;
+  color: rgb(255 247 238 / 0.92);
+  text-underline-offset: 4px;
+  text-decoration: underline;
+  text-decoration-color: rgb(201 162 74 / 0.35);
+  transition: text-decoration-color 0.2s, color 0.2s;
+}
+.fl-faddrlink:hover {
+  color: #f3e2b0;
+  text-decoration-color: #c9a24a;
+}
+.fl-fcontact li.fl-fsocial {
+  display: block;
+  padding-inline-start: 3rem;
+}
+
+/* Footer, final layout: three columns of the same width on big screens; on a phone every block is
+   centred (icon above its text) */
+.fl-fcontact {
+  max-width: 19rem;
+  margin-inline: auto;
+  align-items: center;
+}
+.fl-fcontact li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+.fl-faddr,
+.fl-faddrlink {
+  text-align: center;
+}
+.fl-fcontact li.fl-fsocial {
+  display: block;
+  padding-inline-start: 0;
+}
+.fl-fphones {
+  justify-content: center;
+}
+@media (min-width: 768px) {
+  .fl-fcols {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .fl-fcontact {
+    max-width: none;
+    margin-inline: 0;
+    align-items: stretch;
+  }
+  .fl-fcontact li {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    column-gap: 0.75rem;
+    align-items: start;
+    text-align: start;
+  }
+  .fl-faddr,
+  .fl-faddrlink {
+    text-align: start;
+  }
+  .fl-fcontact li.fl-fsocial {
+    display: block;
+    padding-inline-start: 3rem;
+  }
+  .fl-fphones {
+    justify-content: flex-start;
+  }
+}
+
+/* the quick-links column sits in the middle of the footer, and its headings and links are centred on its axis */
+.fl-fcol-center {
+  align-items: center;
+  text-align: center !important;
+}
+.fl-fcol-center ul {
+  align-items: center !important;
+}
+.fl-fcol-center a,
+.fl-fcol-center button {
+  text-align: center !important;
+}
+
+/* ---------- Footer on a phone: shorter ----------
+   links in one wrapping row, services as a 2x2 grid, each contact row = icon beside its text */
+@media (max-width: 767px) {
+  .fl-fcols {
+    gap: 1.75rem;
+    padding-bottom: 2.5rem !important;
+  }
+  .fl-fcol {
+    gap: 1.25rem;
+  }
+  .fl-fcol-center {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0 1.5rem;
+  }
+  .fl-fcol-center > div,
+  .fl-fcol-center ul {
+    display: contents !important;
+  }
+  .fl-fcol-center p {
+    display: none;
+  }
+  .fl-fcol-center li {
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+  .fl-fchecks {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+  }
+  .fl-fchecks li {
+    justify-content: center;
+    text-align: start;
+  }
+  .fl-fcontact {
+    gap: 0.5rem;
+  }
+  .fl-fcontact li {
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.6rem;
+  }
+  .fl-ficon {
+    margin-top: 0;
+  }
+  .fl-fcontact li.fl-fsocial {
+    justify-content: center;
+  }
+  .fl-footer-bar {
+    padding-bottom: 5.5rem;
+  }
+}
+
+/* Footer on a phone: the order is logo + welcome, then every way to reach the shop (social icons,
+   address, numbers, e-mail), then the links, then the services */
+@media (max-width: 767px) {
+  .fl-fcols {
+    display: flex;
+    flex-direction: column;
+  }
+  .fl-fcols > .fl-fcol:first-child {
+    display: contents;
+  }
+  .fl-fcols > .fl-fcol:first-child > div {
+    order: 1;
+  }
+  .fl-fcols > .fl-fcol:last-child {
+    order: 2;
+  }
+  .fl-fcols > .fl-fcol-center {
+    order: 3;
+  }
+  .fl-fcols > .fl-fcol:first-child > .fl-fchecks {
+    order: 4;
+  }
+  .fl-fcontact li.fl-fsocial {
+    order: -1;
+  }
+}
+
+/* Footer bottom bar on a phone: short. The text keeps clear of the floating buttons by side padding
+   (not by a tall empty strip under it) */
+@media (max-width: 767px) {
+  .fl-footer-bar {
+    gap: 0.25rem;
+    padding: 0.9rem 4rem;
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+}
+
+/* Footer on a phone, tidied: all contact icons on one vertical line with the content centred
+   between them and an empty column on the other side; the services as unbroken chips */
+@media (max-width: 767px) {
+  .fl-fcontact {
+    max-width: 21rem;
+  }
+  .fl-fcontact li:not(.fl-fsocial) {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr) 2.25rem;
+    column-gap: 0.5rem;
+    align-items: center;
+    text-align: center;
+  }
+  .fl-fcontact li:not(.fl-fsocial)::after {
+    content: "";
+  }
+  .fl-fcontact li:not(.fl-fsocial) > .fl-ficon {
+    margin-top: 0;
+  }
+  .fl-fcontact li:not(.fl-fsocial) > :nth-child(2) {
+    justify-self: center;
+  }
+  .fl-fcontact li.fl-fsocial {
+    display: flex;
+    justify-content: center;
+    padding-inline-start: 0;
+  }
+  .fl-fcontact li.fl-fsocial > div {
+    margin-inline-start: 0;
+  }
+  .fl-fchecks {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.25rem;
+  }
+  .fl-fchecks li {
+    white-space: nowrap;
+  }
+}
+
+/* Footer on a phone, second pass: the icons are pinned to the same edge of every row (so they are
+   always on one vertical line), the content is centred in the space left; the services are chips
+   in a row that wraps; the e-mail never breaks in the middle */
+@media (max-width: 767px) {
+  .fl-fcontact {
+    max-width: 100%;
+    width: 100%;
+  }
+  .fl-fcontact li:not(.fl-fsocial) {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 2.75rem;
+    padding-inline: 2.9rem;
+    text-align: center;
+  }
+  .fl-fcontact li:not(.fl-fsocial)::after {
+    content: none;
+  }
+  .fl-fcontact li:not(.fl-fsocial) > .fl-ficon {
+    position: absolute;
+    inset-inline-start: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+  }
+  .fl-fcontact li:not(.fl-fsocial) > :nth-child(2) {
+    width: 100%;
+  }
+  .fl-fcontact li .fl-fphones {
+    width: 100%;
+  }
+  .fl-fcontact li .fl-femail {
+    width: 100%;
+    padding: 0 0.5rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    justify-content: center;
+  }
+  .fl-fchecks {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+@media (max-width: 767px) {
+  .fl-fcontact li:not(.fl-fsocial) {
+    width: 100%; /* every row spans the column, so the pinned icons share one vertical line */
+  }
+}
+
+/* the floating buttons step aside while the footer (which has the same details) is on screen */
+.fl-fab {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.fl-fab[data-hide="1"] {
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fl-fab {
+    transition: none;
+  }
+}
+
+/* the four services on a phone: two aligned columns that start from the reading side (the right
+   in Arabic), each item on its own line, nothing wrapping */
+@media (max-width: 767px) {
+  .fl-fchecks {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: start;
+    gap: 0.75rem 0.5rem;
+    width: 100%;
+    max-width: 21rem;
+    margin-inline: auto;
+    font-size: 0.85rem;
+  }
+  .fl-fchecks li {
+    justify-content: flex-start;
+    white-space: nowrap;
   }
 }

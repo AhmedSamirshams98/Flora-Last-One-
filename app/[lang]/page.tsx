@@ -3,6 +3,7 @@ import OfferLine from "../components/HomeComponents/Offers/OfferLine";
 import type { DealOffer } from "../components/HomeComponents/Offers/types";
 import { categoryMeta } from "../components/HomeComponents/categoryMeta";
 import CategoryCards from "../components/HomeComponents/CategoryCards";
+import HomeProducts from "../components/HomeComponents/HomeProducts";
 import AboutSection from "../components/HomeComponents/AboutSection";
 import { prisma } from "@/lib/prisma";
 import "../components/HomeComponents/bento.css";
@@ -44,26 +45,36 @@ const Page = async ({ params }: PageProps) => {
       endDate: o.endDate ? o.endDate.toISOString() : null,
     }));
 
-  // Featured first, then newest; only active products that have a photo.
+  // In stock first, then the ones the owner marked "featured" (the dashboard checkbox), then newest;
+  // only active products that have a photo.
   const rows = await prisma.product.findMany({
     where: { isActive: true, variants: { some: {} } },
     include: { variants: { select: { images: true } } },
-    orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
+    orderBy: [{ inStock: "desc" }, { isFeatured: "desc" }, { createdAt: "desc" }],
     take: 16,
   });
-  const products = rows
+  const all = rows
     .map((p) => ({
       id: p.id,
       name: p.name,
       basePrice: p.basePrice,
       finalPrice: p.finalPrice,
       isNew: p.isNew,
+      isFeatured: p.isFeatured,
       inStock: p.inStock,
       image: p.variants.flatMap((v) => v.images)[0] ?? "",
       hoverImage: p.variants.flatMap((v) => v.images)[1],
     }))
-    .filter((p) => p.image)
-    .slice(0, 8);
+    .filter((p) => p.image);
+  const products = all.slice(0, 8); // the hero row
+
+  // the grid under the categories, titled by what it really is: the products the owner marked
+  // "featured" if there are at least 4, else the ones marked "new" if there are at least 4, else
+  // a neutral "our products" (in stock first, then featured, then newest)
+  const featured = all.filter((p) => p.isFeatured);
+  const fresh = all.filter((p) => p.isNew);
+  const gridKind = featured.length >= 4 ? "featured" : fresh.length >= 4 ? "new" : "mixed";
+  const gridProducts = (gridKind === "featured" ? featured : gridKind === "new" ? fresh : all).slice(0, 8);
 
   const heroItems = categories.map((c) => ({
     id: c.id,
@@ -79,7 +90,11 @@ const Page = async ({ params }: PageProps) => {
         extra={heroItems.map((c) => ({ id: c.id, image: c.image, alt: c.alt, href: c.href }))}
       />
       <OfferLine lang={lang} offers={deals} />
-      <CategoryCards lang={lang} items={heroItems} />
+      <div className="fl-warm">
+        <CategoryCards lang={lang} items={heroItems} />
+      </div>
+      <HomeProducts lang={lang} products={gridProducts} kind={gridKind} />
+      <span className="fl-hair" aria-hidden="true" />
       <AboutSection lang={lang} />
       {/* the Facebook reels section is off for now: the embeds load slowly (FacebookReelEmbed.tsx and the dashboard page are kept) */}
     </div>

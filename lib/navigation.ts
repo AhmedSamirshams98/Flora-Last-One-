@@ -13,7 +13,11 @@ export const handleNavLinkClick = (
   if (link.type === "anchor" && link.anchorId) {
     const anchorId = link.anchorId;
 
-    if (currentPathname === homePath || currentPathname === "/") {
+    if (
+      document.getElementById(anchorId) ||
+      currentPathname === homePath ||
+      currentPathname === "/"
+    ) {
       scrollToSection(anchorId);
       return;
     }

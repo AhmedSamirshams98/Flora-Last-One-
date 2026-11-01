@@ -205,6 +205,19 @@ html {
   font-size: var(--font-size);
 }
 
+/* big screens: everything set in rem (text, and the spacing built from it) is a little smaller,
+   so a laptop or a desktop does not show phone-sized letters stretched over a wide page */
+@media (min-width: 1280px) {
+  html {
+    font-size: 15px;
+  }
+}
+@media (min-width: 1600px) {
+  html {
+    font-size: 14.5px;
+  }
+}
+
 
 /* ---------- Browser surfaces themed from the palette ---------- */
 ::selection {

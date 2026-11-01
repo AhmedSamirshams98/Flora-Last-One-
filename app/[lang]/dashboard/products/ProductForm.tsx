@@ -314,7 +314,7 @@ export default function ProductForm({
                   }
                   className="w-4 h-4 rounded"
                 />
-                <span>منتج مميز</span>
+                <span>منتج مميز (يظهر أولًا في الصفحة الرئيسية)</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
