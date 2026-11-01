@@ -460,3 +460,317 @@
     display: none;
   }
 }
+
+/* the row of pictures fades out at both ends instead of being cut by the screen edge */
+.fl-reel-fade {
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 12%, #000 88%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 12%, #000 88%, transparent 100%);
+}
+@media (max-width: 599px) {
+  .fl-reel-fade {
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%);
+  }
+}
+
+/* ---------- Test hero: a stack of cards that spreads into a fan ---------- */
+.fl-pan {
+  --cw: clamp(104px, 16vw, 210px);
+  --step: clamp(38px, 10.5vw, 150px);
+  --rx: 0deg;
+  --ry: 0deg;
+  perspective: 1400px;
+  margin-top: 2.5rem;
+  padding-bottom: 3.5rem;
+}
+.fl-pan-stage {
+  position: relative;
+  width: var(--cw);
+  height: calc(var(--cw) * 1.25);
+  margin-inline: auto;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform 0.35s ease-out;
+}
+.fl-pan-card {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: calc(var(--abs) * 45ms);
+  /* --s is how open the fan is: 0 = a loose stack, 1 = spread (it follows the finger when dragging) */
+  transform: translate3d(
+      calc(var(--t) * (5px + (var(--step) - 5px) * var(--s))),
+      calc(var(--abs) * var(--abs) * 4px * var(--s)),
+      calc(var(--abs) * (-2px - 58px * var(--s)))
+    )
+    rotateY(calc(var(--t) * -10deg * var(--s)))
+    rotateZ(calc(var(--t) * (1.4deg + 0.6deg * var(--s))));
+}
+.fl-pan {
+  touch-action: pan-y;
+  cursor: grab;
+}
+.fl-pan-drag {
+  cursor: grabbing;
+}
+.fl-pan-drag .fl-pan-card {
+  transition: none;
+}
+.fl-pan-link {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #f3eee6;
+  box-shadow: 0 18px 40px rgb(20 8 2 / 0.35);
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.fl-pan-link:hover,
+.fl-pan-link:focus-visible {
+  transform: translateY(-14px) scale(1.05);
+}
+.fl-pan-still .fl-pan-stage,
+.fl-pan-still .fl-pan-card,
+.fl-pan-still .fl-pan-link {
+  transition: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fl-pan-stage,
+  .fl-pan-card,
+  .fl-pan-link {
+    transition: none !important;
+  }
+}
+
+/* ---------- Test hero: three pictures overlapping like a hand of cards ---------- */
+.fl-fan {
+  --w: clamp(120px, 27vw, 250px);
+  display: flex;
+  justify-content: center;
+  margin-top: 2.75rem;
+  padding-bottom: 3.5rem;
+}
+.fl-fan-stage {
+  position: relative;
+  width: var(--w);
+  height: calc(var(--w) * 1.25);
+}
+.fl-fan-card {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 100%;
+  --x: 0%;
+  --r: 0deg;
+  --s: 1;
+  transform: translateX(var(--x)) rotate(var(--r)) scale(var(--s));
+  animation: fl-fan-open 0.95s cubic-bezier(0.2, 0.8, 0.2, 1) 0.25s both;
+}
+.fl-fan-card[data-pos="l"] {
+  --x: -64%;
+  --r: -9deg;
+  z-index: 1;
+}
+.fl-fan-card[data-pos="c"] {
+  --s: 1.1;
+  z-index: 3;
+}
+.fl-fan-card[data-pos="r"] {
+  --x: 64%;
+  --r: 9deg;
+  z-index: 2;
+}
+@keyframes fl-fan-open {
+  from {
+    transform: translateX(0) rotate(0deg) scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(var(--x)) rotate(var(--r)) scale(var(--s));
+    opacity: 1;
+  }
+}
+.fl-fan-link {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #f3eee6;
+  box-shadow: 0 20px 44px rgb(20 8 2 / 0.4);
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.fl-fan-link:hover,
+.fl-fan-link:focus-visible {
+  transform: translateY(-12px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .fl-fan-card {
+    animation: none;
+  }
+  .fl-fan-link {
+    transition: none;
+  }
+}
+
+/* ---------- Offers on a string (OfferLine) ---------- */
+.fl-line {
+  position: relative;
+  overflow: hidden;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+  outline: none;
+}
+.fl-line[data-drag="1"] {
+  cursor: grabbing;
+}
+.fl-line:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--primary);
+  border-radius: 12px;
+}
+.fl-line-string {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.fl-line-card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--cw);
+  transform-origin: 50% 0;
+  will-change: transform;
+  visibility: hidden;
+  cursor: inherit;
+}
+.fl-line-print {
+  margin-top: 10px;
+  padding: 10px 10px 12px;
+  background: #fbfaf7;
+  border-radius: 3px;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.12), 0 18px 30px -16px rgb(40 20 5 / 0.45);
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.5s ease;
+}
+.fl-line-card[data-on="0"] .fl-line-print {
+  transform: scale(0.9);
+  filter: saturate(0.7) brightness(0.96);
+}
+.fl-line-shot {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: #e8e1d6;
+}
+.fl-line-shot img {
+  pointer-events: none;
+}
+.fl-line-peg {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 10px;
+  height: 26px;
+  margin-left: -5px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #c9a24a, #e6cf8f 45%, #a8832f);
+  box-shadow: 0 2px 3px rgb(0 0 0 / 0.25);
+}
+@media (prefers-reduced-motion: reduce) {
+  .fl-line-print {
+    transition: none;
+  }
+}
+
+/* ---------- Figures: a card whose gold edge slowly travels round it, with a soft breathing glow ---------- */
+@property --fl-a {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+.fl-stat {
+  position: relative;
+  isolation: isolate;
+  border-radius: 1.25rem;
+  padding: 1.5rem 0.5rem;
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.75), rgb(250 245 235 / 0.6));
+  box-shadow: 0 10px 30px -18px rgb(107 68 35 / 0.45);
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
+}
+.fl-stat::before {
+  /* the travelling edge */
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: conic-gradient(from var(--fl-a), rgb(201 162 74 / 0.22) 0 55%, #c9a24a 78%, #f3e2b0 86%, rgb(201 162 74 / 0.22) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: fl-stat-turn 7s linear infinite;
+}
+.fl-stat::after {
+  /* the glow behind the number */
+  content: "";
+  position: absolute;
+  inset: 12% 8% auto;
+  height: 60%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(201 162 74 / 0.3), transparent);
+  filter: blur(14px);
+  animation: fl-stat-glow 4.5s ease-in-out infinite;
+}
+.fl-stat:nth-child(2)::before,
+.fl-stat:nth-child(2)::after {
+  animation-delay: -2.3s;
+}
+.fl-stat:nth-child(3)::before,
+.fl-stat:nth-child(3)::after {
+  animation-delay: -4.6s;
+}
+.fl-stat:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 36px -16px rgb(107 68 35 / 0.55), 0 0 28px -6px rgb(201 162 74 / 0.5);
+}
+.fl-stat-num {
+  background: linear-gradient(180deg, #8a5a2c 0%, #6b4423 45%, #b8913a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@keyframes fl-stat-turn {
+  to {
+    --fl-a: 360deg;
+  }
+}
+@keyframes fl-stat-glow {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fl-stat::before,
+  .fl-stat::after {
+    animation: none;
+  }
+  .fl-stat {
+    transition: none;
+  }
+  .fl-stat:hover {
+    transform: none;
+  }
+}

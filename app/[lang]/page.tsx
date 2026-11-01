@@ -1,5 +1,5 @@
 import ReelHero from "../components/HomeComponents/Offers/ReelHero";
-import OfferShowcase from "../components/HomeComponents/Offers/OfferShowcase";
+import OfferLine from "../components/HomeComponents/Offers/OfferLine";
 import type { DealOffer } from "../components/HomeComponents/Offers/types";
 import { categoryMeta } from "../components/HomeComponents/categoryMeta";
 import CategoryCards from "../components/HomeComponents/CategoryCards";
@@ -79,7 +79,7 @@ const Page = async ({ params }: PageProps) => {
         products={products}
         extra={heroItems.map((c) => ({ id: c.id, image: c.image, alt: c.alt, href: c.href }))}
       />
-      <OfferShowcase lang={lang} offers={deals} />
+      <OfferLine lang={lang} offers={deals} />
       <CategoryCards lang={lang} items={heroItems} />
       <AboutSection lang={lang} />
       <FacebookReelEmbed lang={lang} />

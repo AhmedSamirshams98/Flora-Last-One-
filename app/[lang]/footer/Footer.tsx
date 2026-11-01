@@ -48,7 +48,7 @@ export default function Footer() {
   };
 
   const linkClass =
-    "bg-transparent border-0 p-0 cursor-pointer text-start text-primary-foreground/80 transition-colors hover:text-gold focus-visible:outline-[#fff7ee]";
+    "bg-transparent border-0 p-0 cursor-pointer text-center md:text-start text-primary-foreground/80 transition-colors hover:text-gold focus-visible:outline-[#fff7ee]";
   const heading =
     "mb-5 text-xs uppercase tracking-[0.18em] text-primary-foreground/55";
 
@@ -63,16 +63,16 @@ export default function Footer() {
       <div className="relative">
       <div className="container relative mx-auto px-4 pt-14 md:pt-20">
         {/* columns */}
-        <div className="grid gap-12 pb-20 md:grid-cols-[1.4fr_1fr_1fr] md:gap-16 md:pb-36">
+        <div className="grid gap-12 pb-20 text-center md:grid-cols-[1.4fr_1fr_1fr] md:gap-16 md:pb-36 md:text-start">
           <div>
             <Image
               sizes="(max-width: 768px) 60vw, 240px"
               src={logo}
               quality={75}
               alt="Flora فلورا "
-              className="w-40 md:w-48"
+              className="mx-auto w-40 md:mx-0 md:w-48"
             />
-            <p className="mt-6 max-w-sm text-base leading-relaxed text-primary-foreground/75">
+            <p className="mx-auto mt-6 max-w-sm text-base md:mx-0 leading-relaxed text-primary-foreground/75">
               {isAr
                 ? "مرحبًا بكم في فلورا مصر، وجهتكم المتميزة للأحذية والحقائب الفاخرة."
                 : "Welcome to Flora Egypt, your premium destination for luxurious shoes and bags."}
@@ -85,7 +85,7 @@ export default function Footer() {
           <div className="grid grid-cols-2 gap-8 md:contents">
           <nav aria-label={isAr ? "روابط الموقع" : "Site links"}>
             <p className={heading}>{isAr ? "تصفّحي" : "Browse"}</p>
-            <ul className="flex flex-col items-start gap-3.5 text-base">
+            <ul className="flex flex-col items-center gap-3.5 text-base md:items-start">
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
                   {link.type === "anchor" ? (
@@ -129,7 +129,7 @@ export default function Footer() {
       </div>
 
       <div className="relative border-t border-primary-foreground/15 bg-[#2b1a0c]/60 backdrop-blur-[2px]">
-        <div className="container mx-auto flex flex-col gap-3 px-4 py-6 text-sm text-primary-foreground/80 md:flex-row md:items-center md:justify-between">
+        <div className="container mx-auto flex flex-col gap-3 px-4 py-6 text-center text-sm text-primary-foreground/80 md:flex-row md:items-center md:justify-between md:text-start">
           <p>
             {isAr
               ? "© 2026 فلورا. جميع الحقوق محفوظة."

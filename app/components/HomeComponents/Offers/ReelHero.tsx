@@ -199,7 +199,7 @@ export default function ReelHero({
 
       <div
         ref={band}
-        className={`relative mt-6 w-full touch-pan-y select-none overflow-hidden md:mt-2 ${
+        className={`fl-reel-fade relative mt-6 w-full touch-pan-y select-none overflow-hidden md:mt-2 ${
           still ? "cursor-grabbing" : "cursor-grab"
         }`}
         dir="ltr"
