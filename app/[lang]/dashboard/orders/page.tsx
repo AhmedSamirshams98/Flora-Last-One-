@@ -100,50 +100,48 @@ const isGuest = (o: Order) => o.user?.email === GUEST_EMAIL;
 
 /* Everything the person who packs and delivers the order needs: who, phone (tap to call, or WhatsApp),
    where, and the customer's note. The name and phone come from the order itself, so a guest order
-   (no account) shows the same as a signed-in one. */
+   (no account) shows the same as a signed-in one. Compact: name and phone side by side on a phone. */
 function CustomerBlock({ order }: { order: Order }) {
   const name = order.customerName || order.user?.name;
   const phone = order.customerPhone;
   // Egypt is +20 and the number keeps its 0: 01012345678 -> 201012345678
   const wa = phone ? `https://wa.me/2${phone}` : null;
-  const row = "rounded-lg bg-secondary/40 p-3";
+  const cell = "rounded-xl bg-secondary/50 p-3";
+  const label = "mb-0.5 text-xs text-primary/70";
+  const pill = "inline-flex min-h-11 items-center rounded-full border border-primary/30 px-3 text-sm text-primary transition-colors hover:bg-primary hover:text-primary-foreground";
   return (
-    <div className="grid gap-3 md:grid-cols-2">
-      <div className={row}>
-        <p className="text-sm text-gray-600">الاسم</p>
-        <p className="font-medium">{name || "—"}</p>
+    <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+      <div className={cell}>
+        <p className={label}>الاسم</p>
+        <p className="break-words font-medium text-primary">{name || "—"}</p>
       </div>
-      <div className={row}>
-        <p className="text-sm text-gray-600">الهاتف</p>
+      <div className={cell}>
+        <p className={label}>الهاتف</p>
         {phone ? (
-          <p className="flex flex-wrap items-center gap-3 font-medium">
-            <a href={`tel:+2${phone}`} dir="ltr" className="underline decoration-gold underline-offset-4">{phone}</a>
+          <p className="flex flex-wrap items-center gap-2">
+            <a href={`tel:+2${phone}`} dir="ltr" className={pill}>{phone}</a>
             {wa && (
-              <a href={wa} target="_blank" rel="noopener noreferrer" className="text-sm text-primary underline decoration-gold underline-offset-4">
-                واتساب
-              </a>
+              <a href={wa} target="_blank" rel="noopener noreferrer" className={pill}>واتساب</a>
             )}
           </p>
         ) : (
           <p className="font-medium">—</p>
         )}
       </div>
-      <div className={`${row} md:col-span-2`}>
-        <p className="text-sm text-gray-600">العنوان</p>
-        <p className="font-medium">
-          {[order.shippingAddress, order.shippingCity].filter(Boolean).join("، ") || "—"}
-        </p>
+      <div className={`${cell} col-span-2`}>
+        <p className={label}>العنوان</p>
+        <p className="font-medium text-primary">{[order.shippingAddress, order.shippingCity].filter(Boolean).join("، ") || "—"}</p>
       </div>
       {order.notes && (
-        <div className={`${row} md:col-span-2`}>
-          <p className="text-sm text-gray-600">ملاحظات العميل</p>
-          <p className="font-medium">{order.notes}</p>
+        <div className={`${cell} col-span-2 md:col-span-4`}>
+          <p className={label}>ملاحظات العميل</p>
+          <p className="font-medium text-primary">{order.notes}</p>
         </div>
       )}
       {!isGuest(order) && order.user?.email && (
-        <div className={`${row} md:col-span-2`}>
-          <p className="text-sm text-gray-600">البريد الإلكتروني (حساب Google)</p>
-          <p dir="ltr" className="font-medium">{order.user.email}</p>
+        <div className={`${cell} col-span-2 md:col-span-4`}>
+          <p className={label}>البريد الإلكتروني (حساب Google)</p>
+          <p dir="ltr" className="break-all font-medium text-primary">{order.user.email}</p>
         </div>
       )}
     </div>
@@ -285,21 +283,10 @@ const Page = () => {
       style={{ direction: "rtl" }}
     >
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">إدارة الطلبات</h1>
-        <div className="flex flex-wrap gap-4 mt-4">
-          <div className="bg-blue-50 p-3 rounded-lg">
-            <p className="text-sm text-gray-600">مسجل دخولك كـ:</p>
-            <p className="font-semibold text-blue-700">
-              {session.user.role === "SUPERADMIN" ? "سوبر أدمن" : "أدمن"}
-            </p>
-          </div>
-          <div className="bg-green-50 p-3 rounded-lg">
-            <p className="text-sm text-gray-600">اسمك:</p>
-            <p className="font-semibold text-green-700">
-              {session.user.name || session.user.email}
-            </p>
-          </div>
-        </div>
+        <h1 className="text-3xl md:text-4xl">إدارة الطلبات</h1>
+        <p className="mt-2 text-sm text-primary/70">
+          {session.user.role === "SUPERADMIN" ? "سوبر أدمن" : "أدمن"} · {session.user.name || session.user.email}
+        </p>
       </div>
 
       {orders.length > 0 && (
@@ -313,7 +300,7 @@ const Page = () => {
               setQuery(e.target.value);
               setShown(PAGE);
             }}
-            placeholder="ابحث برقم الطلب أو اسم العميل أو رقم الهاتف"
+            placeholder="ابحث: رقم الطلب أو الاسم أو الهاتف"
             className="fl-input"
           />
           <div className="flex flex-wrap gap-2" role="group" aria-label="تصفية حسب الحالة">
@@ -345,7 +332,7 @@ const Page = () => {
 
       {orders.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-500 text-lg">لا توجد طلبات حتى الآن</p>
+          <p className="text-primary/70 text-lg">لا توجد طلبات حتى الآن</p>
         </div>
       ) : visibleOrders.length === 0 ? (
         <p className="py-12 text-center text-primary/70">لا توجد طلبات تطابق البحث</p>
@@ -354,57 +341,40 @@ const Page = () => {
           {visibleOrders.slice(0, shown).map((order) => {
             const canEditStatus =
               session.user.role === "SUPERADMIN" ||
-              (session.user.role === "ADMIN" &&
-                (!order.assignedAdminId ||
-                  order.assignedAdminId === session.user.id));
-
+              (session.user.role === "ADMIN" && (!order.assignedAdminId || order.assignedAdminId === session.user.id));
             const adminDisplayName = getAdminDisplayName(order);
             const isAssignedToMe = order.assignedAdminId === session.user.id;
+            const pieces = order.orderItems.reduce((n, i) => n + i.quantity, 0);
+            const offerDiscount = order.totalAmount - order.finalAmount;
 
             return (
-              <div
-                key={order.id}
-                className="border rounded-xl p-6 shadow-sm hover:shadow-md transition bg-white"
-              >
-                {/* Header Section */}
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h2 className="font-bold text-lg text-gray-800">
-                        الطلب #{order.orderNumber}
-                      </h2>
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${STATUS[order.status]?.chip ?? "bg-gray-100 text-gray-800"}`}>
+              <article key={order.id} className="fl-pcard !p-4 md:!p-6">
+                <header className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h2 className="fl-display text-2xl text-primary">الطلب #{order.orderNumber}</h2>
+                      <span className={`rounded-full px-3 py-1 text-xs font-medium ${STATUS[order.status]?.chip ?? "bg-secondary/60 text-primary"}`}>
                         {statusAr(order.status)}
                       </span>
+                      {isGuest(order) && <span className="rounded-full bg-gold/25 px-2 py-0.5 text-xs text-primary">طلب كضيف</span>}
                     </div>
-
-                    <p className="mb-2 text-sm text-primary/75">
-                      {fmtDate(order.createdAt)} · {order.orderItems.reduce((n, i) => n + i.quantity, 0)} قطعة
+                    <p className="mt-1 text-sm text-primary/70">
+                      {fmtDate(order.createdAt)} · {pieces} قطعة
                     </p>
-                    <div className="flex flex-wrap gap-4 text-sm">
-                      <div className="flex items-center gap-2">
-                        <span className="text-gray-600">المسؤول:</span>
-                        <span
-                          className={`font-medium ${
-                            isAssignedToMe ? "text-blue-600" : "text-gray-800"
-                          }`}
-                        >
-                          {adminDisplayName}
-                        </span>
-                      </div>
-                    </div>
+                    <p className="text-sm text-primary/80">
+                      المسؤول: <span className={`font-medium ${isAssignedToMe ? "text-primary" : ""}`}>{adminDisplayName}</span>
+                    </p>
                   </div>
 
-                  {/* Status Controls */}
-                  <div className="flex flex-col items-end gap-3">
+                  <div className="w-full sm:w-56">
                     {canEditStatus ? (
                       <>
+                        <label htmlFor={`st-${order.id}`} className="mb-1 block text-xs text-primary/70">حالة الطلب</label>
                         <select
+                          id={`st-${order.id}`}
                           value={order.status}
-                          onChange={(e) =>
-                            handleStatusChange(order.id, e.target.value)
-                          }
-                          className="px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition"
+                          onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                          className="fl-input"
                         >
                           {ORDER_STATUSES.map((status) => (
                             <option key={status} value={status}>
@@ -412,127 +382,65 @@ const Page = () => {
                             </option>
                           ))}
                         </select>
-                        <div className="flex items-center gap-2">
-                          <div
-                            className={`w-3 h-3 rounded-full ${
-                              isAssignedToMe ? "bg-green-500" : "bg-blue-500"
-                            }`}
-                          ></div>
-                          <span className="text-xs text-gray-600">
-                            {isAssignedToMe
-                              ? "أنت المسؤول عن هذا الطلب"
-                              : "تستطيع تعديل هذا الطلب"}
-                          </span>
-                        </div>
+                        <p className="mt-1 text-xs text-primary/70">
+                          {isAssignedToMe ? "أنت المسؤول عن هذا الطلب" : "تستطيع تعديل هذا الطلب"}
+                        </p>
                       </>
                     ) : (
-                      <div className="text-right">
-                        <p className="text-sm text-gray-600 mb-1">
-                          لا يمكنك التعديل
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          مسؤول عن التعديل: {adminDisplayName}
-                        </p>
-                      </div>
+                      <p className="rounded-xl bg-secondary/50 p-3 text-sm text-primary/80">
+                        لا يمكنك تعديل هذا الطلب. المسؤول: {adminDisplayName}
+                      </p>
                     )}
                   </div>
-                </div>
+                </header>
 
-                {/* Divider */}
-                <div className="border-t border-gray-200 my-4"></div>
+                <div className="my-4 h-px bg-gold/40" />
 
-                {/* Customer Info: name, phone, address, city, notes (the e-mail only for a real account) */}
-                <div className="mb-4">
-                  <h3 className="font-semibold text-gray-700 mb-2">
-                    معلومات العميل والتوصيل {isGuest(order) && <span className="ms-2 rounded-full bg-gold/25 px-2 py-0.5 text-xs">طلب كضيف</span>}
-                  </h3>
-                  <CustomerBlock order={order} />
-                </div>
+                <CustomerBlock order={order} />
 
-                {/* Order Summary */}
-                <div className="mb-4">
-                  <h3 className="font-semibold text-gray-700 mb-2">
-                    ملخص الطلب
-                  </h3>
-                  <div className="flex flex-wrap gap-6">
+                <ul className="mt-4 divide-y divide-gold/30 rounded-xl bg-secondary/40 px-3">
+                  {order.orderItems.map((item) => (
+                    <li key={item.id} className="flex items-center gap-3 py-3">
+                      <div className="relative h-14 w-11 shrink-0 overflow-hidden rounded-lg bg-secondary">
+                        {item.variant?.images?.[0] && (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={item.variant.images[0]} alt="" className="h-full w-full object-cover" />
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-medium text-primary">{item.productName}</p>
+                        <p className="text-sm text-primary/70">
+                          {[item.variantDetails, `× ${item.quantity}`].filter(Boolean).join("  ·  ")}
+                        </p>
+                      </div>
+                      <p className="shrink-0 text-sm font-medium text-primary">{(item.price * item.quantity).toFixed(2)} ج.م</p>
+                    </li>
+                  ))}
+                </ul>
+
+                <footer className="mt-4 flex flex-wrap items-end justify-between gap-3">
+                  <dl className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
                     <div>
-                      <p className="text-sm text-gray-600">المجموع</p>
-                      <p className="font-medium text-lg">
-                        {order.totalAmount.toFixed(2)} ج.م
-                      </p>
+                      <dt className="text-xs text-primary/70">المجموع</dt>
+                      <dd className="font-medium text-primary">{order.totalAmount.toFixed(2)} ج.م</dd>
                     </div>
-                    {order.totalAmount > order.finalAmount && (
+                    {offerDiscount > 0 && (
                       <div>
-                        <p className="text-sm text-gray-600">خصم العرض (قطع مجانية)</p>
-                        <p className="font-medium text-lg text-[#9b2c1f]">
-                          -{(order.totalAmount - order.finalAmount).toFixed(2)} ج.م
-                        </p>
+                        <dt className="text-xs text-primary/70">خصم العرض (قطع مجانية)</dt>
+                        <dd className="font-medium text-[#9b2c1f]">-{offerDiscount.toFixed(2)} ج.م</dd>
                       </div>
                     )}
                     <div>
-                      <p className="text-sm text-gray-600">المبلغ النهائي</p>
-                      <p className="font-medium text-lg text-green-600">
-                        {order.finalAmount.toFixed(2)} ج.م
-                      </p>
+                      <dt className="text-xs text-primary/70">المبلغ النهائي</dt>
+                      <dd className="fl-display text-2xl text-primary">{order.finalAmount.toFixed(2)} ج.م</dd>
                     </div>
-                  </div>
-                </div>
-
-                {/* Order Items - Clickable Section */}
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-semibold text-gray-700">عناصر الطلب</h3>
-                    <button
-                      onClick={() => openOrderDetails(order)}
-                      className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors"
-                    >
-                      <Eye className="w-4 h-4" />
-                      <span className="text-sm">عرض التفاصيل الكاملة</span>
-                    </button>
-                  </div>
-
-                  <div
-                    className="bg-gray-50 rounded-lg p-4 cursor-pointer hover:bg-gray-100 transition-colors"
-                    onClick={() => openOrderDetails(order)}
-                  >
-                    <div className="space-y-3">
-                      {order.orderItems.map((item) => (
-                        <div
-                          key={item.id}
-                          className="flex justify-between items-center py-2 border-b border-gray-200 last:border-0"
-                        >
-                          <div>
-                            <p className="font-medium">{item.productName}</p>
-                            {item.variantDetails && (
-                              <p className="text-sm text-gray-600">
-                                {item.variantDetails}
-                              </p>
-                            )}
-                            <p className="text-sm text-gray-500">
-                              الكمية: {item.quantity}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-medium">
-                              {item.price.toFixed(2)} ج.م
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              الإجمالي:{" "}
-                              {(item.price * item.quantity).toFixed(2)} ج.م
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="mt-4 text-center">
-                      <p className="text-sm text-blue-600">
-                        انقر لعرض جميع تفاصيل المنتجات
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                  </dl>
+                  <button onClick={() => openOrderDetails(order)} className="fl-btn-oval !min-h-11 w-full text-sm sm:w-auto">
+                    <Eye className="h-4 w-4" aria-hidden="true" />
+                    عرض التفاصيل الكاملة
+                  </button>
+                </footer>
+              </article>
             );
           })}
           {visibleOrders.length > shown && (
@@ -552,17 +460,17 @@ const Page = () => {
             {/* Header */}
             <div className="sticky top-0 bg-white border-b p-6 flex items-center justify-between z-10">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="fl-display text-2xl text-primary">
                   تفاصيل الطلب #{selectedOrder.orderNumber}
                 </h2>
-                <p className="text-gray-600 mt-1">
+                <p className="text-primary/75 mt-1">
                   تاريخ الطلب:{" "}
                   {fmtDate(selectedOrder.createdAt)}
                 </p>
               </div>
               <button
                 onClick={closeOrderDetails}
-                className="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100"
+                className="text-primary/70 hover:text-primary/85 p-2 rounded-full hover:bg-secondary/60"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -578,8 +486,8 @@ const Page = () => {
                   </span>
                 </div>
                 <div className="text-right">
-                  <p className="text-gray-600">الإجمالي</p>
-                  <p className="text-3xl font-bold text-green-600">
+                  <p className="text-primary/75">الإجمالي</p>
+                  <p className="fl-display text-3xl text-primary">
                     {selectedOrder.finalAmount.toFixed(2)} ج.م
                   </p>
                 </div>
@@ -603,18 +511,18 @@ const Page = () => {
                     key={item.id}
                     className="border rounded-xl overflow-hidden"
                   >
-                    <div className="bg-blue-50 p-4">
+                    <div className="bg-secondary/60 p-4">
                       <div className="flex items-center justify-between">
                         <h4 className="font-bold text-lg">
                           المنتج #{index + 1}: {item.productName}
                         </h4>
                         <div className="text-right">
-                          <p className="text-2xl font-bold text-green-600">
+                          <p className="fl-display text-2xl text-primary">
                             {item.price.toFixed(2)} ج.م
                           </p>
                           {item.originalPrice &&
                             item.originalPrice > item.price && (
-                              <p className="text-sm text-gray-500 line-through">
+                              <p className="text-sm text-primary/70 line-through">
                                 {item.originalPrice.toFixed(2)} ج.م
                               </p>
                             )}
@@ -626,17 +534,17 @@ const Page = () => {
                       {/* Product Details */}
                       <div className="space-y-4">
                         <div className="flex items-center gap-3">
-                          <Package className="w-5 h-5 text-gray-500" />
+                          <Package className="w-5 h-5 text-primary/70" />
                           <div>
-                            <p className="text-sm text-gray-600">الكمية</p>
+                            <p className="text-sm text-primary/75">الكمية</p>
                             <p className="font-medium">{item.quantity} قطعة</p>
                           </div>
                         </div>
 
                         <div className="flex items-center gap-3">
-                          <DollarSign className="w-5 h-5 text-gray-500" />
+                          <DollarSign className="w-5 h-5 text-primary/70" />
                           <div>
-                            <p className="text-sm text-gray-600">الإجمالي</p>
+                            <p className="text-sm text-primary/75">الإجمالي</p>
                             <p className="font-medium text-lg">
                               {(item.price * item.quantity).toFixed(2)} ج.م
                             </p>
@@ -645,12 +553,12 @@ const Page = () => {
 
                         {item.discountAmount && item.discountAmount > 0 && (
                           <div className="flex items-center gap-3">
-                            <Tag className="w-5 h-5 text-green-500" />
+                            <Tag className="w-5 h-5 text-gold" />
                             <div>
-                              <p className="text-sm text-gray-600">
+                              <p className="text-sm text-primary/75">
                                 خصم السعر على هذا المنتج
                               </p>
-                              <p className="font-medium text-green-600">
+                              <p className="font-medium text-primary">
                                 -{(item.discountAmount * item.quantity).toFixed(2)} ج.م
                               </p>
                             </div>
@@ -659,9 +567,9 @@ const Page = () => {
 
                         {item.product?.code && (
                           <div className="flex items-center gap-3">
-                            <Hash className="w-5 h-5 text-gray-500" />
+                            <Hash className="w-5 h-5 text-primary/70" />
                             <div>
-                              <p className="text-sm text-gray-600">
+                              <p className="text-sm text-primary/75">
                                 كود المنتج
                               </p>
                               <p className="font-medium">{item.product.code}</p>
@@ -671,9 +579,9 @@ const Page = () => {
 
                         {item.product?.category && (
                           <div className="flex items-center gap-3">
-                            <Tag className="w-5 h-5 text-gray-500" />
+                            <Tag className="w-5 h-5 text-primary/70" />
                             <div>
-                              <p className="text-sm text-gray-600">الفئة</p>
+                              <p className="text-sm text-primary/75">الفئة</p>
                               <p className="font-medium">
                                 {CATEGORY_AR[item.product.category] ?? item.product.category}
                               </p>
@@ -686,9 +594,9 @@ const Page = () => {
                       {item.variant && (
                         <div className="space-y-4">
                           <div className="flex items-center gap-3">
-                            <Palette className="w-5 h-5 text-gray-500" />
+                            <Palette className="w-5 h-5 text-primary/70" />
                             <div className="flex items-center gap-2">
-                              <p className="text-sm text-gray-600">اللون:</p>
+                              <p className="text-sm text-primary/75">اللون:</p>
                               <p className="font-medium">
                                 {item.variant.color}
                               </p>
@@ -705,17 +613,17 @@ const Page = () => {
 
                           {item.variant.stock !== undefined && (
                             <div className="flex items-center gap-3">
-                              <Package className="w-5 h-5 text-gray-500" />
+                              <Package className="w-5 h-5 text-primary/70" />
                               <div>
-                                <p className="text-sm text-gray-600">
+                                <p className="text-sm text-primary/75">
                                   المخزون الحالي
                                 </p>
                                 <p
                                   className={`font-medium ${
                                     item.variant.stock > 10
-                                      ? "text-green-600"
+                                      ? "text-primary"
                                       : item.variant.stock > 0
-                                      ? "text-yellow-600"
+                                      ? "text-primary"
                                       : "text-red-600"
                                   }`}
                                 >
@@ -726,11 +634,11 @@ const Page = () => {
                           )}
 
                           {item.variantDetails && (
-                            <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                              <p className="text-sm text-gray-600 mb-1">
+                            <div className="mt-4 p-3 bg-secondary/40 rounded-lg">
+                              <p className="text-sm text-primary/75 mb-1">
                                 المطلوب (اللون / المقاس)
                               </p>
-                              <p className="text-gray-800">
+                              <p className="text-primary">
                                 {item.variantDetails}
                               </p>
                             </div>
@@ -747,12 +655,12 @@ const Page = () => {
                 <div className="flex justify-between items-center mb-4">
                   <h4 className="font-bold text-lg">ملخص الطلب</h4>
                   <div className="text-right">
-                    <p className="text-3xl font-bold text-green-600">
+                    <p className="fl-display text-3xl text-primary">
                       {selectedOrder.finalAmount.toFixed(2)} ج.م
                     </p>
                     {selectedOrder.totalAmount !==
                       selectedOrder.finalAmount && (
-                      <p className="text-sm text-gray-500 line-through">
+                      <p className="text-sm text-primary/70 line-through">
                         {selectedOrder.totalAmount.toFixed(2)} ج.م
                       </p>
                     )}
@@ -760,8 +668,8 @@ const Page = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <p className="text-sm text-gray-600">عدد المنتجات</p>
+                  <div className="bg-secondary/60 p-4 rounded-lg">
+                    <p className="text-sm text-primary/75">عدد المنتجات</p>
                     <p className="text-2xl font-bold">
                       {selectedOrder.orderItems.reduce(
                         (sum, item) => sum + item.quantity,
@@ -770,15 +678,15 @@ const Page = () => {
                     </p>
                   </div>
 
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <p className="text-sm text-gray-600">المنتجات المختلفة</p>
+                  <div className="bg-secondary/60 p-4 rounded-lg">
+                    <p className="text-sm text-primary/75">المنتجات المختلفة</p>
                     <p className="text-2xl font-bold">
                       {selectedOrder.orderItems.length}
                     </p>
                   </div>
 
-                  <div className="bg-yellow-50 p-4 rounded-lg">
-                    <p className="text-sm text-gray-600">إجمالي الخصم</p>
+                  <div className="bg-secondary/60 p-4 rounded-lg">
+                    <p className="text-sm text-primary/75">إجمالي الخصم</p>
                     <p className="text-2xl font-bold text-red-600">
                       {(
                         selectedOrder.orderItems.reduce((sum, item) => sum + (item.discountAmount || 0) * item.quantity, 0) +
@@ -800,7 +708,7 @@ const Page = () => {
             <div className="sticky bottom-0 bg-white border-t p-4">
               <button
                 onClick={closeOrderDetails}
-                className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                className="fl-cta w-full"
               >
                 إغلاق
               </button>
