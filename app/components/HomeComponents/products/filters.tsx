@@ -22,9 +22,7 @@ const subcategoryMap: Record<NonNullable<Category>, Subcategory[]> = {
     ProductSubtype.SNEAKERS,
     ProductSubtype.PUMPS,
     ProductSubtype.BALLERINAS,
-    ProductSubtype.LOAFERS,
     ProductSubtype.SLIPPERS,
-    ProductSubtype.SANDALS,
   ],
   BAG: [
     ProductSubtype.HAND_BAGS,
@@ -103,6 +101,9 @@ export default function Filters({ lang }: FiltersProps) {
     updateURL(category, null);
   };
 
+  // the first choice inside a category: everything in it ("All Shoes" / "All Bags")
+  const allOfCategory = category === "BAG" ? (isAr ? "كل الشنط" : "All Bags") : isAr ? "كل الأحذية" : "All Shoes";
+
   const types = category
     ? subcategoryMap[category].map((value) => ({
         value,
@@ -161,7 +162,7 @@ export default function Filters({ lang }: FiltersProps) {
                 <ul className="mb-2 ms-5 border-s border-primary/15 ps-3">
                   <li>
                     <button onClick={pickAllTypes} className={row(!subcategory)}>
-                      {isAr ? "الكل" : "All"}
+                      {allOfCategory}
                     </button>
                   </li>
                   {types.map((s) => (
@@ -268,7 +269,7 @@ export default function Filters({ lang }: FiltersProps) {
                   <p className="mb-3 mt-6 text-xs uppercase tracking-[0.18em] text-primary/50">{T.type}</p>
                   <div className="flex flex-wrap gap-2">
                     <button onClick={pickAllTypes} aria-pressed={!subcategory} className={chip(!subcategory)}>
-                      {isAr ? "الكل" : "All"}
+                      {allOfCategory}
                     </button>
                     {types.map((s) => (
                       <button

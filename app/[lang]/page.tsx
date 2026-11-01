@@ -4,7 +4,6 @@ import type { DealOffer } from "../components/HomeComponents/Offers/types";
 import { categoryMeta } from "../components/HomeComponents/categoryMeta";
 import CategoryCards from "../components/HomeComponents/CategoryCards";
 import AboutSection from "../components/HomeComponents/AboutSection";
-import FacebookReelEmbed from "../components/HomeComponents/FacebookReelEmbed";
 import { prisma } from "@/lib/prisma";
 import "../components/HomeComponents/bento.css";
 
@@ -82,7 +81,7 @@ const Page = async ({ params }: PageProps) => {
       <OfferLine lang={lang} offers={deals} />
       <CategoryCards lang={lang} items={heroItems} />
       <AboutSection lang={lang} />
-      <FacebookReelEmbed lang={lang} />
+      {/* the Facebook reels section is off for now: the embeds load slowly (FacebookReelEmbed.tsx and the dashboard page are kept) */}
     </div>
   );
 };

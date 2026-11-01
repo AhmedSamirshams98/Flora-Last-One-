@@ -56,17 +56,15 @@
     },
     "subtypes": {
       "shoe": {
-        "ALL_SHOES": "جميع الأحذية",
+        "ALL_SHOES": "كل الأحذية",
         "WINTER_BOOTS": "أحذية شتوية",
         "SNEAKERS": "أحذية رياضية",
         "PUMPS": "كعب عالي",
-        "BALLERINAS": "باليرينا",
-        "LOAFERS": "لوفرس",
-        "SLIPPERS": "شباشب",
-        "SANDALS": "صنادل"
+        "BALLERINAS": "باليرينا ولوفرس",
+        "SLIPPERS": "شباشب وصنادل"
       },
       "bag": {
-        "ALL_BAGS": "جميع الشنط",
+        "ALL_BAGS": "كل الشنط",
         "HAND_BAGS": "شنط يد",
         "SHOULDER_BAGS": "شنط كتف",
         "CROSSBODY_BAGS": "شنط كروس",

@@ -19,9 +19,7 @@ const SUBCATEGORIES = {
     "SNEAKERS",
     "PUMPS",
     "BALLERINAS",
-    "LOAFERS",
     "SLIPPERS",
-    "SANDALS",
   ],
   BAG: [
     "ALL_BAGS",

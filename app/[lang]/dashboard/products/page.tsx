@@ -5,7 +5,7 @@ import { confirmAction } from "@/app/components/AdminConfirm";
 import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 
-import { ProductType, ProductSubtype, PricingType } from "@/types/product";
+import { ProductType, ProductSubtype, PricingType, canonicalSubtype } from "@/types/product";
 import ProductCard from "./ProductCard";
 import ProductForm from "./ProductForm";
 
@@ -73,7 +73,7 @@ export default function ProductsPage() {
     const formData: ProductFormData = {
       name: product.name,
       category: product.category,
-      subcategory: product.subcategory || undefined,
+      subcategory: canonicalSubtype(product.subcategory) || undefined,
       pricingType: product.pricingType,
       basePrice: product.basePrice,
       salePrice: product.salePrice || undefined,
