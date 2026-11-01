@@ -13,7 +13,7 @@ const SocialFooter = () => {
   const iconClass = isContactPage ? "w-5 h-5 text-primary" : "w-5 h-5"; // بدون لون → يرث اللون
 
   return (
-    <div className="-ms-3 flex items-center">
+    <div className="flex items-center justify-center md:-ms-3 md:justify-start">
       <a
         href="https://www.facebook.com/share/1BT3kJVN5D/?mibextid=wwXIfr"
         target="_blank"
