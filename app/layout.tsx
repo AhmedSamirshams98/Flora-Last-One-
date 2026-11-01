@@ -32,7 +32,7 @@ const amiri = Amiri({
 // Arabic text (free; replaces the commercial Gess files).
 const readex = Readex_Pro({
   subsets: ["arabic", "latin"],
-  weight: ["300", "400", "500", "600"],
+  // a variable font: no list of weights, every weight is in the one file
   variable: "--font-readex",
   display: "swap",
 });
