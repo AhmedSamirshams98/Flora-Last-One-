@@ -1174,529 +1174,6 @@ body:has(.fl-pdp-bar) .fl-fab {
   }
 }
 
-/* the floating buttons sit over the bottom corner: keep the copyright line clear of them */
-.fl-footer-bar {
-  padding-bottom: 6.5rem;
-}
-@media (min-width: 768px) {
-  .fl-footer-bar {
-    padding-inline: 5rem;
-    padding-bottom: 1.5rem;
-  }
-}
-
-/* Footer contact: a small gold-lined icon, then the details; the two numbers and the e-mail are
-   cream-lined pills (gold on hover) instead of loose lines of text */
-.fl-fcontact {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-}
-.fl-fcontact li {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-}
-.fl-ficon {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  border: 1px solid rgb(201 162 74 / 0.5);
-  border-radius: 9999px;
-  background: rgb(201 162 74 / 0.08);
-  color: #e6cf8f;
-}
-.fl-faddr {
-  max-width: 17rem;
-  line-height: 1.8;
-  text-align: center;
-}
-.fl-fmap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 2.75rem;
-  color: #e6cf8f;
-  font-size: 0.875rem;
-  text-decoration: underline;
-  text-decoration-color: rgb(201 162 74 / 0.5);
-  text-underline-offset: 4px;
-}
-.fl-fmap:hover {
-  text-decoration-color: #c9a24a;
-}
-.fl-fphones {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.5rem;
-}
-.fl-fphone {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.75rem;
-  padding: 0 0.9rem;
-  border: 1px solid rgb(255 247 238 / 0.3);
-  border-radius: 9999px;
-  color: #fff7ee;
-  font-size: 0.95rem;
-  transition: border-color 0.2s, color 0.2s, background-color 0.2s;
-}
-.fl-fphone:hover {
-  border-color: #c9a24a;
-  background: rgb(201 162 74 / 0.14);
-  color: #f3e2b0;
-}
-.fl-femail {
-  overflow-wrap: anywhere;
-  border-radius: 1.25rem;
-  padding-block: 0.4rem;
-}
-@media (min-width: 768px) {
-  .fl-fcontact {
-    align-items: flex-start;
-  }
-  .fl-fcontact li {
-    justify-content: flex-start;
-  }
-  .fl-faddr {
-    text-align: start;
-  }
-  .fl-fmap {
-    justify-content: flex-start;
-  }
-  .fl-fphones {
-    justify-content: flex-start;
-  }
-}
-
-/* Footer contact, on one grid: an icon column and a content column of the same width in every row,
-   so the icons, the left edges and the right edges all line up (the first rows were ragged) */
-.fl-fcontact {
-  width: 100%;
-  max-width: 19rem;
-  margin-inline: auto;
-  align-items: stretch;
-  gap: 0.875rem;
-}
-.fl-fcontact li {
-  display: grid;
-  grid-template-columns: 2.25rem minmax(0, 1fr);
-  column-gap: 0.75rem;
-  align-items: start;
-  justify-content: initial;
-}
-.fl-ficon {
-  margin-top: 0.25rem;
-}
-.fl-faddr {
-  max-width: none;
-  padding-top: 0.2rem;
-  text-align: start;
-}
-.fl-fmap {
-  justify-content: flex-start;
-}
-.fl-fphones {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
-}
-.fl-fphone {
-  width: 100%;
-  justify-content: center;
-  padding: 0 0.5rem;
-}
-@media (min-width: 768px) {
-  .fl-fcontact {
-    margin-inline: 0;
-    align-items: stretch;
-  }
-  .fl-fcontact li {
-    justify-content: initial;
-  }
-}
-
-/* the social icons are the last row of the contact column, on the same left edge as the rows above */
-.fl-fcontact li.fl-fsocial {
-  display: block;
-}
-
-/* ---------- Footer: contact band under the two top columns ---------- */
-.fl-fband {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 1.75rem;
-  max-width: 19rem;
-  margin-inline: auto;
-  padding-top: 2.25rem;
-  border-top: 1px solid rgb(201 162 74 / 0.25);
-}
-.fl-fitem {
-  display: grid;
-  grid-template-columns: 2.25rem minmax(0, 1fr);
-  column-gap: 0.75rem;
-  align-items: start;
-  text-align: start;
-}
-.fl-fitem.fl-fsocial {
-  display: block;
-}
-.fl-fhead {
-  margin-bottom: 0.4rem;
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
-  color: rgb(255 247 238 / 0.65);
-}
-.fl-fitem .fl-fphones {
-  grid-template-columns: 1fr 1fr;
-}
-.fl-fitem .fl-fphone {
-  padding: 0 0.4rem;
-  font-size: 0.85rem;
-}
-.fl-fitem .fl-femail {
-  width: 100%;
-  font-size: 0.85rem;
-}
-@media (min-width: 768px) {
-  .fl-fband {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1.5rem;
-    max-width: none;
-    margin-inline: 0;
-  }
-  .fl-fitem.fl-fsocial .fl-fsoc-body {
-    padding-inline-start: 0;
-  }
-}
-
-/* the "follow us" block has no icon, so it keeps the icon column's width empty: its heading and
-   icons start on the same line as the text of the other three blocks */
-.fl-fitem.fl-fsocial {
-  padding-inline-start: 3rem;
-}
-.fl-fitem.fl-fsocial .fl-fsoc-body > div {
-  justify-content: flex-start;
-  margin-inline-start: -0.75rem;
-}
-
-/* ---------- Footer: three columns, one height ---------- */
-.fl-fcols {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 3rem;
-}
-.fl-fcol {
-  display: flex;
-  flex-direction: column;
-  gap: 1.75rem;
-}
-@media (min-width: 768px) {
-  .fl-fcols {
-    grid-template-columns: 1.1fr 1fr 1.25fr;
-    gap: 3.5rem;
-    align-items: stretch;
-  }
-  .fl-fcol {
-    justify-content: space-between;
-  }
-}
-.fl-fchecks {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  align-items: center;
-  font-size: 0.95rem;
-  color: rgb(255 247 238 / 0.78);
-}
-.fl-fchecks li {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-@media (min-width: 768px) {
-  .fl-fchecks {
-    align-items: flex-start;
-  }
-}
-.fl-faddrlink {
-  display: block;
-  color: rgb(255 247 238 / 0.92);
-  text-underline-offset: 4px;
-  text-decoration: underline;
-  text-decoration-color: rgb(201 162 74 / 0.35);
-  transition: text-decoration-color 0.2s, color 0.2s;
-}
-.fl-faddrlink:hover {
-  color: #f3e2b0;
-  text-decoration-color: #c9a24a;
-}
-.fl-fcontact li.fl-fsocial {
-  display: block;
-  padding-inline-start: 3rem;
-}
-
-/* Footer, final layout: three columns of the same width on big screens; on a phone every block is
-   centred (icon above its text) */
-.fl-fcontact {
-  max-width: 19rem;
-  margin-inline: auto;
-  align-items: center;
-}
-.fl-fcontact li {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  text-align: center;
-}
-.fl-faddr,
-.fl-faddrlink {
-  text-align: center;
-}
-.fl-fcontact li.fl-fsocial {
-  display: block;
-  padding-inline-start: 0;
-}
-.fl-fphones {
-  justify-content: center;
-}
-@media (min-width: 768px) {
-  .fl-fcols {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .fl-fcontact {
-    max-width: none;
-    margin-inline: 0;
-    align-items: stretch;
-  }
-  .fl-fcontact li {
-    display: grid;
-    grid-template-columns: 2.25rem minmax(0, 1fr);
-    column-gap: 0.75rem;
-    align-items: start;
-    text-align: start;
-  }
-  .fl-faddr,
-  .fl-faddrlink {
-    text-align: start;
-  }
-  .fl-fcontact li.fl-fsocial {
-    display: block;
-    padding-inline-start: 3rem;
-  }
-  .fl-fphones {
-    justify-content: flex-start;
-  }
-}
-
-/* the quick-links column sits in the middle of the footer, and its headings and links are centred on its axis */
-.fl-fcol-center {
-  align-items: center;
-  text-align: center !important;
-}
-.fl-fcol-center ul {
-  align-items: center !important;
-}
-.fl-fcol-center a,
-.fl-fcol-center button {
-  text-align: center !important;
-}
-
-/* ---------- Footer on a phone: shorter ----------
-   links in one wrapping row, services as a 2x2 grid, each contact row = icon beside its text */
-@media (max-width: 767px) {
-  .fl-fcols {
-    gap: 1.75rem;
-    padding-bottom: 2.5rem !important;
-  }
-  .fl-fcol {
-    gap: 1.25rem;
-  }
-  .fl-fcol-center {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0 1.5rem;
-  }
-  .fl-fcol-center > div,
-  .fl-fcol-center ul {
-    display: contents !important;
-  }
-  .fl-fcol-center p {
-    display: none;
-  }
-  .fl-fcol-center li {
-    display: flex;
-    align-items: center;
-    min-height: 2.75rem;
-  }
-  .fl-fchecks {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem 0.75rem;
-    font-size: 0.85rem;
-  }
-  .fl-fchecks li {
-    justify-content: center;
-    text-align: start;
-  }
-  .fl-fcontact {
-    gap: 0.5rem;
-  }
-  .fl-fcontact li {
-    flex-direction: row;
-    justify-content: center;
-    gap: 0.6rem;
-  }
-  .fl-ficon {
-    margin-top: 0;
-  }
-  .fl-fcontact li.fl-fsocial {
-    justify-content: center;
-  }
-  .fl-footer-bar {
-    padding-bottom: 5.5rem;
-  }
-}
-
-/* Footer on a phone: the order is logo + welcome, then every way to reach the shop (social icons,
-   address, numbers, e-mail), then the links, then the services */
-@media (max-width: 767px) {
-  .fl-fcols {
-    display: flex;
-    flex-direction: column;
-  }
-  .fl-fcols > .fl-fcol:first-child {
-    display: contents;
-  }
-  .fl-fcols > .fl-fcol:first-child > div {
-    order: 1;
-  }
-  .fl-fcols > .fl-fcol:last-child {
-    order: 2;
-  }
-  .fl-fcols > .fl-fcol-center {
-    order: 3;
-  }
-  .fl-fcols > .fl-fcol:first-child > .fl-fchecks {
-    order: 4;
-  }
-  .fl-fcontact li.fl-fsocial {
-    order: -1;
-  }
-}
-
-/* Footer bottom bar on a phone: short. The text keeps clear of the floating buttons by side padding
-   (not by a tall empty strip under it) */
-@media (max-width: 767px) {
-  .fl-footer-bar {
-    gap: 0.25rem;
-    padding: 0.9rem 4rem;
-    font-size: 0.8rem;
-    line-height: 1.5;
-  }
-}
-
-/* Footer on a phone, tidied: all contact icons on one vertical line with the content centred
-   between them and an empty column on the other side; the services as unbroken chips */
-@media (max-width: 767px) {
-  .fl-fcontact {
-    max-width: 21rem;
-  }
-  .fl-fcontact li:not(.fl-fsocial) {
-    display: grid;
-    grid-template-columns: 2.25rem minmax(0, 1fr) 2.25rem;
-    column-gap: 0.5rem;
-    align-items: center;
-    text-align: center;
-  }
-  .fl-fcontact li:not(.fl-fsocial)::after {
-    content: "";
-  }
-  .fl-fcontact li:not(.fl-fsocial) > .fl-ficon {
-    margin-top: 0;
-  }
-  .fl-fcontact li:not(.fl-fsocial) > :nth-child(2) {
-    justify-self: center;
-  }
-  .fl-fcontact li.fl-fsocial {
-    display: flex;
-    justify-content: center;
-    padding-inline-start: 0;
-  }
-  .fl-fcontact li.fl-fsocial > div {
-    margin-inline-start: 0;
-  }
-  .fl-fchecks {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem 1.25rem;
-  }
-  .fl-fchecks li {
-    white-space: nowrap;
-  }
-}
-
-/* Footer on a phone, second pass: the icons are pinned to the same edge of every row (so they are
-   always on one vertical line), the content is centred in the space left; the services are chips
-   in a row that wraps; the e-mail never breaks in the middle */
-@media (max-width: 767px) {
-  .fl-fcontact {
-    max-width: 100%;
-    width: 100%;
-  }
-  .fl-fcontact li:not(.fl-fsocial) {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 2.75rem;
-    padding-inline: 2.9rem;
-    text-align: center;
-  }
-  .fl-fcontact li:not(.fl-fsocial)::after {
-    content: none;
-  }
-  .fl-fcontact li:not(.fl-fsocial) > .fl-ficon {
-    position: absolute;
-    inset-inline-start: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    margin: 0;
-  }
-  .fl-fcontact li:not(.fl-fsocial) > :nth-child(2) {
-    width: 100%;
-  }
-  .fl-fcontact li .fl-fphones {
-    width: 100%;
-  }
-  .fl-fcontact li .fl-femail {
-    width: 100%;
-    padding: 0 0.5rem;
-    font-size: 0.8rem;
-    white-space: nowrap;
-    overflow-wrap: normal;
-    justify-content: center;
-  }
-  .fl-fchecks {
-    flex-direction: row;
-    align-items: center;
-  }
-}
-
-@media (max-width: 767px) {
-  .fl-fcontact li:not(.fl-fsocial) {
-    width: 100%; /* every row spans the column, so the pinned icons share one vertical line */
-  }
-}
-
 /* the floating buttons step aside while the footer (which has the same details) is on screen */
 .fl-fab {
   transition: opacity 0.3s ease, transform 0.3s ease;
@@ -1709,25 +1186,6 @@ body:has(.fl-pdp-bar) .fl-fab {
 @media (prefers-reduced-motion: reduce) {
   .fl-fab {
     transition: none;
-  }
-}
-
-/* the four services on a phone: two aligned columns that start from the reading side (the right
-   in Arabic), each item on its own line, nothing wrapping */
-@media (max-width: 767px) {
-  .fl-fchecks {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    justify-items: start;
-    gap: 0.75rem 0.5rem;
-    width: 100%;
-    max-width: 21rem;
-    margin-inline: auto;
-    font-size: 0.85rem;
-  }
-  .fl-fchecks li {
-    justify-content: flex-start;
-    white-space: nowrap;
   }
 }
 
@@ -1951,3 +1409,132 @@ body:has(.fl-pdp-bar) .fl-fab {
 .fl-hero .fl-st-dots button.is-on { background: var(--gold); }
 .fl-hero .fl-st-card:focus-visible,
 .fl-hero .fl-st-arrow:focus-visible { outline-color: #fff7ee; }
+
+/* ---------- Footer: one calm row of blocks, then a hairline and one line (after "Footer 7") ----------
+   Brand + a short line + social icons on one side; plain link lists beside it; a thin rule; the
+   copyright and the credit. Nothing is boxed, no pills: air does the separating. */
+.fl-ft-grid {
+  display: grid;
+  gap: 3rem 2rem;
+  grid-template-columns: 1fr 1fr;
+  padding-block: 4rem 3.5rem;
+}
+.fl-ft-brand { grid-column: 1 / -1; }
+.fl-ft-contact { grid-column: 1 / -1; }
+@media (min-width: 900px) {
+  .fl-ft-grid {
+    grid-template-columns: 1.4fr 0.8fr 0.8fr 1.7fr;
+    gap: 3rem 4rem;
+    padding-block: 5.5rem 4.5rem;
+  }
+  .fl-ft-brand, .fl-ft-contact { grid-column: auto; }
+}
+.fl-ft-title {
+  margin-bottom: 1.25rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(255 247 238 / 0.6);
+}
+.fl-ft-list { display: flex; flex-direction: column; gap: 0.95rem; font-size: 0.98rem; }
+.fl-ft-list a, .fl-ft-list button {
+  display: inline-block;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: start;
+  cursor: pointer;
+  color: rgb(255 247 238 / 0.85);
+  line-height: 1.6;
+  transition: color 0.2s ease;
+}
+.fl-ft-list a:hover, .fl-ft-list button:hover { color: var(--gold); }
+.fl-ft-list a:focus-visible, .fl-ft-list button:focus-visible { outline: 2px solid #fff7ee; outline-offset: 3px; border-radius: 4px; }
+.fl-ft-social { display: flex; align-items: center; gap: 0.25rem; margin-top: 1.75rem; margin-inline-start: -0.75rem; }
+.fl-ft-social > div { margin: 0 !important; justify-content: flex-start !important; }
+.fl-ft-rule { height: 1px; background: rgb(201 162 74 / 0.28); }
+.fl-ft-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-block: 1.75rem 6.5rem; /* clear of the floating buttons on a phone */
+  font-size: 0.88rem;
+  color: rgb(255 247 238 / 0.7);
+}
+@media (min-width: 768px) {
+  .fl-ft-bar { flex-direction: row; align-items: center; justify-content: space-between; padding-block: 1.75rem; }
+}
+.fl-ft-bar a:hover { color: var(--gold); }
+
+/* a contact line: a small gold icon beside its text, on the reading side */
+.fl-ft-row { display: flex; align-items: flex-start; gap: 0.75rem; }
+.fl-ft-row > svg { flex: none; width: 1.05rem; height: 1.05rem; margin-top: 0.4rem; color: var(--gold); }
+
+/* Footer on a phone: every block sits on the middle axis */
+@media (max-width: 899px) {
+  .fl-ft-grid { text-align: center; justify-items: center; }
+  .fl-ft-brand, .fl-ft-contact { display: flex; flex-direction: column; align-items: center; width: 100%; }
+  .fl-ft-brand p { margin-inline: auto; }
+  .fl-ft-social { margin-inline-start: 0; justify-content: center; }
+  .fl-ft-list { align-items: center; }
+  .fl-ft-list a, .fl-ft-list button { text-align: center; }
+  .fl-ft-row { justify-content: center; align-items: center; }
+  .fl-ft-row > svg { margin-top: 0; }
+  .fl-ft-bar { align-items: center; text-align: center; }
+}
+@media (max-width: 899px) {
+  /* the address wraps to two lines: its pin sits above it so the pair stays on the middle axis */
+  .fl-ft-list > .fl-ft-row:first-child { flex-direction: column; gap: 0.4rem; }
+}
+@media (max-width: 899px) {
+  /* the two link lists are not two half-width columns (each centred in its own half, so off the
+     middle axis): each takes the full width, its links in a centred wrapping row */
+  .fl-ft-grid > nav { grid-column: 1 / -1; width: 100%; }
+  .fl-ft-grid > nav .fl-ft-list { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 0.5rem 1.75rem; }
+}
+
+/* letter-spacing pulls Arabic letters apart (they must stay joined): only the Latin headings get it */
+[dir="rtl"] .fl-ft-title,
+[dir="rtl"] .fl-st-eyebrow { letter-spacing: 0; text-transform: none; }
+/* the same for every Arabic block that carries a tracking-* utility; Latin ones (dir=ltr / lang=en) keep it */
+[dir="rtl"] [class*="tracking-"]:not([dir="ltr"]):not([lang="en"]) { letter-spacing: normal; }
+
+/* footer audit: real headings keep the quiet look; links are easy to hit with a thumb (44px) on touch
+   screens and a comfortable 32px with a mouse */
+.fl-ft-title { font-family: inherit; font-weight: 400; line-height: 1.4; }
+.fl-ft-list a, .fl-ft-list button, .fl-ft-bar a { display: inline-flex; align-items: center; min-height: 32px; }
+.fl-ft-list { gap: 0.25rem; }
+@media (max-width: 899px), (pointer: coarse) {
+  .fl-ft-list a, .fl-ft-list button, .fl-ft-bar a { min-height: 44px; }
+}
+@media (max-width: 899px) {
+  .fl-ft-grid > nav .fl-ft-list { gap: 0 1.5rem; }
+  .fl-ft-list > .fl-ft-row:first-child { gap: 0; }
+}
+
+/* Footer on a phone, tighter and even: smaller gaps between blocks, every contact row built the same
+   way (icon beside its text, the pair centred), the address broken into two balanced lines */
+@media (max-width: 899px) {
+  .fl-ft-grid { gap: 1.75rem; padding-block: 2.5rem 1.75rem; }
+  .fl-ft-title { margin-bottom: 0.35rem; }
+  .fl-ft-brand p { margin-top: 1rem; }
+  .fl-ft-social { margin-top: 0.75rem; }
+  .fl-ft-list a, .fl-ft-list button, .fl-ft-bar a { min-height: 40px; }
+  .fl-ft-list { gap: 0; }
+  .fl-ft-list > .fl-ft-row:first-child { flex-direction: row; gap: 0.75rem; }
+  .fl-ft-row > svg { margin-top: 0; }
+  .fl-ft-row a { text-wrap: balance; text-align: center; }
+  .fl-ft-bar { padding-block: 1rem 5.5rem; gap: 0; }
+}
+@media (max-width: 899px) {
+  /* each contact row is only as wide as its content, so the icon stays next to its text */
+  .fl-ft-row { width: fit-content; max-width: 100%; margin-inline: auto; }
+}
+
+/* Footer contact on a phone: one centred block whose rows all start from the same edge, so the four
+   icons stand on one vertical line and each text sits right next to its icon */
+@media (max-width: 899px) {
+  .fl-ft-contact .fl-ft-list { width: fit-content; max-width: min(100%, 19.5rem); margin-inline: auto; align-items: stretch; }
+  .fl-ft-contact .fl-ft-row { width: 100%; margin-inline: 0; justify-content: flex-start; align-items: center; gap: 0.85rem; }
+  .fl-ft-contact .fl-ft-row a { text-align: start; text-wrap: pretty; }
+}
