@@ -28,6 +28,7 @@ const SocialFooter = () => {
         href="https://wa.me/201090770881"
         target="_blank"
         rel="noopener noreferrer"
+        aria-label="WhatsApp"
         title="Chat on WhatsApp"
         className="grid h-11 w-11 place-items-center transition-colors hover:text-gold"
       >
