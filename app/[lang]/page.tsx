@@ -1,4 +1,4 @@
-import ReelHero from "../components/HomeComponents/Offers/ReelHero";
+import HeroSwitch from "../components/HomeComponents/Offers/HeroSwitch";
 import OfferLine from "../components/HomeComponents/Offers/OfferLine";
 import type { DealOffer } from "../components/HomeComponents/Offers/types";
 import { categoryMeta } from "../components/HomeComponents/categoryMeta";
@@ -88,7 +88,7 @@ const Page = async ({ params }: PageProps) => {
 
   return (
     <div className="relative top-0 overflow-hidden" data-home="bento">
-      <ReelHero
+      <HeroSwitch
         lang={lang}
         products={products}
         extra={heroItems.map((c) => ({ id: c.id, image: c.image, alt: c.alt, href: c.href }))}
