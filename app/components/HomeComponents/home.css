@@ -1739,3 +1739,215 @@ body:has(.fl-pdp-bar) .fl-fab {
   transition: background-color 0.2s, color 0.2s;
 }
 .fl-danger:hover { background: #9b2c1f; color: #fff; }
+
+/* ---------- Home hero: the 3D stage of pictures ---------- */
+.fl-stage {
+  --cw: clamp(190px, 58vw, 290px); /* card width; the height follows */
+  --sx: 0.62; /* sideways step, in card widths */
+  background:
+    radial-gradient(60% 55% at 12% 0%, rgba(201, 162, 74, 0.2), transparent 70%),
+    radial-gradient(55% 50% at 92% 0%, rgba(196, 140, 130, 0.16), transparent 70%),
+    radial-gradient(70% 30% at 50% 100%, rgba(255, 255, 255, 0.9), transparent 75%),
+    linear-gradient(rgba(107, 68, 35, 0.045) 1px, transparent 1px) 0 0 / 44px 44px,
+    linear-gradient(90deg, rgba(107, 68, 35, 0.045) 1px, transparent 1px) 0 0 / 44px 44px,
+    #faf9f6;
+}
+@media (min-width: 900px) {
+  .fl-stage { --cw: clamp(230px, 22vw, 300px); --sx: 0.8; }
+}
+.fl-st-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: var(--primary);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(201, 162, 74, 0.45);
+  backdrop-filter: blur(8px);
+}
+.fl-st-eyebrow i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 4px rgba(201, 162, 74, 0.25), 0 0 12px rgba(201, 162, 74, 0.8);
+}
+
+.fl-st-wrap { position: relative; margin-top: 2rem; padding-bottom: 78px; }
+.fl-st-stage {
+  position: relative;
+  height: calc(var(--cw) * 1.38 + 36px);
+  perspective: 1400px;
+  touch-action: pan-y;
+  user-select: none;
+}
+.fl-st-card {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  width: var(--cw);
+  height: calc(var(--cw) * 1.38);
+  margin-left: calc(var(--cw) / -2);
+  overflow: hidden;
+  border-radius: 28px;
+  background: var(--secondary);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 30px 60px -22px rgba(58, 34, 17, 0.45), inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  transform: translate3d(calc(var(--d) * var(--cw) * var(--sx)), 0, calc(var(--ad) * -130px))
+    rotateY(calc(var(--d) * -15deg)) scale(calc(1 - var(--ad) * 0.07));
+  z-index: calc(10 - var(--ad));
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity;
+  cursor: pointer;
+}
+.fl-st-card[data-ad="0"] { opacity: 1; filter: none; cursor: pointer; }
+.fl-st-card[data-ad="1"] { opacity: 0.72; filter: blur(1.5px) brightness(0.97); }
+.fl-st-card[data-ad="2"] { opacity: 0.3; filter: blur(4px) brightness(0.95); }
+.fl-st-card[data-ad="3"] { opacity: 0; filter: blur(8px); visibility: hidden; pointer-events: none; }
+@media (max-width: 899px) {
+  /* phones: only the active card and its two neighbours */
+  .fl-st-card[data-ad="2"] { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+.fl-st-card:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
+
+.fl-st-shade {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 42%;
+  background: linear-gradient(to top, rgba(30, 16, 6, 0.72), transparent);
+  pointer-events: none;
+}
+.fl-st-info {
+  position: absolute;
+  inset: auto 1rem 1rem 1rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+  color: #fff;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.fl-st-card[data-ad="0"] .fl-st-info { opacity: 1; transform: none; transition-delay: 0.25s; }
+.fl-st-label { font-size: 0.95rem; line-height: 1.4; text-align: start; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45); }
+.fl-st-num {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  background: rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(8px);
+}
+/* a slow band of light crosses the front picture now and then */
+.fl-st-card[data-ad="0"]::after {
+  content: "";
+  position: absolute;
+  inset: -20% auto -20% -60%;
+  width: 40%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+  transform: skewX(-18deg);
+  animation: fl-st-shine 7s ease-in-out 1.5s infinite;
+  pointer-events: none;
+}
+@keyframes fl-st-shine {
+  0%, 55% { left: -60%; }
+  100% { left: 140%; }
+}
+
+.fl-st-arrow {
+  position: absolute;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  color: var(--primary);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(201, 162, 74, 0.45);
+  box-shadow: 0 8px 22px -8px rgba(58, 34, 17, 0.35);
+  backdrop-filter: blur(10px);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  bottom: 4px; /* phones: under the stage, at the corners */
+}
+.fl-st-prev { left: 1rem; }
+.fl-st-next { right: 1rem; }
+.fl-st-arrow:hover { transform: scale(1.08); background: #fff; }
+.fl-st-arrow:active { transform: scale(0.92); }
+.fl-st-arrow:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+@media (min-width: 900px) {
+  .fl-st-arrow { bottom: auto; top: calc(var(--cw) * 0.69 + 18px - 24px); }
+  .fl-st-prev { left: 4%; }
+  .fl-st-next { right: 4%; }
+}
+
+.fl-st-dots {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(201, 162, 74, 0.4);
+  backdrop-filter: blur(10px);
+}
+.fl-st-dots button {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(107, 68, 35, 0.3);
+  transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s ease;
+}
+/* the dot is small, the tap target is not */
+.fl-st-dots button::before { content: ""; position: absolute; inset: -14px -4px; }
+.fl-st-dots button.is-on { width: 24px; background: var(--primary); }
+.fl-st-dots button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fl-st-card, .fl-st-info, .fl-st-dots button { transition-duration: 0.01s; transition-delay: 0s !important; }
+  .fl-st-card[data-ad="0"]::after { animation: none; display: none; }
+}
+
+/* the stage on the shop's dark cocoa ground: cream type, gold hairlines, glass in cream */
+.fl-stage.fl-hero {
+  background:
+    radial-gradient(60% 50% at 50% 30%, rgb(201 162 74 / 0.28), transparent 72%),
+    radial-gradient(40% 40% at 12% 85%, rgb(201 162 74 / 0.12), transparent 70%),
+    linear-gradient(rgb(255 247 238 / 0.035) 1px, transparent 1px) 0 0 / 44px 44px,
+    linear-gradient(90deg, rgb(255 247 238 / 0.035) 1px, transparent 1px) 0 0 / 44px 44px,
+    linear-gradient(180deg, var(--primary) 0%, #3a2211 100%);
+}
+.fl-hero .fl-st-eyebrow {
+  color: #fff7ee;
+  background: rgb(255 247 238 / 0.08);
+  border-color: rgb(201 162 74 / 0.55);
+}
+.fl-hero .fl-st-card {
+  border: 1px solid rgb(201 162 74 / 0.6);
+  box-shadow: 0 34px 60px -22px rgb(0 0 0 / 0.65), inset 0 0 0 1px rgb(255 247 238 / 0.12);
+}
+.fl-hero .fl-st-arrow,
+.fl-hero .fl-st-dots {
+  color: #fff7ee;
+  background: rgb(255 247 238 / 0.1);
+  border-color: rgb(201 162 74 / 0.5);
+}
+.fl-hero .fl-st-arrow:hover { background: rgb(255 247 238 / 0.2); }
+.fl-hero .fl-st-dots button { background: rgb(255 247 238 / 0.35); }
+.fl-hero .fl-st-dots button.is-on { background: var(--gold); }
+.fl-hero .fl-st-card:focus-visible,
+.fl-hero .fl-st-arrow:focus-visible { outline-color: #fff7ee; }
